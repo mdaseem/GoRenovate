@@ -1,0 +1,62 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1);
+}
+.header-nav-list {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+.header-nav-item {
+  background-color: #c4fd5b;
+  padding: 6px 15px;
+  border-radius: 5px;
+  margin: auto;
+}
+.header-nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 100%;
+}
+.list-item {
+  text-decoration: none;
+  margin: auto;
+  color: black;
+  font-weight: 500;
+}
+.list-item:hover {
+  color: white;
+  .header-nav-item {
+    background-color: green;
+  }
+  .header-nav-profile {
+    background-color: green;
+    color: white;
+  }
+}
+.header-nav-profile:hover {
+  background-color: #c4fd5b;
+  color: white;
+}
+.logo-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+  display: inline;
+}
+.lolo-icon {
+    position: absolute;
+    top: 35px;
+    left: 79px;
+}
+.logo-n {
+    opacity: 0;
+    margin: 1px;
+}

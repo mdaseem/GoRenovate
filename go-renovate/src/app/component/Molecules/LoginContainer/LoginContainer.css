@@ -1,0 +1,32 @@
+.login-container-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  height: 640px;
+  background-image: url("/Texture_img.png");
+  margin-top: 8px;
+}
+.login-children-content {
+  flex: 1;
+  height: max-content;
+  height: 100%;
+  width: 100%;
+}
+.login-children-content2 {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .login-container-wrapper {
+    flex-direction: column;
+  }
+  .login-children-content1 {
+    display: none;
+  }
+  .login-container {
+    justify-content: normal;
+ }
+}
