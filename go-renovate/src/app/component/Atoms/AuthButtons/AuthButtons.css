@@ -1,0 +1,20 @@
+.auth-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #c4fd5b;
+  /* color: white; */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-button:hover {
+  background-color: green;
+  color: white;
+}
+.signin-text {
+  display: inline;
+  margin: auto 4px;
+}
