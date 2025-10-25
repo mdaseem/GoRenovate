@@ -35,8 +35,8 @@ export default function Login() {
               required
             />
           </label>
-          <AuthButtons />
         </form>
+        <AuthButtons />
       </div>
     </div>
   );

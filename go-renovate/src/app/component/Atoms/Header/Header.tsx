@@ -5,8 +5,10 @@ import Link from "next/link";
 import MyIcon from "../../../../../public/user_profile.svg";
 import MyHome from "../../../../../public/house_icon.svg";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
+  const { data: session } = useSession();
   return (
     <header className="header">
       <h1 className="header-title">
@@ -26,7 +28,7 @@ export default function Header() {
       <nav className="header-nav">
         <ul className="header-nav-list">
           <li className="list-item">
-            <Link className="header-nav-item" href="/Login">
+            <Link className="header-nav-item" href="/">
               Login
             </Link>
           </li>
@@ -43,9 +45,9 @@ export default function Header() {
           <li className="list-item">
             <button className="header-nav-profile">
               <Image
+                src={session?.user?.image || MyIcon}
                 className="profile-icon"
-                src={MyIcon}
-                alt="My Icon"
+                alt="User Image"
                 width={30}
                 height={30}
               />

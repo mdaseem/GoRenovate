@@ -1,15 +1,15 @@
-// import AuthButtons from "../component/Atoms/AuthButtons";
+import AuthButtons from "../component/Atoms/AuthButtons/AuthButtons";
 import Header from "../component/Atoms/Header/Header";
-import Login from "../component/Atoms/Login/Login";
 
-export default function LoginPage() {
+export default function HomePage() {
   const renderHeader = () => {
     return <Header />;
   }
   return (
     <div className="login-page">
       {renderHeader()}
-      <Login />
+      <AuthButtons />
+      {`home page`}
     </div>
   );
 }

@@ -60,3 +60,6 @@
     opacity: 0;
     margin: 1px;
 }
+.profile-icon {
+    border-radius: 50%;
+}

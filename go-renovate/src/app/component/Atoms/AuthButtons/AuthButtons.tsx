@@ -5,30 +5,46 @@ import "./AuthButtons.css";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import GoogleIcon from "../../../../../public/google_icon.svg";
+import { useRequireAuth } from "../../HOC/RequireAuth/useRequireAuth";
 
 export default function AuthButtons() {
   const { data: session, status } = useSession();
+  const { isLoading } = useRequireAuth();
+  const [isLogin, setIsLogin] = React.useState(false);
 
   if (status === "loading") return <p>Loading...</p>;
-  console.log("session -", session?.user);
+  const renderSignin = (shouldLoad: boolean) => {
+    return (
+      <div className="auth-button-container">
+        <button className="auth-button" onClick={() => signIn("google")}>
+          <p className="signin-text">{`Sign in with Google`}</p>
+          <Image
+            className="signin-text"
+            src={GoogleIcon}
+            alt="Google Icon"
+            height={16}
+            width={16}
+          />
+        </button>
+        {shouldLoad && isLogin && <div className="loader" />}
+      </div>
+    );
+  };
 
   return session ? (
     <div>
       <p>Welcome, {session.user?.name}</p>
-      <button className="auth-button" onClick={() => signOut()}>
+      <button
+        className="auth-button"
+        onClick={() => {
+          signOut();
+          setIsLogin(true);
+        }}
+      >
         Sign out
       </button>
     </div>
   ) : (
-    <button className="auth-button" onClick={() => signIn("google")}>
-      <p className="signin-text">{`Sign in with Google`}</p>
-      <Image
-        className="signin-text"
-        src={GoogleIcon}
-        alt="Google Icon"
-        height={16}
-        width={16}
-      />
-    </button>
+    renderSignin(isLoading)
   );
 }
