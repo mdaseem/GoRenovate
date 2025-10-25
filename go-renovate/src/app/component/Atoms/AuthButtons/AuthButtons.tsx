@@ -12,7 +12,6 @@ export default function AuthButtons() {
   const { isLoading } = useRequireAuth();
   const [isLogin, setIsLogin] = React.useState(false);
 
-  if (status === "loading") return <p>Loading...</p>;
   const renderSignin = (shouldLoad: boolean) => {
     return (
       <div className="auth-button-container">
@@ -26,10 +25,11 @@ export default function AuthButtons() {
             width={16}
           />
         </button>
-        {shouldLoad && isLogin && <div className="loader" />}
+        {shouldLoad && <div className="loader" />}
       </div>
     );
   };
+  if (status === "loading") return renderSignin(true);
 
   return session ? (
     <div>
@@ -45,6 +45,6 @@ export default function AuthButtons() {
       </button>
     </div>
   ) : (
-    renderSignin(isLoading)
+    renderSignin(false)
   );
 }
