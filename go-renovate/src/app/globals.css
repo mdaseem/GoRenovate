@@ -2,6 +2,29 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  /* background-image: url("/Texture_img.png"); */
+}
+
+.auth-button-container {
+  position: relative;
+  width: 100%;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 120px;
+  height: 20px;
+  -webkit-mask: radial-gradient(circle closest-side,#0b5a03 50%,#0000) left/20% 100%;
+  background: linear-gradient(#0b5a03 0 0) left/0% 100% no-repeat #ddd;
+  animation: l17 2s infinite steps(6);
+  position: absolute;
+  top: 0;
+  width: 10%;
+  left: 71%;
+  top: 22%;
+}
+@keyframes l17 {
+    100% {background-size:120% 100%}
 }
 
 a {
