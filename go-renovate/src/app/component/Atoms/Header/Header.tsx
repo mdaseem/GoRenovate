@@ -1,14 +1,26 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import "./Header.css";
 import Link from "next/link";
 import MyIcon from "../../../../../public/user_profile.svg";
 import MyHome from "../../../../../public/house_icon.svg";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { loginRequest, logout } from "@/app/store/features/authSlice";
 
 export default function Header() {
   const { data: session } = useSession();
+  const dispatch = useAppDispatch();
+  const { user, loading, error, token } = useAppSelector((state) => state.auth);
+  console.log("Header auth state:", { user, loading, error, token });
+
+  useEffect(() => {
+    if (session?.user?.email && token && token != undefined) {
+      dispatch(loginRequest({ email: session?.user?.email || "", token: token || "" }));
+    }
+  }, [session]);
+  
   return (
     <header className="header">
       <h1 className="header-title">
@@ -27,11 +39,21 @@ export default function Header() {
       </h1>
       <nav className="header-nav">
         <ul className="header-nav-list">
-          <li className="list-item">
-            <Link className="header-nav-item" href="/">
-              Login
-            </Link>
-          </li>
+          {session && (
+            <li className="list-item logout-item">
+              <Link
+                className="header-nav-item"
+                onClick={() => {
+                  signOut();
+                  dispatch(logout());
+                }}
+                href="/"
+              >
+                Logout
+              </Link>
+              {/* {loading &&  <div className="loader" />} */}
+            </li>
+          )}
           <li className="list-item">
             <Link className="header-nav-item" href="/">
               Home

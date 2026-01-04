@@ -30,6 +30,14 @@
   color: black;
   font-weight: 500;
 }
+.logout-item {
+  position: relative;
+  .loader {
+    top: 50%;
+    left: 80%;
+    width: 18%;
+  }
+}
 .list-item:hover {
   color: white;
   .header-nav-item {

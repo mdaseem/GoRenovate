@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -9,9 +9,48 @@ const handler = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    strategy: "jwt", // or "database" if using a DB
-  },
-});
 
+  session: {
+    strategy: "jwt",
+  },
+
+  callbacks: {
+    // When a user first signs in
+    async jwt({ token, account, profile }) {
+      // Store user info in the token (runs once on login)
+      if (account && profile) {
+        token.email = profile.email;
+      }
+      return token;
+    },
+
+    // Whenever a session is checked or created
+    async session({ session, token }) {
+      if (token?.email && session.user) {
+        session.user.email = token.email;
+      }
+
+      // Optionally: automatically fetch a backend JWT and store it in the session
+      // (you can also do this manually in another API route if you prefer)
+      try {
+        const backendRes = await fetch(`https://go-renovate-server.onrender.com/auth`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: token.email }),
+        });
+
+        if (backendRes.ok) {
+          const { token: backendToken } = await backendRes.json();
+          session.backendToken = backendToken; // attach backend JWT to session
+        }
+      } catch (err) {
+        console.error("Failed to get backend token:", err);
+      }
+
+      return session;
+    },
+  },
+};
+
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
