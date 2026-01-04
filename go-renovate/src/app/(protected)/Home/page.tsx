@@ -3,7 +3,7 @@ import ProductListPage from "@/app/component/Molecules/ProductListPage/ProductLi
 import { useSession } from "next-auth/react";
 
 export default function HomePage() {
-  const { data: session, status } = useSession();
+  const { data: session, } = useSession();
 
   return (
     <div className="login-page">

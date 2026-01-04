@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import authReducer from './features/authSlice';
 import rootSaga from './sagas/rootSaga';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {
   const sagaMiddleware = createSagaMiddleware();
 
