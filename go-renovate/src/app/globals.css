@@ -84,5 +84,5 @@ a {
   pointer-events: auto;
   position: fixed;
 
-  transform: translateY(0) scale(1);
+  transform: translateY(20px) scale(1);
 }

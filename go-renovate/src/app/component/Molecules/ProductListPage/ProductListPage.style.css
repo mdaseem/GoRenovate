@@ -7,10 +7,6 @@
 }
 .product-page-filters {
     flex: 1;
-    border-right: 1px solid gainsboro;
-    box-shadow: 0 10px 10px #c7f2cd;
-    min-height: 600px;
-    margin: 12px 0
 }
 .product-page-list {
     margin: 12px 0;

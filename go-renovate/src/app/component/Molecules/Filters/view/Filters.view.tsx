@@ -22,12 +22,12 @@ function Filters() {
     },
     {
       filterName: "prices",
-      filterValue:["<1000","<2000","<3000"],
+      filterValue: ["<1000", "<2000", "<3000"],
     },
     {
       filterName: "Rating",
-      filterValue:["2","3","4","5"],
-    }
+      filterValue: ["2", "3", "4", "5"],
+    },
   ];
 
   const a = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -89,12 +89,12 @@ function Filters() {
   return (
     <div className="filters-container">
       <div className="container-item">
-      <h3>Filters</h3>
-      <div className="filter-name-drop-down-container">
-        {filterData.map((filtersData: FilterType, index: number) => {
-          return <DropDownFilter key={index} filtersData={filtersData} />;
-        })}
-      </div>
+        <h3>Filters</h3>
+        <div className="filter-name-drop-down-container main-comtainer-filter">
+          {filterData.map((filtersData: FilterType, index: number) => {
+            return <DropDownFilter key={index} filtersData={filtersData} />;
+          })}
+        </div>
       </div>
     </div>
   );
