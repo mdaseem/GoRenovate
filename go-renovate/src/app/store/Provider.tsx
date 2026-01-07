@@ -10,7 +10,8 @@ export function Providers({
   preloadedState,
 }: {
   children: React.ReactNode;
-  preloadedState?: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  preloadedState?: any;
 }) {
   const storeRef = useRef(makeStore(preloadedState));
   return (

@@ -1,0 +1,53 @@
+.filters-container {
+  flex: 2;
+  border-right: 1px solid grey;
+  padding: 0 18px;
+}
+.container-item {
+  position: fixed;
+  width: 22%;
+}
+.filter-name {
+  background-color: #fff;
+  border: 1px solid grey;
+  border-top: #fff;
+  border-left: #fff;
+  border-right: #fff;
+  padding: 16px;
+  width: 100%;
+  display: flex;
+  cursor: pointer;
+}
+.filter-value-container {
+  display: flex;
+}
+.filter-values-list {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  margin-left: 6%;
+}
+.filter-name-value {
+  flex: 8;
+  margin: 0;
+  text-align: left;
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.arrow-down {
+  flex: 1;
+}
+.filter-value {
+  margin: 0;
+  text-transform: capitalize;
+  margin-left: 4px;
+  font-size: 14px;
+}
+.values-container {
+  border: 1px solid grey;
+  border-top: #fff;
+  border-right: #fff;
+  border-left: #fff;
+  padding: 14px 0;
+}

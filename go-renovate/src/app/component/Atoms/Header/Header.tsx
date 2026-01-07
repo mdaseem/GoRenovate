@@ -17,10 +17,12 @@ export default function Header() {
 
   useEffect(() => {
     if (session?.user?.email && token && token != undefined) {
-      dispatch(loginRequest({ email: session?.user?.email || "", token: token || "" }));
+      dispatch(
+        loginRequest({ email: session?.user?.email || "", token: token || "" })
+      );
     }
   }, [session]);
-  
+
   return (
     <header className="header">
       <h1 className="header-title">

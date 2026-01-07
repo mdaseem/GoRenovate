@@ -57,3 +57,32 @@ a {
     display: none;
   }
 }
+
+
+
+
+
+
+.product-overlay {
+  position: fixed;
+  inset: 0;
+  background: white;
+
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+
+  transform: translateY(400px) scale(0.98);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+.product-overlay.open {
+  z-index: 1000;
+  top: 57px;
+  opacity: 1;
+  pointer-events: auto;
+  position: fixed;
+
+  transform: translateY(0) scale(1);
+}
