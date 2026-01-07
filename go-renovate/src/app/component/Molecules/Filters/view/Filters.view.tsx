@@ -89,7 +89,7 @@ function Filters() {
   return (
     <div className="filters-container">
       <div className="container-item">
-        <h3>Filters</h3>
+        {/* <h3>Filters</h3> */}
         <div className="filter-name-drop-down-container main-comtainer-filter">
           {filterData.map((filtersData: FilterType, index: number) => {
             return <DropDownFilter key={index} filtersData={filtersData} />;
