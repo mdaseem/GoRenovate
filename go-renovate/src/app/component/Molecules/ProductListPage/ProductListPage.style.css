@@ -1,0 +1,39 @@
+.product-page-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.product-page-filters {
+    flex: 1;
+    border-right: 1px solid gainsboro;
+    box-shadow: 0 10px 10px #c7f2cd;
+    min-height: 600px;
+    margin: 12px 0
+}
+.product-page-list {
+    margin: 12px 0;
+    display: flex;
+    flex: 3;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+
+@media (max-width: 700px) {
+    .product-page-filters {
+    display: none;
+}
+.tile-container {
+    width: 46%;
+}
+.product-img {
+    width: 100%;
+}
+.product-page-list {
+    gap: 14px;
+    justify-content: center;
+}
+  
+}

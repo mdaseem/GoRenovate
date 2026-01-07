@@ -1,25 +1,16 @@
 "use client";
-import { useRouter } from "next/navigation";
-import Header from "./component/Atoms/Header/Header";
-import { LoginContainer } from "./component/Molecules/LoginContainer/LoginContainer";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import ProductListPage from "./component/Molecules/ProductListPage/ProductListPage";
 
 export default function Home() {
-    const { data: session, status } = useSession();
-    const navigate = useRouter();
-    
-    useEffect(() => {
-      if (status === "authenticated") return navigate.push("/Home");
-    }, [status]);
+  // const { data: session, status } = useSession();
+  // const navigate = useRouter();
+  // const dispatch = useAppDispatch();
+  // const { user, loading, error, token } = useAppSelector((state) => state.auth);
 
-  const renderHeader = () => {
-    return <Header />;
-  };
   return (
     <div>
-      {renderHeader()}
-      <LoginContainer />
+      <ProductListPage />
+      {/* <LoginContainer /> */}
     </div>
   );
 }
