@@ -5,11 +5,14 @@
 }
 .container-item {
   position: fixed;
-  width: 22%;
+  width: 24%;
+  height: 100vh;
+  overflow: scroll;
+  padding: 18px 15px 0 0;
 }
 .filter-name {
   background-color: #fff;
-  border: 1px solid grey;
+  border: 1px solid #0bf273;
   border-top: #fff;
   border-left: #fff;
   border-right: #fff;
@@ -20,6 +23,7 @@
 }
 .filter-value-container {
   display: flex;
+  padding: 4px;
 }
 .filter-values-list {
   display: flex;
@@ -45,9 +49,13 @@
   font-size: 14px;
 }
 .values-container {
-  border: 1px solid grey;
+  border: 1px solid #0bf273;
   border-top: #fff;
   border-right: #fff;
   border-left: #fff;
   padding: 14px 0;
+}
+.main-comtainer-filter {
+  height: 100vh;
+  padding-top: 10px;
 }

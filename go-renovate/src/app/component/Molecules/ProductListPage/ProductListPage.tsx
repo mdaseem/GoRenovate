@@ -4,6 +4,7 @@ import "./ProductListPage.style.css";
 import ProductFilters from "../../Atoms/Filters/ProductFilters";
 import ProductPage from "../ProductPage/ProductPage";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import Filters from "../Filters/view/Filters.view";
 
 function ProductListPage() {
   const products = [
@@ -76,7 +77,7 @@ function ProductListPage() {
     <div className="product-page-container">
       <ProductPage product={product} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="product-page-filters">
-        <ProductFilters />
+        <Filters />
       </div>
       <div className="product-page-list">{productList}</div>
     </div>
