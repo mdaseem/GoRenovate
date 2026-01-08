@@ -1,4 +1,4 @@
-.fav-icon:hover {
+.fav {
   fill: red;
   transform: translateY(-0px) scale(1.2);
 }
@@ -7,7 +7,7 @@
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 .fav-container {
-    top: 77%;
+  top: 77%;
   margin-left: 83%;
   display: inline;
   position: absolute;
@@ -21,6 +21,12 @@
   cursor: pointer;
 }
 
+@media (min-width: 700px) {
+  .fav-icon:hover {
+    fill: red;
+    transform: translateY(-0px) scale(1.2);
+  }
+}
 
 @media (max-width: 700px) {
   .details-container {
