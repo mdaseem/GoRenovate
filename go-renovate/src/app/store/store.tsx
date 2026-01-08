@@ -1,10 +1,12 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import authReducer from './features/authSlice';
+import favs from './features/favroites';
 import rootSaga from './sagas/rootSaga';
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  favoriteList: favs
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {
