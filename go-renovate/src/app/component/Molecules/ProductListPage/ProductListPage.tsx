@@ -58,6 +58,7 @@ function ProductListPage() {
     },
   ];
   type productType = {
+    id: number;
     description: string;
     actualPrice: number;
     discountPrice: number;
