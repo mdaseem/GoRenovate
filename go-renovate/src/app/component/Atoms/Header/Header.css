@@ -5,9 +5,9 @@
   padding: 20px;
   box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
-    top: 0;
-    background: white;
-    z-index: 2000;
+  top: 0;
+  background: white;
+  z-index: 2000;
 }
 .header-nav-list {
   list-style: none;
@@ -17,6 +17,12 @@
   padding: 0;
 }
 .header-nav-item {
+  background-color: #c4fd5b;
+  padding: 6px 15px;
+  border-radius: 5px;
+  margin: auto;
+}
+.header-nav-item1 {
   background-color: #c4fd5b;
   padding: 6px 15px;
   border-radius: 5px;
@@ -64,14 +70,14 @@
   display: inline;
 }
 .lolo-icon {
-    position: absolute;
-    top: 35px;
-    left: 79px;
+  position: absolute;
+  top: 35px;
+  left: 79px;
 }
 .logo-n {
-    opacity: 0;
-    margin: 1px;
+  opacity: 0;
+  margin: 1px;
 }
 .profile-icon {
-    border-radius: 50%;
+  border-radius: 50%;
 }

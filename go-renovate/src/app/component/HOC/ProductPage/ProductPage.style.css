@@ -1,0 +1,34 @@
+.product-detail-page-container {
+  /* position: absolute; */
+  padding: 80px 0 0 0;
+  .product-container-in-overlay {
+    .product-img {
+      height: 100%;
+      flex: 1;
+    }
+  }
+  .product-detail-info {
+    flex: 1;
+  }
+  .tile-container {
+    /* height: min-content; */
+  }
+  .overlay-content {
+    flex: 1;
+  }
+}
+.go-back {
+  margin: 20px;
+  padding: 2px 8px;
+  background-color: white;
+  border: 0px solid white;
+  cursor: pointer;
+  height: min-content;
+}
+.product-detail-page-content {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 50px;
+}

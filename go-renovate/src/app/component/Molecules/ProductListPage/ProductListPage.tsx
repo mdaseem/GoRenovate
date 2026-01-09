@@ -1,10 +1,10 @@
 import React from "react";
 import ProductTile from "../../Atoms/ProductTile/productTile";
 import "./ProductListPage.style.css";
-import ProductFilters from "../../Atoms/Filters/ProductFilters";
-import ProductPage from "../ProductPage/ProductPage";
+import ProductPage from "../../HOC/ProductPage/ProductPage";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import Filters from "../Filters/view/Filters.view";
+import ProductView from "../../Atoms/ProductView/ProductView";
 
 function ProductListPage() {
   const products = [
@@ -70,13 +70,20 @@ function ProductListPage() {
 
   const productList = products?.map((product) => {
     return (
-      <ProductTile key={product.id} product={product} setProduct={setProduct} setIsOpen={setIsOpen} />
+      <ProductTile
+        key={product.id}
+        product={product}
+        setProduct={setProduct}
+        setIsOpen={setIsOpen}
+      />
     );
   });
 
   return (
     <div className="product-page-container">
-      <ProductPage product={product} isOpen={isOpen} setIsOpen={setIsOpen} />
+      <ProductPage isOpen={isOpen} setIsOpen={setIsOpen}>
+        <ProductView product={product} />
+      </ProductPage>
       <div className="product-page-filters">
         <Filters />
       </div>

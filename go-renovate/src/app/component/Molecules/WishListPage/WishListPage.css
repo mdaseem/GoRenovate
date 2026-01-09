@@ -1,0 +1,20 @@
+.product-page-container-wishlist {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: left;
+    flex-wrap: wrap;
+    position: relative;
+    padding: 0 50px;
+}
+
+@media (max-width: 700px) {
+    .product-page-container-wishlist {
+        justify-content: center;
+        gap: 10px;
+        padding: 0 6px;
+    }
+    .go-back {
+        margin: 0 2px;
+    }
+}
