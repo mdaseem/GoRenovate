@@ -22,5 +22,5 @@ export const overlaySlice = createSlice({
   },
 });
 
-export const { setOpenState, setIsClose } = overlaySlice.actions;
+export const { setOpenState } = overlaySlice.actions;
 export default overlaySlice.reducer;
