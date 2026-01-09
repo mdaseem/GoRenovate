@@ -68,7 +68,6 @@ export default function Header() {
             </Link>
           </li>
           <li className="list-item">
-          </li>
             <Link
               className="header-nav-item1"
               href=" "
@@ -76,6 +75,7 @@ export default function Header() {
             >
               WishList
             </Link>
+          </li>
           <li className="list-item">
             <button className="header-nav-profile">
               <Image
