@@ -79,7 +79,6 @@ a {
 }
 .product-overlay.open {
   z-index: 1000;
-  top: 57px;
   opacity: 1;
   pointer-events: auto;
   position: fixed;

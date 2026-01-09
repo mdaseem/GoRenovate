@@ -4,6 +4,7 @@
     gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
+    position: relative;
 }
 .product-page-filters {
     flex: 1;

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { loginRequest, logout } from "@/app/store/features/authSlice";
+import { setOpenState } from "@/app/store/features/overLaySlice";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -64,6 +65,15 @@ export default function Header() {
           <li className="list-item">
             <Link className="header-nav-item" href="/contact">
               Contact
+            </Link>
+          </li>
+          <li className="list-item">
+            <Link
+              className="header-nav-item1"
+              href=" "
+              onClick={() => dispatch(setOpenState(true))}
+            >
+              WishList
             </Link>
           </li>
           <li className="list-item">

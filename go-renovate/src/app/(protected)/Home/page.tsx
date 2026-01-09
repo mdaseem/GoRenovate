@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <div className="login-page">
       {!session && <div className="loader1" />}
-      <ProductListPage />
+      {/* <ProductListPage /> */}
     </div>
   );
 }
