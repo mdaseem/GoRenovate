@@ -81,7 +81,7 @@ function ProductListPage() {
 
   return (
     <div className="product-page-container">
-      <ProductPage isOpen={isOpen} setIsOpen={setIsOpen}>
+      <ProductPage isDisable={false} isOpen={isOpen} setIsOpen={setIsOpen}>
         <ProductView product={product} />
       </ProductPage>
       <div className="product-page-filters">

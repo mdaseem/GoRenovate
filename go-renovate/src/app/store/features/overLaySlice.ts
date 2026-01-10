@@ -3,6 +3,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const initialState: any = {
   isOpen: false,
+  isOpenLogin: false,
 };
 type prodType = {
   id: number;
@@ -19,8 +20,12 @@ export const overlaySlice = createSlice({
       store.isOpen = payload;
       return store;
     },
+    setOpenStateLogin: (store, { payload }) => {
+      store.isOpenLogin = payload;
+      return store;
+    },
   },
 });
 
-export const { setOpenState } = overlaySlice.actions;
+export const { setOpenState, setOpenStateLogin } = overlaySlice.actions;
 export default overlaySlice.reducer;

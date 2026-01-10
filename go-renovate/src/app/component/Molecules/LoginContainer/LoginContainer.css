@@ -5,7 +5,7 @@
   border: 1px solid #ccc;
   height: 640px;
   background-image: url("/Texture_img.png");
-  margin-top: 8px;
+  /* margin-top: 8px; */
 }
 .login-children-content {
   flex: 1;
