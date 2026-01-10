@@ -8,10 +8,13 @@ import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { loginRequest, logout } from "@/app/store/features/authSlice";
-import { setOpenState } from "@/app/store/features/overLaySlice";
+import {
+  setOpenState,
+  setOpenStateLogin,
+} from "@/app/store/features/overLaySlice";
 
 export default function Header() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
   const { user, loading, error, token } = useAppSelector((state) => state.auth);
   console.log("Header auth state:", { user, loading, error, token });
@@ -62,11 +65,17 @@ export default function Header() {
               Home
             </Link>
           </li>
-          <li className="list-item">
-            <Link className="header-nav-item" href="/contact">
-              Contact
-            </Link>
-          </li>
+          {status === "authenticated" ? null : (
+            <li className="list-item">
+              <Link
+                onClick={() => dispatch(setOpenStateLogin(true))}
+                className="header-nav-item"
+                href=""
+              >
+                Login
+              </Link>
+            </li>
+          )}
           <li className="list-item">
             <Link
               className="header-nav-item1"

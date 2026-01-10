@@ -26,7 +26,6 @@ type PropsType = {
 function WishListPage(props: PropsType) {
   const favsList = useSelector((state: RootState) => state.favoriteList);
   const [product, setProduct] = React.useState<productType>(null);
-  const [isProductOpen, setIsProductOpen] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
 
   const ProductList = () => {
@@ -41,8 +40,8 @@ function WishListPage(props: PropsType) {
   };
   return (
     <div className="product-page-container-wishlist">
-      <ProductPage isOpen={isOpen} setIsOpen={setIsOpen}>
-        {<ProductView product={product}/>}
+      <ProductPage isDisable={false} isOpen={isOpen} setIsOpen={setIsOpen}>
+        {<ProductView product={product} />}
       </ProductPage>
       <ProductList />
     </div>
