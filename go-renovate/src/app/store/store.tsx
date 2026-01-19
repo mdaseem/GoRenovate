@@ -1,14 +1,16 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import createSagaMiddleware from 'redux-saga';
-import authReducer from './features/authSlice';
-import overLay from './features/overLaySlice';
-import favs from './features/favroites';
-import rootSaga from './sagas/rootSaga';
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import createSagaMiddleware from "redux-saga";
+import authReducer from "./features/authSlice";
+import overLay from "./features/overLaySlice";
+import productsState from "./features/productSlice";
+import favs from "./features/favroites";
+import rootSaga from "./sagas/rootSaga";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   favoriteList: favs,
   overlay: overLay,
+  productsList: productsState,
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {
@@ -21,7 +23,7 @@ export function makeStore(preloadedState?: any) {
     preloadedState,
   });
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     sagaMiddleware.run(rootSaga);
   }
 
@@ -29,5 +31,5 @@ export function makeStore(preloadedState?: any) {
 }
 
 export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore['getState']>;
-export type AppDispatch = AppStore['dispatch'];
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];

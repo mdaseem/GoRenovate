@@ -20,6 +20,7 @@ export const authOptions: NextAuthOptions = {
       // Store user info in the token (runs once on login)
       if (account && profile) {
         token.email = profile.email;
+        token.backendToken = account.access_token;
       }
       return token;
     },
@@ -33,10 +34,12 @@ export const authOptions: NextAuthOptions = {
       // Optionally: automatically fetch a backend JWT and store it in the session
       // (you can also do this manually in another API route if you prefer)
       try {
+        // https://go-renovate-server.onrender.com/auth
+        // http://localhost:3002/auth
         const backendRes = await fetch(`https://go-renovate-server.onrender.com/auth`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: token.email }),
+          body: JSON.stringify({ userEmail: token.email, isGoogleLogin: true }),
         });
 
         if (backendRes.ok) {

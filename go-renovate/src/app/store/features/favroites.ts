@@ -3,7 +3,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const initialState: any = [];
 type prodType = {
-  id: number;
+  _id: number;
   name: string;
   price: number;
   image: string;
@@ -15,7 +15,7 @@ export const favListSlice = createSlice({
   reducers: {
     setFavsData: (store, { payload }) => {
       const prodfound = store?.filter(
-        (item: prodType) => item.id === payload.id
+        (item: prodType) => item._id === payload._id
       );
       if (prodfound.length) {
         return store;
@@ -26,7 +26,7 @@ export const favListSlice = createSlice({
     },
     unsetFavState: (store,{payload}) => {
         const prodAfterUnFav = store?.filter(
-            (item: prodType) => item.id != payload.id
+            (item: prodType) => item._id != payload._id
           );
           return prodAfterUnFav
     }
