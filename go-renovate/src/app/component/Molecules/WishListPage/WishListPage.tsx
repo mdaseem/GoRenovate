@@ -2,7 +2,6 @@
 import React from "react";
 import "./WishListPage.css";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import ProductTile from "../../Atoms/ProductTile/productTile";
@@ -10,7 +9,7 @@ import ProductPage from "../../HOC/ProductPage/ProductPage";
 import ProductView from "../../Atoms/ProductView/ProductView";
 
 type productType = {
-  id: number;
+  _id: number;
   description: string;
   actualPrice: number;
   discountPrice: number;
@@ -20,7 +19,6 @@ type productType = {
 
 type PropsType = {
   isOpen: boolean;
-  // setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function WishListPage(props: PropsType) {
@@ -31,7 +29,7 @@ function WishListPage(props: PropsType) {
   const ProductList = () => {
     return favsList?.map((product: productType) => (
       <ProductTile
-        key={product?.id}
+        key={product?._id}
         product={product}
         setProduct={setProduct}
         setIsOpen={setIsOpen}

@@ -6,6 +6,12 @@
   height: 100%;
   width: 100%;
 }
+.link-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
 .login-box {
   display: flex;
   flex-direction: column;
@@ -34,6 +40,33 @@
   border-radius: 5px;
   width: 100%;
   margin-top: 8px;
+}
+.submit-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.submit-buttons {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #c4fd5b;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.submit-buttons:hover {
+  background-color: green;
+  color: white;
+}
+.signup-submit {
+  color: blue;
+  text-decoration: underline;
+  padding: 2px;
+  text-align: center;
 }
 
 @media (max-width: 440px) {

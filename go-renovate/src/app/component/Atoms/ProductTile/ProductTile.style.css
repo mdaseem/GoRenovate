@@ -1,6 +1,6 @@
 .tile-container {
   display: inline-block;
-  border: 1px solid rgb(11, 242, 115);
+  border: 1px solid rgb(206, 202, 202);
   box-sizing: border-box;
   padding: 6px;
   border-radius: 20px;
@@ -34,6 +34,9 @@
 }
 .prod-description {
   font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .prod-price-discount {
   font-weight: 600;

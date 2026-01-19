@@ -5,6 +5,7 @@ import { setFavsData, unsetFavState } from "@/app/store/features/favroites";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 type productType = {
+  _id: number;
   description: string;
   actualPrice: number;
   discountPrice: number;

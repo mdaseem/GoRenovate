@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 
 type productType = {
-  id: number;
+  _id: number;
   description: string;
   actualPrice: number;
   discountPrice: number;
@@ -26,7 +26,7 @@ function ProductTile(props: propType) {
   const { product } = props;
   const favList = useSelector((state: RootState) => state.favoriteList);
   const isFav = favList?.filter(
-    (favprod: productType) => favprod?.id === product?.id
+    (favprod: productType) => favprod?._id === product?._id
   );
 
   const FullStar = () => (
@@ -88,7 +88,7 @@ function ProductTile(props: propType) {
           }}
           className="buy-prod"
         >
-          Buy now
+          View 
         </button>
       </div>
     </div>

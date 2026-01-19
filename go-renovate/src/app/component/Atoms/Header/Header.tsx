@@ -16,13 +16,19 @@ import {
 export default function Header() {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
-  const { user, loading, error, token } = useAppSelector((state) => state.auth);
-  console.log("Header auth state:", { user, loading, error, token });
+  const store = useAppSelector((state) => state);
 
   useEffect(() => {
-    if (session?.user?.email && token && token != undefined) {
+    if (
+      session?.user?.email &&
+      store.auth.token &&
+      store.auth.token != undefined
+    ) {
       dispatch(
-        loginRequest({ email: session?.user?.email || "", token: token || "" })
+        loginRequest({
+          email: session?.user?.email || "",
+          token: store.auth.token || "",
+        })
       );
     }
   }, [session]);
@@ -83,6 +89,9 @@ export default function Header() {
               onClick={() => dispatch(setOpenState(true))}
             >
               WishList
+              {store.favoriteList.length > 0 && (
+                <p className="fav-count">{store.favoriteList.length}</p>
+              )}
             </Link>
           </li>
           <li className="list-item">
