@@ -12,13 +12,17 @@ import WishListPage from "../WishListPage/WishListPage";
 import { LoginContainer } from "../LoginContainer/LoginContainer";
 import Loader from "../Loader/Loader";
 
-function Dashboard() {
+type propType = {
+  products: void | Response
+}
+
+function Dashboard(props: propType) {
   const dispatch = useAppDispatch();
   const store = useAppSelector((state: RootState) => state);
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <ProductListPage />
+        <ProductListPage products={props.products} />
       </Suspense>
       <ProductPage
         isOpen={store.overlay.isOpen}

@@ -4,24 +4,34 @@ interface AuthState {
   user: { userName: string } | null;
   loading: boolean;
   error: string | null;
-  token: string | undefined
+  token: string | undefined;
+  email: string | undefined;
+  password?: string | undefined;
 }
 
 const initialState: AuthState = {
   user: null,
   loading: false,
   error: null,
-  token: ""
+  token: "",
+  email: "",
+  password: "",
+
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginRequest: (state, action: PayloadAction<{ email: string | "", token: string | "" }>) => {
+    loginRequest: (state, action: PayloadAction<{ email: string | "", password: string | "", token: string | "" }>) => {
       state.loading = true;
       state.error = null;
       state.token = action.payload.token
+    },
+    SignupRequest: (state, action: PayloadAction<{ email: string | "", password: string | ""}>) => {
+      state.loading = true;
+      state.error = null;
+      state.email = action.payload.email
     },
     loginSuccess: (state, action: PayloadAction<{ user: string, token: string }>) => {
       state.loading = false;
@@ -39,5 +49,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginRequest, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginRequest, SignupRequest, loginSuccess, loginFailure, logout } = authSlice.actions;
 export default authSlice.reducer;
