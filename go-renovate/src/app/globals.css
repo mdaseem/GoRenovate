@@ -59,7 +59,7 @@ a {
   }
 }
 
-@media (max-width: 462px) {
+@media (max-width: 410px) {
   .header-nav-item {
     display: none;
   }
