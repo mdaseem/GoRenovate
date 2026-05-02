@@ -38,13 +38,16 @@ export const authOptions: NextAuthOptions = {
         // http://localhost:3002/auth
         const backendRes = await fetch(`https://go-renovate-server.onrender.com/auth`, {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userEmail: token.email, isGoogleLogin: true }),
-        });
+        },
+      );
 
         if (backendRes.ok) {
           const { token: backendToken } = await backendRes.json();
           session.backendToken = backendToken; // attach backend JWT to session
+          
         }
       } catch (err) {
         console.error("Failed to get backend token:", err);

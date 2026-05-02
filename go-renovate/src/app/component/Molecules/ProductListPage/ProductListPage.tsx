@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import ProductList from "../ProductList/ProductList";
 
-function ProductListPage() {
+function ProductListPage(props: {products: void | Response}) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
 
@@ -19,7 +19,7 @@ function ProductListPage() {
   );
 
   useEffect(() => {
-    if (session?.backendToken) {
+    if (session?.backendToken && !props.products) {
       dispatch(getProducts({ token: session?.backendToken }));
     }
   }, [session]);

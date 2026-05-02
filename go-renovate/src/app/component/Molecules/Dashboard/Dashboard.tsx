@@ -6,19 +6,25 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import {
   setOpenState,
+  setOpenStateChat,
   setOpenStateLogin,
 } from "@/app/store/features/overLaySlice";
 import WishListPage from "../WishListPage/WishListPage";
 import { LoginContainer } from "../LoginContainer/LoginContainer";
 import Loader from "../Loader/Loader";
+import Chat from "../../Atoms/Chat/Chat";
 
-function Dashboard() {
+type propType = {
+  products: void | Response
+}
+
+function Dashboard(props: propType) {
   const dispatch = useAppDispatch();
   const store = useAppSelector((state: RootState) => state);
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <ProductListPage />
+        <ProductListPage products={props.products} />
       </Suspense>
       <ProductPage
         isOpen={store.overlay.isOpen}
@@ -34,6 +40,9 @@ function Dashboard() {
         isLoginPage={false}
       >
         {store.overlay.isOpenLogin && <LoginContainer />}
+      </ProductPage>
+      <ProductPage isDisable={false} isOpen={store.overlay.isOpenChat} setIsOpen={(payload) => dispatch(setOpenStateChat(payload))}>
+        <Chat />
       </ProductPage>
     </>
   );

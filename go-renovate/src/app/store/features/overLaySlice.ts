@@ -4,6 +4,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 const initialState: any = {
   isOpen: false,
   isOpenLogin: false,
+  isOpenChat: false,
 };
 type prodType = {
   id: number;
@@ -24,8 +25,12 @@ export const overlaySlice = createSlice({
       store.isOpenLogin = payload;
       return store;
     },
+    setOpenStateChat: (store, { payload }) => {
+      store.isOpenChat = payload;
+      return store;
+    },
   },
 });
 
-export const { setOpenState, setOpenStateLogin } = overlaySlice.actions;
+export const { setOpenState, setOpenStateLogin, setOpenStateChat } = overlaySlice.actions;
 export default overlaySlice.reducer;

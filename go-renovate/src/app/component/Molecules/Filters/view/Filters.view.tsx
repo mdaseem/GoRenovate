@@ -7,9 +7,30 @@ type FilterType = {
   filterValue: string[];
 };
 
+export type FilterValueType = {
+  filterValues: [
+    {
+      categoryName: string;
+      categoryData: [{categoryValue: string, checked: boolean}];
+    }
+  ];
+};
+
 type filtersType = FilterType[];
 
 function Filters() {
+  const [filterValues, setFilterValue] = useState<FilterValueType>({
+    filterValues: [
+      {
+        categoryName: "Availability",
+        categoryData: [
+          { categoryValue: "in stock", checked: false },
+        ]
+      },
+    ]
+  });
+  // console.log("called----", filterValues);
+  
   const [isDropDownOn, setIsDropDownOn] = useState(false);
   const filterData: filtersType = [
     {
@@ -92,7 +113,7 @@ function Filters() {
         {/* <h3>Filters</h3> */}
         <div className="filter-name-drop-down-container main-comtainer-filter">
           {filterData.map((filtersData: FilterType, index: number) => {
-            return <DropDownFilter key={index} filtersData={filtersData} />;
+            return <DropDownFilter key={index} filtersData={filtersData} filterValues={filterValues} setFilterValue={setFilterValue} />;
           })}
         </div>
       </div>
