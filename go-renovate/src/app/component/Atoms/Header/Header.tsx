@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { loginRequest, logout } from "@/app/store/features/authSlice";
 import {
   setOpenState,
+  setOpenStateChat,
   setOpenStateLogin,
 } from "@/app/store/features/overLaySlice";
 
@@ -27,8 +28,9 @@ export default function Header() {
       dispatch(
         loginRequest({
           email: session?.user?.email || "",
+          password: "",
           token: store.auth.token || "",
-        })
+        }),
       );
     }
   }, [session]);
@@ -52,19 +54,30 @@ export default function Header() {
       <nav className="header-nav">
         <ul className="header-nav-list">
           {session && (
-            <li className="list-item logout-item">
-              <Link
-                className="header-nav-item"
-                onClick={() => {
-                  signOut();
-                  dispatch(logout());
-                }}
-                href="/"
-              >
-                Logout
-              </Link>
-              {/* {loading &&  <div className="loader" />} */}
-            </li>
+            <>
+              <li className="list-item logout-item">
+                <Link
+                  onClick={() => dispatch(setOpenStateChat(true))}
+                  className="header-nav-item"
+                  href=""
+                >
+                  Chat
+                </Link>
+              </li>
+              <li className="list-item logout-item">
+                <Link
+                  className="header-nav-item"
+                  onClick={() => {
+                    signOut();
+                    dispatch(logout());
+                  }}
+                  href="/"
+                >
+                  Logout
+                </Link>
+                {/* {loading &&  <div className="loader" />} */}
+              </li>
+            </>
           )}
           {status === "authenticated" ? null : (
             <li className="list-item">
