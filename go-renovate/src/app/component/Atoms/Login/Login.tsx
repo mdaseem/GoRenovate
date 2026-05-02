@@ -26,19 +26,27 @@ export default function Login() {
               required
             />
           </label>
-          <label className="login-label" htmlFor="password">
-            {`Password `}
-            <input
-              className="login-input"
-              placeholder="Enter your password"
-              type="password"
-              id="password"
-              name="password"
-              required
-            />
-          </label>
-          {!isLogin && (
-            <label className="login-label" htmlFor="confirm password">
+          <div className="password-container">
+            <label
+              className={`login-label password-label ${
+                isLogin ? "expanded" : ""
+              }`}
+              htmlFor="password"
+            >
+              {`Password `}
+              <input
+                className="login-input"
+                placeholder="Enter your password"
+                type="password"
+                id="password"
+                name="password"
+                required
+              />
+            </label>
+            <label
+              className={`login-label ${isLogin ? "hide-label" : ""}`}
+              htmlFor="confirm-password"
+            >
               {`Confirm Password `}
               <input
                 className="login-input"
@@ -49,11 +57,16 @@ export default function Login() {
                 required
               />
             </label>
-          )}
+          </div>
           <div className="submit-buttons-container">
             <button className="login-submit submit-buttons" type="submit">
               {isLogin ? "Login" : "Signup"}
             </button>
+            <div className="or-line">
+              <div className="line" />
+              <p className="or-para">or</p>
+            </div>
+            <AuthButtons />
             <div className="link-buttons">
               {isLogin ? <p>new here ?</p> : "already a user ?"}
               <Link
@@ -64,7 +77,6 @@ export default function Login() {
                 {isLogin ? "Signup" : "Login"}
               </Link>
             </div>
-            <AuthButtons />
           </div>
         </form>
       </div>

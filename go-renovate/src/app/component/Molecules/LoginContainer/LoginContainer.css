@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #ccc;
+  height: 100vh;
   background-image: url("/Texture_img.png");
 }
 .login-children-content {

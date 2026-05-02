@@ -66,11 +66,6 @@ export default function Header() {
               {/* {loading &&  <div className="loader" />} */}
             </li>
           )}
-          <li className="list-item">
-            <Link className="header-nav-item" href="/">
-              Home
-            </Link>
-          </li>
           {status === "authenticated" ? null : (
             <li className="list-item">
               <Link
