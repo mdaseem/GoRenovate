@@ -3,6 +3,7 @@ import createSagaMiddleware from "redux-saga";
 import authReducer from "./features/authSlice";
 import overLay from "./features/overLaySlice";
 import productsState from "./features/productSlice";
+import users from "./features/userSlice";
 import favs from "./features/favroites";
 import rootSaga from "./sagas/rootSaga";
 
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   favoriteList: favs,
   overlay: overLay,
   productsList: productsState,
+  user: users,
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {

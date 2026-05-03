@@ -1,16 +1,11 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const initialState: any = {
   isOpen: false,
   isOpenLogin: false,
   isOpenChat: false,
-};
-type prodType = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
+  isUserListOpen: false,
 };
 
 export const overlaySlice = createSlice({
@@ -29,8 +24,17 @@ export const overlaySlice = createSlice({
       store.isOpenChat = payload;
       return store;
     },
+    setOpenStateUserList: (store, { payload }) => {
+      store.isUserListOpen = payload;
+      return store;
+    },
   },
 });
 
-export const { setOpenState, setOpenStateLogin, setOpenStateChat } = overlaySlice.actions;
+export const {
+  setOpenState,
+  setOpenStateLogin,
+  setOpenStateChat,
+  setOpenStateUserList,
+} = overlaySlice.actions;
 export default overlaySlice.reducer;
