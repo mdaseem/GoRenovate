@@ -8,18 +8,25 @@ import {
   setOpenState,
   setOpenStateChat,
   setOpenStateLogin,
+  setOpenStateUserList,
 } from "@/app/store/features/overLaySlice";
 import WishListPage from "../WishListPage/WishListPage";
 import { LoginContainer } from "../LoginContainer/LoginContainer";
 import Loader from "../Loader/Loader";
 import Chat from "../../Atoms/Chat/Chat";
+import UserList from "../../Atoms/UserList/UserList";
 
 type propType = {
-  products: void | Response
-}
+  products: void | Response;
+};
 
 function Dashboard(props: propType) {
   const dispatch = useAppDispatch();
+  const [selectedUser, setSelectedUser] = React.useState<{
+    id: string;
+    Name: string;
+    status: string;
+  } | null>(null);
   const store = useAppSelector((state: RootState) => state);
   return (
     <>
@@ -41,7 +48,18 @@ function Dashboard(props: propType) {
       >
         {store.overlay.isOpenLogin && <LoginContainer />}
       </ProductPage>
-      <ProductPage isDisable={false} isOpen={store.overlay.isOpenChat} setIsOpen={(payload) => dispatch(setOpenStateChat(payload))}>
+      <ProductPage
+        isDisable={false}
+        isOpen={store.overlay.isUserListOpen}
+        setIsOpen={(payload) => dispatch(setOpenStateUserList(payload))}
+      >
+        <UserList setSelectedUser={setSelectedUser} />
+      </ProductPage>
+      <ProductPage
+        isDisable={false}
+        isOpen={store.overlay.isOpenChat}
+        setIsOpen={(payload) => dispatch(setOpenStateChat(payload))}
+      >
         <Chat />
       </ProductPage>
     </>

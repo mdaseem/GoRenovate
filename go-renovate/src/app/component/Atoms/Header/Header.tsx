@@ -10,8 +10,8 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { loginRequest, logout } from "@/app/store/features/authSlice";
 import {
   setOpenState,
-  setOpenStateChat,
   setOpenStateLogin,
+  setOpenStateUserList,
 } from "@/app/store/features/overLaySlice";
 
 export default function Header() {
@@ -57,7 +57,7 @@ export default function Header() {
             <>
               <li className="list-item logout-item">
                 <Link
-                  onClick={() => dispatch(setOpenStateChat(true))}
+                  onClick={() => dispatch(setOpenStateUserList(true))}
                   className="header-nav-item"
                   href=""
                 >

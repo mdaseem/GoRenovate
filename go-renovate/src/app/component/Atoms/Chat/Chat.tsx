@@ -1,5 +1,6 @@
 // src/components/Chat.tsx
 import { socket } from "@/app/socket";
+import './Chat.css';
 import { useEffect, useState } from "react";
 
 interface Message {
@@ -55,7 +56,7 @@ const Chat = () => {
   };
 
   return (
-    <div>
+    <div className="chat-container">
       <h2>Chat</h2>
 
       <div>
@@ -70,9 +71,10 @@ const Chat = () => {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Type message..."
+        className="chat-input"
       />
 
-      <button onClick={sendMessage}>Send</button>
+      <button className="chat-send" onClick={sendMessage}>Send</button>
     </div>
   );
 };
