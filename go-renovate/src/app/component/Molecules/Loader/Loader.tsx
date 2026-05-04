@@ -17,7 +17,7 @@ function ProductLoader() {
         </div>
       </div>
       <div className="prod-button-container">
-        <button onClick={() => {}} className="buy-prod" />
+        <button className="buy-prod" />
       </div>
     </div>
   );
@@ -25,11 +25,14 @@ function ProductLoader() {
 
 export default function Loader() {
   return (
-    <div className="loader-container">
-      <div className="product-page-list">
-        {[1, 2, 3, 4, 5, 6, 7].map((item: number, index: number) => (
-          <ProductLoader key={index} />
-        ))}
+    <div className="loader-main-container">
+      <div className="product-filters" />
+      <div className="loader-container">
+        <div className="product-page-list">
+          {[1, 2, 3, 4, 5, 6, 7].map((item: number, index: number) => (
+            <ProductLoader key={index} />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -29,7 +29,6 @@ function Filters() {
       },
     ]
   });
-  // console.log("called----", filterValues);
   
   const [isDropDownOn, setIsDropDownOn] = useState(false);
   const filterData: filtersType = [

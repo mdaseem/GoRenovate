@@ -15,6 +15,7 @@ import { LoginContainer } from "../LoginContainer/LoginContainer";
 import Loader from "../Loader/Loader";
 import Chat from "../../Atoms/Chat/Chat";
 import UserList from "../../Atoms/UserList/UserList";
+import { useSession } from "next-auth/react";
 
 type propType = {
   products: void | Response;
@@ -27,7 +28,12 @@ function Dashboard(props: propType) {
     Name: string;
     status: string;
   } | null>(null);
+  const { data: session } = useSession();
   const store = useAppSelector((state: RootState) => state);
+  if(!session) {
+    return !props.products ? <Loader /> : null;
+  }
+  
   return (
     <>
       <Suspense fallback={<Loader />}>

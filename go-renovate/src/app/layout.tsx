@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./store/Provider";
 import Header from "./component/Atoms/Header/Header";
+import { Suspense } from "react";
+import Loader from "./component/Molecules/Loader/Loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +26,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
-       <head>
+      <head>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -37,7 +38,7 @@ export default function RootLayout({
         <Providers>
           <>
             <Header />
-            {children}
+            <Suspense fallback={<Loader />}>{children}</Suspense>
           </>
         </Providers>
       </body>

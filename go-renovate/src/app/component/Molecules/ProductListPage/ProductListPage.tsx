@@ -9,13 +9,25 @@ import { getProducts } from "@/app/store/features/productSlice";
 import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import ProductList from "../ProductList/ProductList";
+import Loader from "../Loader/Loader";
 
-function ProductListPage(props: {products: void | Response}) {
+type productType = {
+  _id: number;
+  description: string;
+  actualPrice: number;
+  discountPrice: number;
+  rating: number;
+  imageUrl: string | StaticImport;
+} | null;
+
+function ProductListPage(props: { products: void | Response }) {
+  const [product, setProduct] = React.useState<productType>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
   const dispatch = useDispatch();
   const { data: session } = useSession();
 
   const productLists = useSelector(
-    (state: RootState) => state.productsList.prodList
+    (state: RootState) => state.productsList.prodList,
   );
 
   useEffect(() => {
@@ -24,25 +36,16 @@ function ProductListPage(props: {products: void | Response}) {
     }
   }, [session]);
 
-  type productType = {
-    _id: number;
-    description: string;
-    actualPrice: number;
-    discountPrice: number;
-    rating: number;
-    imageUrl: string | StaticImport;
-  } | null;
-  const [product, setProduct] = React.useState<productType>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
+  if (!productLists?.data?.length) {
+    return <Loader />;
+  }
 
   return (
     <div className="product-page-container">
       <ProductPage isDisable={false} isOpen={isOpen} setIsOpen={setIsOpen}>
         <ProductView product={product} />
       </ProductPage>
-      <div className="product-page-filters">
-        <Filters />
-      </div>
+      <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
         <ProductList
           productLists={productLists}

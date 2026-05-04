@@ -94,7 +94,7 @@ export default function Header() {
               </Link>
             </li>
           )}
-          {!store.overlay.isOpen ? (
+          {!store.overlay.isOpen && status === "authenticated"  ? (
             <li className="list-item">
               <Link
                 className="header-nav-item1"
