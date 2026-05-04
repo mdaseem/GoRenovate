@@ -28,11 +28,7 @@ function Dashboard(props: propType) {
     Name: string;
     status: string;
   } | null>(null);
-  const { data: session } = useSession();
   const store = useAppSelector((state: RootState) => state);
-  if(!session) {
-    return !props.products ? <Loader /> : null;
-  }
   
   return (
     <>

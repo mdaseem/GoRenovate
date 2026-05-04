@@ -36,9 +36,9 @@ function ProductListPage(props: { products: void | Response }) {
     }
   }, [session]);
 
-  if (!productLists?.data?.length) {
-    return <Loader />;
-  }
+  // if (session && !productLists?.data?.length) {
+  //   return <Loader />;
+  // }
 
   return (
     <div className="product-page-container">
