@@ -19,9 +19,6 @@ type propType = {
 };
 
 function ProductList(props: propType) {
-    if(!props.productLists.data?.length) {
-        return <Loader />
-    }
   const productList = props.productLists?.data?.map((product: productType) => {
     return (
       <ProductTile

@@ -55,15 +55,19 @@ export default function Header() {
         <ul className="header-nav-list">
           {session && (
             <>
-              <li className="list-item logout-item">
-                <Link
-                  onClick={() => dispatch(setOpenStateUserList(true))}
-                  className="header-nav-item"
-                  href=""
-                >
-                  Chat
-                </Link>
-              </li>
+              {!store.overlay.isUserListOpen ? (
+                <li className="list-item logout-item">
+                  <Link
+                    onClick={() => dispatch(setOpenStateUserList(true))}
+                    className="header-nav-item"
+                    href=""
+                  >
+                    Chat
+                  </Link>
+                </li>
+              ) : (
+                ""
+              )}
               <li className="list-item logout-item">
                 <Link
                   className="header-nav-item"
@@ -79,7 +83,7 @@ export default function Header() {
               </li>
             </>
           )}
-          {status === "authenticated" ? null : (
+          {status === "authenticated" || store.overlay.isOpenLogin ? null : (
             <li className="list-item">
               <Link
                 onClick={() => dispatch(setOpenStateLogin(true))}
@@ -90,18 +94,22 @@ export default function Header() {
               </Link>
             </li>
           )}
-          <li className="list-item">
-            <Link
-              className="header-nav-item1"
-              href=" "
-              onClick={() => dispatch(setOpenState(true))}
-            >
-              WishList
-              {store.favoriteList.length > 0 && (
-                <p className="fav-count">{store.favoriteList.length}</p>
-              )}
-            </Link>
-          </li>
+          {!store.overlay.isOpen && status === "authenticated"  ? (
+            <li className="list-item">
+              <Link
+                className="header-nav-item1"
+                href=" "
+                onClick={() => dispatch(setOpenState(true))}
+              >
+                WishList
+                {store.favoriteList.length > 0 && (
+                  <p className="fav-count">{store.favoriteList.length}</p>
+                )}
+              </Link>
+            </li>
+          ) : (
+            ""
+          )}
           <li className="list-item">
             <button className="header-nav-profile">
               <Image

@@ -38,7 +38,6 @@ function* handleRequest(action: ReturnType<typeof getChatUsers>): SagaIterator {
   // https://go-renovate-server.onrender.com/products
   try {
     const chatUsers: Response = yield call(getUser, action.payload.token);
-    console.log("called----------------1", chatUsers);
 
     yield put(setChatUsers({ data: chatUsers }));
   } catch (error: unknown) {
