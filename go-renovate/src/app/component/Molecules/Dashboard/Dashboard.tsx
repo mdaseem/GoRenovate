@@ -29,7 +29,19 @@ function Dashboard(props: propType) {
     status: string;
   } | null>(null);
   const store = useAppSelector((state: RootState) => state);
-  
+  const { data: session, status } = useSession();
+
+  if (!session?.loading && !session?.backendToken) {
+    switch (status) {
+      case "loading":
+        return <Loader />;
+      case "unauthenticated":
+        return <LoginContainer />;
+      default:
+        return <LoginContainer />;
+    }
+  }
+
   return (
     <>
       <Suspense fallback={<Loader />}>

@@ -1,7 +1,6 @@
 import React from "react";
 import ProductTile from "../../Atoms/ProductTile/productTile";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import Loader from "../Loader/Loader";
 
 type productType = {
   _id: number;
