@@ -23,16 +23,28 @@ function ProductLoader() {
   );
 }
 
+const ProductList = () => {
+  return [1, 2, 3, 4, 5, 6, 7].map((item: number, index: number) => (
+    <ProductLoader key={index} />
+  ));
+};
+
+export const Loader1 = () => {
+  return (
+    <div className="loader-main-container">
+      <div className="loader-container">
+        <div className="product-page-list">{ProductList()}</div>
+      </div>
+    </div>
+  );
+};
+
 export default function Loader() {
   return (
     <div className="loader-main-container">
       <div className="product-filters" />
       <div className="loader-container">
-        <div className="product-page-list">
-          {[1, 2, 3, 4, 5, 6, 7].map((item: number, index: number) => (
-            <ProductLoader key={index} />
-          ))}
-        </div>
+        <div className="product-page-list">{ProductList()}</div>
       </div>
     </div>
   );

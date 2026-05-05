@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { loginFailure } from "../features/authSlice";
 import { SagaIterator } from "redux-saga";
-import { getProducts, setProducts } from "../features/productSlice";
+import { getProducts, setLoading, setProducts } from "../features/productSlice";
 import axios from "axios";
 
 //http://localhost:3002/products
@@ -24,12 +24,14 @@ function* handleRequest(action: ReturnType<typeof getProducts>): SagaIterator {
     const res: Response = yield call(getProductCall, action.payload.token);
 
     yield put(setProducts({ data: res }));
+    yield put(setLoading({ data: false }));
   } catch (error: unknown) {
     if (error instanceof Error) {
       yield put(loginFailure(error.message));
     } else {
       yield put(loginFailure("An unknown error occurred"));
     }
+    yield put(setLoading({ data: false }));
   }
 }
 

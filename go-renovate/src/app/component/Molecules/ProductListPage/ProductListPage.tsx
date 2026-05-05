@@ -9,7 +9,7 @@ import { getProducts } from "@/app/store/features/productSlice";
 import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import ProductList from "../ProductList/ProductList";
-import Loader from "../Loader/Loader";
+import { Loader1 } from "../Loader/Loader";
 
 type productType = {
   _id: number;
@@ -26,19 +26,13 @@ function ProductListPage(props: { products: void | Response }) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
 
-  const productLists = useSelector(
-    (state: RootState) => state.productsList.prodList,
-  );
+  const productLists = useSelector((state: RootState) => state.productsList);
 
   useEffect(() => {
     if (session?.backendToken && !props.products) {
       dispatch(getProducts({ token: session?.backendToken }));
     }
   }, [session]);
-
-  // if (session && !productLists?.data?.length) {
-  //   return <Loader />;
-  // }
 
   return (
     <div className="product-page-container">
@@ -47,11 +41,15 @@ function ProductListPage(props: { products: void | Response }) {
       </ProductPage>
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
-        <ProductList
-          productLists={productLists}
-          setIsOpen={setIsOpen}
-          setProduct={setProduct}
-        />
+        {productLists.isloading ? (
+          <Loader1 />
+        ) : (
+          <ProductList
+            productLists={productLists.prodList}
+            setIsOpen={setIsOpen}
+            setProduct={setProduct}
+          />
+        )}
       </div>
     </div>
   );

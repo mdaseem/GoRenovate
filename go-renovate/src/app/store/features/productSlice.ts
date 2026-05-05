@@ -5,6 +5,7 @@ const initialState: any = {
   isOpen: false,
   isOpenLogin: false,
   prodList: [] as ProductType[],
+  isloading: false,
 };
 type ProductType = {
   id: number;
@@ -22,10 +23,15 @@ export const productSlice = createSlice({
       return store;
     },
     getProducts: (store, { payload }) => {
+      store.isloading = true;
       return store;
     },
+    setLoading: (store, { payload }) => {
+      store.isloading = payload.data;
+      return store;
+    }
   },
 });
 
-export const { setProducts, getProducts } = productSlice.actions;
+export const { setProducts, getProducts, setLoading } = productSlice.actions;
 export default productSlice.reducer;

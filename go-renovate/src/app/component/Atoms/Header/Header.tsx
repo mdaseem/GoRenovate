@@ -83,7 +83,7 @@ export default function Header() {
               </li>
             </>
           )}
-          {status === "authenticated" || store.overlay.isOpenLogin ? null : (
+          {/* {status === "authenticated" || store.overlay.isOpenLogin ? null : (
             <li className="list-item">
               <Link
                 onClick={() => dispatch(setOpenStateLogin(true))}
@@ -93,8 +93,8 @@ export default function Header() {
                 Login
               </Link>
             </li>
-          )}
-          {!store.overlay.isOpen && status === "authenticated"  ? (
+          )} */}
+          {!store.overlay.isOpen && status === "authenticated" ? (
             <li className="list-item">
               <Link
                 className="header-nav-item1"

@@ -6,6 +6,7 @@ declare module "next-auth" {
     user?: DefaultSession["user"] & {
       email?: string;
     };
+      loading?: boolean;
   }
 
   interface JWT {
