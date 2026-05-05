@@ -13,7 +13,6 @@ import {
   setOpenStateLogin,
   setOpenStateUserList,
 } from "@/app/store/features/overLaySlice";
-import Menu from "../Menu/Menu";
 
 export default function Header() {
   const { data: session, status } = useSession();
