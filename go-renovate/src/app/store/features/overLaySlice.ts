@@ -6,6 +6,7 @@ const initialState: any = {
   isOpenLogin: false,
   isOpenChat: false,
   isUserListOpen: false,
+  isMobileMenuOpen: false,
 };
 
 export const overlaySlice = createSlice({
@@ -28,6 +29,10 @@ export const overlaySlice = createSlice({
       store.isUserListOpen = payload;
       return store;
     },
+    setOpenMobileMenu: (store, { payload }) => {
+      store.isMobileMenuOpen = payload;
+      return store;
+    },
   },
 });
 
@@ -36,5 +41,6 @@ export const {
   setOpenStateLogin,
   setOpenStateChat,
   setOpenStateUserList,
+  setOpenMobileMenu,
 } = overlaySlice.actions;
 export default overlaySlice.reducer;

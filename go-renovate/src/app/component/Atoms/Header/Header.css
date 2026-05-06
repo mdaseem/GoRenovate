@@ -30,6 +30,7 @@
   gap: 15px;
   margin: 0;
   padding: 0;
+  justify-content: end;
 }
 .header-nav-item {
   background-color: #c4fd5b;
@@ -52,7 +53,6 @@
 }
 .list-item {
   text-decoration: none;
-  margin: auto;
   color: black;
   font-weight: 500;
 }
