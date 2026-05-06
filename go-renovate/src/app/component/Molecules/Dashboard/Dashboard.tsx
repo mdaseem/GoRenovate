@@ -5,6 +5,7 @@ import ProductPage from "../../HOC/ProductPage/ProductPage";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import {
+  setOpenMobileMenu,
   setOpenState,
   setOpenStateChat,
   setOpenStateLogin,
@@ -16,6 +17,7 @@ import Loader from "../Loader/Loader";
 import Chat from "../../Atoms/Chat/Chat";
 import UserList from "../../Atoms/UserList/UserList";
 import { useSession } from "next-auth/react";
+import Menu from "../../Atoms/Menu/Menu";
 
 type propType = {
   products: void | Response;
@@ -75,6 +77,13 @@ function Dashboard(props: propType) {
         setIsOpen={(payload) => dispatch(setOpenStateChat(payload))}
       >
         <Chat />
+      </ProductPage>
+      <ProductPage
+        isDisable={false}
+        isOpen={store.overlay.isMobileMenuOpen}
+        setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
+      >
+        <Menu />
       </ProductPage>
     </>
   );

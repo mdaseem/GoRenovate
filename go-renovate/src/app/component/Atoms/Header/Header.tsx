@@ -9,10 +9,9 @@ import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { loginRequest, logout } from "@/app/store/features/authSlice";
 import {
-  setOpenState,
-  setOpenStateLogin,
-  setOpenStateUserList,
+  setOpenMobileMenu,
 } from "@/app/store/features/overLaySlice";
+import { menuOpen } from "../Menu/MenuSVG";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -53,7 +52,7 @@ export default function Header() {
       </h1>
       <nav className="header-nav">
         <ul className="header-nav-list">
-          {session && (
+          {/* {session && (
             <>
               {!store.overlay.isUserListOpen ? (
                 <li className="list-item logout-item">
@@ -79,22 +78,10 @@ export default function Header() {
                 >
                   Logout
                 </Link>
-                {/* {loading &&  <div className="loader" />} */}
               </li>
             </>
-          )}
-          {/* {status === "authenticated" || store.overlay.isOpenLogin ? null : (
-            <li className="list-item">
-              <Link
-                onClick={() => dispatch(setOpenStateLogin(true))}
-                className="header-nav-item"
-                href=""
-              >
-                Login
-              </Link>
-            </li>
           )} */}
-          {!store.overlay.isOpen && status === "authenticated" ? (
+          {/* {!store.overlay.isOpen && status === "authenticated" ? (
             <li className="list-item">
               <Link
                 className="header-nav-item1"
@@ -109,11 +96,12 @@ export default function Header() {
             </li>
           ) : (
             ""
-          )}
+          )} */}
           <li className="list-item">
             <button className="header-nav-profile">
               <Image
                 src={session?.user?.image || MyIcon}
+                onClick={() => dispatch(setOpenMobileMenu(true))}
                 className="profile-icon"
                 alt="User Image"
                 width={30}
