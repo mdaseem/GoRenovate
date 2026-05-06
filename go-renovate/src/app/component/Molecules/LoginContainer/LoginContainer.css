@@ -17,12 +17,15 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1246px) {
   .login-container-wrapper {
     flex-direction: column;
   }
   .login-children-content1 {
-    display: none;
+    /* position: absolute; */
+  }
+   .login-children-content2 {
+    position: absolute;
   }
   .login-container {
     justify-content: normal;
