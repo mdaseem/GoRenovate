@@ -35,7 +35,11 @@ const UserList = ({ setSelectedUser }: propType) => {
               setSelectedUser(user);
               dispatch(setOpenStateChat(true));
             }}
-            disabled={user.status === "approved"}
+            disabled={
+              session?.user?.connections?.find(
+                (conn) => conn.userId?.toString() === user.id,
+              )?.status !== "approved"
+            }
             className="user-list-item"
           >
             {user.Name}

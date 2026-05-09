@@ -44,21 +44,18 @@ export const authOptions: NextAuthOptions = {
         try {
           // https://go-renovate-server.onrender.com/auth
           // http://localhost:3002/auth
-          const res = await fetch(
-            "https://go-renovate-server.onrender.com/auth",
-            {
-              method: "POST",
+          const res = await fetch("https://go-renovate-server.onrender.com/auth", {
+            method: "POST",
 
-              headers: {
-                "Content-Type": "application/json",
-              },
-
-              body: JSON.stringify({
-                email: credentials?.email,
-                password: credentials?.password,
-              }),
+            headers: {
+              "Content-Type": "application/json",
             },
-          );
+
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          });
 
           const data = await res.json();
 
@@ -78,7 +75,6 @@ export const authOptions: NextAuthOptions = {
           if (!res.ok || !data?.token) {
             return null;
           }
-
           /*
             Returned object becomes:
             user
@@ -88,6 +84,7 @@ export const authOptions: NextAuthOptions = {
             id: data?.user?.id,
             email: data?.user?.email,
             name: data?.user?.name,
+            connections: data?.user?.connections || [{ id: "", Name: "", status: "" }], // Ensure connections is always defined
 
             /*
               YOUR backend JWT
@@ -132,28 +129,25 @@ export const authOptions: NextAuthOptions = {
           try {
             // http://localhost:3002/auth
             // https://go-renovate-server.onrender.com/auth
-            const backendRes = await fetch(
-              "https://go-renovate-server.onrender.com/auth",
-              {
-                method: "POST",
+            const backendRes = await fetch("https://go-renovate-server.onrender.com/auth", {
+              method: "POST",
 
-                headers: {
-                  "Content-Type": "application/json",
-                },
+              headers: {
+                "Content-Type": "application/json",
+              },
 
-                body: JSON.stringify({
-                  userEmail: profile.email,
+              body: JSON.stringify({
+                userEmail: profile.email,
 
-                  isGoogleLogin: true,
+                isGoogleLogin: true,
 
-                  /*
+                /*
                     Optional but recommended
                     for backend verification
                   */
-                  googleIdToken: account.id_token,
-                }),
-              },
-            );
+                googleIdToken: account.id_token,
+              }),
+            });
 
             if (backendRes.ok) {
               const data = await backendRes.json();
@@ -178,10 +172,13 @@ export const authOptions: NextAuthOptions = {
       /*
         Runs ONLY after credentials login
       */
-      if (user?.backendToken) {
+      if (user) {
         token.backendToken = user.backendToken;
+        token.email = user.email;
+        token.id = user.id as number;
+        token.name = user.name;
 
-        token.email = user.email || undefined;
+        token.connections = user.connections as unknown as []; // Type assertion to match the expected type
       }
 
       return token;
@@ -198,6 +195,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.email = token.email;
+        session.user.name = token.name;
+        session.user.id = token.id as number;
+        session.user.connections = (token.connections || [{ userId: "", Name: "", status: "" }]); // Type assertion to match the expected type
       }
 
       /*

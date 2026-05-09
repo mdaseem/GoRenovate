@@ -14,7 +14,10 @@ declare module "next-auth" {
     loading?: boolean;
 
     user?: DefaultSession["user"] & {
-      email?: string;
+      id?: number;
+      connections:
+        | [{ userId?: number | string; Name: string; status: string }]
+        | [];
     };
   }
 
@@ -26,12 +29,19 @@ declare module "next-auth" {
   */
   interface User extends DefaultUser {
     backendToken?: string;
+    id?: number;
+    connections?:
+      | [{ userId?: number | string; Name: string; status: string }]
+      | [];
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
-    email?: string;
+    email?: string | null | undefined;
+    name?: string | null | undefined;
+    id?: number;
+    connections?: [];
 
     /*
       Stored inside Auth.js JWT cookie
