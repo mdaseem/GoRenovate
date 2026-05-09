@@ -4,6 +4,8 @@ import { SagaIterator } from "redux-saga";
 import axios, { AxiosResponse } from "axios";
 import { getChatUsers, setChatUsers } from "../features/userSlice";
 
+// http://localhost:3002/user/userlist
+// https://go-renovate-server.onrender.com/user/userlist
 async function getUser(token: string) {
   return axios
     .get<Response>("https://go-renovate-server.onrender.com/user/userlist", {

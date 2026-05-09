@@ -31,7 +31,7 @@ function* handleSignup(action: ReturnType<typeof SignupRequest>): SagaIterator {
             // action.payload.token
           ),
         }),
-      }
+      },
     );
 
     const data = yield call([response, "json"]);
@@ -39,7 +39,7 @@ function* handleSignup(action: ReturnType<typeof SignupRequest>): SagaIterator {
     if (!response.ok) throw new Error(data.message || "Login failed");
 
     yield put(
-      loginSuccess({ user: data?.validUserData.userName, token: data?.token })
+      loginSuccess({ user: data?.validUserData.userName, token: data?.token }),
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -52,6 +52,8 @@ function* handleSignup(action: ReturnType<typeof SignupRequest>): SagaIterator {
 
 function* handleLogin(action: ReturnType<typeof loginRequest>): SagaIterator {
   try {
+    // http://localhost:3002/auth
+    // https://go-renovate-server.onrender.com/auth
     // Replace this with your actual API call
     const response = yield call(
       fetch,
@@ -60,12 +62,9 @@ function* handleLogin(action: ReturnType<typeof loginRequest>): SagaIterator {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          data: setPayload(
-            action.payload.email,
-            action.payload.password,
-          ),
+          data: setPayload(action.payload.email, action.payload.password),
         }),
-      }
+      },
     );
 
     const data = yield call([response, "json"]);
@@ -73,7 +72,7 @@ function* handleLogin(action: ReturnType<typeof loginRequest>): SagaIterator {
     if (!response.ok) throw new Error(data.message || "Login failed");
 
     yield put(
-      loginSuccess({ user: data?.validUserData.userName, token: data?.token })
+      loginSuccess({ user: data?.validUserData.userName, token: data?.token }),
     );
   } catch (error: unknown) {
     if (error instanceof Error) {

@@ -4,7 +4,8 @@ import "./Login.css";
 import AuthButtons from "../AuthButtons/AuthButtons";
 import Link from "next/link";
 import { useAppDispatch } from "@/app/store/hooks";
-import { loginRequest, SignupRequest } from "@/app/store/features/authSlice";
+import { SignupRequest } from "@/app/store/features/authSlice";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -71,36 +72,34 @@ export default function Login() {
             </label>
           </div>
         </form>
-          <div className="submit-buttons-container">
-            <button
-              className="login-submit submit-buttons"
-              onClick={() => {
-                if (isLogin) {
-                  dispatch(
-                    loginRequest({
-                      email: email,
-                      password: "password",
-                      token: "",
-                    })
-                  );
-                } else if(!isLogin && password === confirmPassword){
-                  dispatch(
-                    SignupRequest({
-                      email: email,
-                      password: "password",
-                    })
-                  );
-                }
-              }}
-            >
-              {isLogin ? "Login" : "Signup"}
-            </button>
-            <div className="or-line">
-              <div className="line" />
-              <p className="or-para">or</p>
-            </div>
-            <AuthButtons />
+        <div className="submit-buttons-container">
+          <button
+            className="login-submit submit-buttons"
+            onClick={async () => {
+              if (isLogin) {
+                await signIn("credentials", {
+                  email,
+                  password,
+                  redirect: false,
+                });
+              } else if (!isLogin && password === confirmPassword) {
+                dispatch(
+                  SignupRequest({
+                    email: email,
+                    password: "password",
+                  }),
+                );
+              }
+            }}
+          >
+            {isLogin ? "Login" : "Signup"}
+          </button>
+          <div className="or-line">
+            <div className="line" />
+            <p className="or-para">or</p>
           </div>
+          <AuthButtons />
+        </div>
         <div className="link-buttons">
           {isLogin ? <p>new here ?</p> : "already a user ?"}
           <Link

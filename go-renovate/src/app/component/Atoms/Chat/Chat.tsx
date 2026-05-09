@@ -1,7 +1,8 @@
 // src/components/Chat.tsx
 import { socket } from "@/app/socket";
-import './Chat.css';
+import "./Chat.css";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface Message {
   roomId: string;
@@ -12,10 +13,11 @@ interface Message {
 const Chat = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const { data: session } = useSession();
 
   // 🔑 hardcoded users for now (replace later)
-  const user1Id = "A";
-  const user2Id = "B";
+  const user1Id = session?.user?.id;
+  const user2Id = session?.user?.connections?.[0]?.userId; // first connection
 
   const roomId = [user1Id, user2Id].sort().join("_");
 
@@ -43,7 +45,7 @@ const Chat = () => {
     const messageData: Message = {
       roomId,
       message,
-      sender: user1Id,
+      sender: session?.user?.name || "",
     };
 
     // send to backend
@@ -74,7 +76,9 @@ const Chat = () => {
         className="chat-input"
       />
 
-      <button className="chat-send" onClick={sendMessage}>Send</button>
+      <button className="chat-send" onClick={sendMessage}>
+        Send
+      </button>
     </div>
   );
 };
