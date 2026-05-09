@@ -1,65 +1,215 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
   secret: process.env.NEXTAUTH_SECRET,
 
   session: {
     strategy: "jwt",
   },
 
+  providers: [
+    /*
+      GOOGLE LOGIN
+    */
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+
+    /*
+      EMAIL/PASSWORD LOGIN
+    */
+    CredentialsProvider({
+      name: "credentials",
+
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+        },
+
+        password: {
+          label: "Password",
+          type: "password",
+        },
+      },
+
+      /*
+        Runs when:
+        signIn("credentials")
+      */
+      async authorize(credentials) {
+        try {
+          // https://go-renovate-server.onrender.com/auth
+          // http://localhost:3002/auth
+          const res = await fetch(
+            "https://go-renovate-server.onrender.com/auth",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify({
+                email: credentials?.email,
+                password: credentials?.password,
+              }),
+            },
+          );
+
+          const data = await res.json();
+
+          /*
+            Expected backend response:
+
+            {
+              token: "...",
+              user: {
+                id,
+                email,
+                name
+              }
+            }
+          */
+
+          if (!res.ok || !data?.token) {
+            return null;
+          }
+
+          /*
+            Returned object becomes:
+            user
+            inside jwt callback
+          */
+          return {
+            id: data?.user?.id,
+            email: data?.user?.email,
+            name: data?.user?.name,
+
+            /*
+              YOUR backend JWT
+            */
+            backendToken: data.token,
+          };
+        } catch (error) {
+          console.error("Credentials login failed:", error);
+
+          return null;
+        }
+      },
+    }),
+  ],
+
   callbacks: {
-    // When a user first signs in
-    async jwt({ token, account, profile }) {
-      // Store user info in the token (runs once on login)
-      if (account && profile) {
+    /*
+      JWT CALLBACK
+
+      Used for:
+      - storing backend JWT
+      - persisting auth state
+    */
+    async jwt({ token, user, account, profile }) {
+      /*
+        ==========================================
+        GOOGLE LOGIN
+        ==========================================
+      */
+
+      /*
+        Runs ONLY on initial Google login
+      */
+      if (account?.provider === "google" && profile?.email) {
         token.email = profile.email;
-        token.backendToken = account.access_token;
+
+        /*
+          Only fetch backend token
+          ONCE during login
+        */
+        if (!token.backendToken) {
+          try {
+            // http://localhost:3002/auth
+            // https://go-renovate-server.onrender.com/auth
+            const backendRes = await fetch(
+              "https://go-renovate-server.onrender.com/auth",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type": "application/json",
+                },
+
+                body: JSON.stringify({
+                  userEmail: profile.email,
+
+                  isGoogleLogin: true,
+
+                  /*
+                    Optional but recommended
+                    for backend verification
+                  */
+                  googleIdToken: account.id_token,
+                }),
+              },
+            );
+
+            if (backendRes.ok) {
+              const data = await backendRes.json();
+
+              /*
+                Persist backend JWT
+              */
+              token.backendToken = data.token;
+            }
+          } catch (err) {
+            console.error("Google backend auth failed:", err);
+          }
+        }
       }
+
+      /*
+        ==========================================
+        CREDENTIALS LOGIN
+        ==========================================
+      */
+
+      /*
+        Runs ONLY after credentials login
+      */
+      if (user?.backendToken) {
+        token.backendToken = user.backendToken;
+
+        token.email = user.email || undefined;
+      }
+
       return token;
     },
 
-    // Whenever a session is checked or created
+    /*
+      SESSION CALLBACK
+
+      Converts:
+      token -> session
+
+      NO backend API calls here
+    */
     async session({ session, token }) {
-      if (token?.email && session.user) {
+      if (session.user) {
         session.user.email = token.email;
-        session.loading = false;
       }
 
-      // Optionally: automatically fetch a backend JWT and store it in the session
-      // (you can also do this manually in another API route if you prefer)
-      try {
-        // https://go-renovate-server.onrender.com/auth
-        // http://localhost:3002/auth
-        session.loading = false; // start loading state
-        const backendRes = await fetch(
-          `https://go-renovate-server.onrender.com/auth`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userEmail: token.email,
-              isGoogleLogin: true,
-            }),
-          },
-        );
+      /*
+        Expose backend JWT
+        to frontend
+      */
+      session.backendToken = token.backendToken;
 
-        if (backendRes.ok) {
-          const { token: backendToken } = await backendRes.json();
-          session.backendToken = backendToken; // attach backend JWT to session
-          session.loading = false; // loading complete
-        }
-      } catch (err) {
-        console.error("Failed to get backend token:", err);
-        session.loading = false; // even on error, stop loading state
-      }
+      /*
+        Keep existing UI compatibility
+      */
+      session.loading = false;
 
       return session;
     },

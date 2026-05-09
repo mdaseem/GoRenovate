@@ -4,7 +4,8 @@ import { SagaIterator } from "redux-saga";
 import { getProducts, setLoading, setProducts } from "../features/productSlice";
 import axios from "axios";
 
-//http://localhost:3002/products
+// http://localhost:3002/products
+// https://go-renovate-server.onrender.com/products
 function getProductCall(token: string) {
   return axios
     .get<Response>("https://go-renovate-server.onrender.com/products", {
