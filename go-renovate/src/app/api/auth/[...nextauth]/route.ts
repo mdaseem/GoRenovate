@@ -118,8 +118,8 @@ export const authOptions: NextAuthOptions = {
       /*
         Runs ONLY on initial Google login
       */
-      if (account?.provider === "google" && profile?.email) {
-        token.email = profile.email;
+      if (account?.provider === "google" || profile?.email || token) {
+        token.email = profile?.email;
 
         /*
           Only fetch backend token
@@ -137,7 +137,7 @@ export const authOptions: NextAuthOptions = {
               },
 
               body: JSON.stringify({
-                userEmail: profile.email,
+                userEmail: profile?.email,
 
                 isGoogleLogin: true,
 
@@ -145,7 +145,7 @@ export const authOptions: NextAuthOptions = {
                     Optional but recommended
                     for backend verification
                   */
-                googleIdToken: account.id_token,
+                googleIdToken: account?.id_token,
               }),
             });
 
