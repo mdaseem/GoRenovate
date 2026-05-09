@@ -39,7 +39,7 @@ const UserList = ({ setSelectedUser }: propType) => {
               // session?.user?.connections?.find(
               //   (conn) => conn.userId?.toString() === user.id,
               // )?.status !== "approved"
-              true
+              false
             }
             className="user-list-item"
           >
