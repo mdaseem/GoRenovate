@@ -84,6 +84,6 @@ a {
   position: fixed;
 
   transform: translateY(20px) scale(1);
-  height: 100vh;
+  height: 100%;
   overflow: scroll;
 }

@@ -38,7 +38,9 @@ export default function RootLayout({
         <Providers>
           <>
             <Header />
-            <Suspense fallback={<Loader />}>{children}</Suspense>
+            {/* <Suspense fallback={<Loader />}> */}
+            {children}
+            {/* </Suspense> */}
           </>
         </Providers>
       </body>

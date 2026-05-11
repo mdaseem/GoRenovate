@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense } from "react";
+import React from "react";
 import ProductListPage from "../ProductListPage/ProductListPage";
 import ProductPage from "../../HOC/ProductPage/ProductPage";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -23,6 +23,11 @@ type propType = {
   products: void | Response;
 };
 
+// const Chat = dynamic(() => import("@/app/component/Atoms/Chat/Chat"), {
+//   loading: () => <p><Loader /></p>,
+//   ssr: false,
+// });
+
 function Dashboard(props: propType) {
   const dispatch = useAppDispatch();
   const [selectedUser, setSelectedUser] = React.useState<{
@@ -33,7 +38,11 @@ function Dashboard(props: propType) {
   const store = useAppSelector((state: RootState) => state);
   const { data: session, status } = useSession();
 
-  if (!session?.loading && !session?.backendToken) {
+  if (
+    !session?.loading &&
+    !session?.backendToken &&
+    !props.products
+  ) {
     switch (status) {
       case "loading":
         return <Loader />;
@@ -46,9 +55,7 @@ function Dashboard(props: propType) {
 
   return (
     <>
-      <Suspense fallback={<Loader />}>
-        <ProductListPage products={props.products} />
-      </Suspense>
+      <ProductListPage products={props.products} />
       <ProductPage
         isOpen={store.overlay.isOpen}
         setIsOpen={(payload) => dispatch(setOpenState(payload))}
