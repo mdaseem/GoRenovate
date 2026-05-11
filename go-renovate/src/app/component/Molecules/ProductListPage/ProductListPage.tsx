@@ -30,7 +30,11 @@ function ProductListPage(props: { products: void | Response }) {
   const productListsData =
     props.products != undefined
       ? { data: props.products, isloading: false, error: null }
-      : productLists?.data;
+      : {
+          data: productLists?.prodList?.data,
+          isloading: productLists?.isloading,
+          error: null,
+        };
 
   useEffect(() => {
     if (session?.backendToken && !props.products) {
@@ -45,7 +49,7 @@ function ProductListPage(props: { products: void | Response }) {
       </ProductPage>
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
-        {productListsData.isloading && !props.products ? (
+        {productListsData?.isloading && !props.products ? (
           <Loader1 />
         ) : (
           <ProductList
