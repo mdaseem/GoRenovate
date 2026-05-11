@@ -15,6 +15,7 @@ declare module "next-auth" {
 
     user?: DefaultSession["user"] & {
       id?: number;
+      isNotGoogleLogin?: boolean; // Custom flag to identify credentials login
       connections:
         | [{ userId?: number | string; Name: string; status: string }]
         | [];
@@ -30,6 +31,7 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     backendToken?: string;
     id?: number;
+    isNotGoogleLogin?: boolean; // Custom flag to identify credentials login
     connections?:
       | [{ userId?: number | string; Name: string; status: string }]
       | [];
@@ -42,6 +44,7 @@ declare module "next-auth/jwt" {
     name?: string | null | undefined;
     id?: number;
     connections?: [];
+    isNotGoogleLogin?: boolean; // Custom flag to identify credentials login
 
     /*
       Stored inside Auth.js JWT cookie

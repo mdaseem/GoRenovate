@@ -85,6 +85,7 @@ export const authOptions: NextAuthOptions = {
             email: data?.user?.email,
             name: data?.user?.name,
             connections: data?.user?.connections || [{ id: "", Name: "", status: "" }], // Ensure connections is always defined
+            isNotGoogleLogin: true, // Custom flag to indicate credentials login
 
             /*
               YOUR backend JWT
@@ -118,7 +119,7 @@ export const authOptions: NextAuthOptions = {
       /*
         Runs ONLY on initial Google login
       */
-      if (account?.provider === "google" || profile?.email || token) {
+      if (!user?.isNotGoogleLogin) {
         token.email = profile?.email;
 
         /*
@@ -131,6 +132,7 @@ export const authOptions: NextAuthOptions = {
             // https://go-renovate-server.onrender.com/auth
             const backendRes = await fetch("https://go-renovate-server.onrender.com/auth", {
               method: "POST",
+              credentials: "include",
 
               headers: {
                 "Content-Type": "application/json",

@@ -27,6 +27,10 @@ function ProductListPage(props: { products: void | Response }) {
   const { data: session } = useSession();
 
   const productLists = useSelector((state: RootState) => state.productsList);
+  const productListsData =
+    props.products != undefined
+      ? { data: props.products, isloading: false, error: null }
+      : productLists?.data;
 
   useEffect(() => {
     if (session?.backendToken && !props.products) {
@@ -41,11 +45,11 @@ function ProductListPage(props: { products: void | Response }) {
       </ProductPage>
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
-        {productLists.isloading ? (
+        {productListsData.isloading && !props.products ? (
           <Loader1 />
         ) : (
           <ProductList
-            productLists={productLists.prodList}
+            productLists={productListsData}
             setIsOpen={setIsOpen}
             setProduct={setProduct}
           />

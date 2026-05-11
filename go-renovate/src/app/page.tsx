@@ -2,12 +2,12 @@ import React from "react";
 import Dashboard from "./component/Molecules/Dashboard/Dashboard";
 import axios, { AxiosResponse } from "axios";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 async function getProducts() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("backendToken")?.value;
-  console.log("Error fetching products:", token);
+  const session = await getServerSession(authOptions);
+  const token = session?.backendToken;
   if (!token) {
     return;
   }
@@ -16,7 +16,6 @@ async function getProducts() {
     .get<Response>("https://go-renovate-server.onrender.com/products", {
       headers: {
         Authorization: `Bearer ${token}`,
-        credentials: "include",
       },
     })
     .then(
@@ -43,10 +42,6 @@ async function getProducts() {
 
 export default async function Home() {
   const res: void | Response = await getProducts();
-  // const navigate = useRouter();
-  // const dispatch = useAppDispatch();
-  // const store = useAppSelector((state: RootState) => state);
-  // const [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <div>
