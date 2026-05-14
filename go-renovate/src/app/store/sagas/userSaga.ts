@@ -42,6 +42,9 @@ function* handleRequest(action: ReturnType<typeof getChatUsers>): SagaIterator {
     const chatUsers: Response = yield call(getUser, action.payload.token);
 
     yield put(setChatUsers({ data: chatUsers }));
+    if(chatUsers.status === 401 ) {
+      yield put(loginFailure(("Token expired. Please login again.")));
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       yield put(loginFailure(error.message));

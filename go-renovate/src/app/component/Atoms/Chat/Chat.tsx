@@ -1,10 +1,7 @@
-// src/components/Chat.tsx
 import { socket } from "@/app/socket";
 import "./Chat.css";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
 
 interface Message {
   roomId: string;
@@ -40,7 +37,7 @@ const Chat = () => {
     };
 
     fetchMessages();
-  }, [roomId]);
+  }, [messages]);
 
   useEffect(() => {
     // connect socket
