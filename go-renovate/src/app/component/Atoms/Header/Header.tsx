@@ -1,20 +1,16 @@
 "use client";
 import React, { useEffect } from "react";
 import "./Header.css";
-import Link from "next/link";
 import MyIcon from "../../../../../public/user_profile.svg";
 import MyHome from "../../../../../public/house_icon.svg";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { loginRequest, logout } from "@/app/store/features/authSlice";
-import {
-  setOpenMobileMenu,
-} from "@/app/store/features/overLaySlice";
-import { menuOpen } from "../Menu/MenuSVG";
+import { loginRequest } from "@/app/store/features/authSlice";
+import { setOpenMobileMenu } from "@/app/store/features/overLaySlice";
 
 export default function Header() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const store = useAppSelector((state) => state);
 
@@ -40,7 +36,7 @@ export default function Header() {
         <p className="logo-title">
           <span className="logo-title">GoRe</span>
           <span className="logo-title logo-n">{`n`}</span>
-          <span className="logo-title">ovate</span>
+          <span className="logo-title remaining-text">ovate</span>
         </p>
         <Image
           src={MyHome}
@@ -52,51 +48,6 @@ export default function Header() {
       </h1>
       <nav className="header-nav">
         <ul className="header-nav-list">
-          {/* {session && (
-            <>
-              {!store.overlay.isUserListOpen ? (
-                <li className="list-item logout-item">
-                  <Link
-                    onClick={() => dispatch(setOpenStateUserList(true))}
-                    className="header-nav-item"
-                    href=""
-                  >
-                    Chat
-                  </Link>
-                </li>
-              ) : (
-                ""
-              )}
-              <li className="list-item logout-item">
-                <Link
-                  className="header-nav-item"
-                  onClick={() => {
-                    signOut();
-                    dispatch(logout());
-                  }}
-                  href="/"
-                >
-                  Logout
-                </Link>
-              </li>
-            </>
-          )} */}
-          {/* {!store.overlay.isOpen && status === "authenticated" ? (
-            <li className="list-item">
-              <Link
-                className="header-nav-item1"
-                href=" "
-                onClick={() => dispatch(setOpenState(true))}
-              >
-                WishList
-                {store.favoriteList.length > 0 && (
-                  <p className="fav-count">{store.favoriteList.length}</p>
-                )}
-              </Link>
-            </li>
-          ) : (
-            ""
-          )} */}
           <li className="list-item">
             <button className="header-nav-profile">
               <Image
