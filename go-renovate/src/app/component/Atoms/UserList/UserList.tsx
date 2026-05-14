@@ -27,7 +27,7 @@ const UserList = ({ setSelectedUser }: propType) => {
   return (
     <div className="user-list-container">
       <h3>Connections </h3>
-      {users?.chatUsers.map(
+      {users?.chatUsers?.map(
         (user: { id: string; Name: string; status: string }) => (
           <button
             key={user.id}
