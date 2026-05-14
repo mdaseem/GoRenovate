@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 33px;
   box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -94,12 +94,17 @@
 }
 .lolo-icon {
   position: absolute;
-  top: 35px;
-  left: 79px;
+  top: 48.5px;
+  left: 92px;
 }
 .logo-n {
   opacity: 0;
   margin: 1px;
+  position: relative;
+}
+.remaining-text {
+  margin: 1px;
+  position: relative;
 }
 .profile-icon {
   border-radius: 50%;

@@ -15,29 +15,32 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const { data: session } = useSession();
-  // 🔑 hardcoded users for now (replace later)
+
   const user1Id = session?.user?.id;
   const user2Id = session?.user?.connections?.[0]?.userId; // first connection
 
   const roomId = [user1Id, user2Id].sort().join("_");
 
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch(
+        `https://go-renovate-server.onrender.com/rooms/${roomId}`,
+      );
+
+      const data = await res.json();
+
+      setMessages(data.messages);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (!roomId) return;
-
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch(`https://go-renovate-server.onrender.com/rooms/${roomId}`);
-
-        const data = await res.json();
-
-        setMessages(data.messages);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchMessages();
-  }, [messages]);
+    if (messages.length === 0) {
+      fetchMessages();
+    }
+  }, [roomId]);
 
   useEffect(() => {
     // connect socket
@@ -48,7 +51,10 @@ const Chat = () => {
 
     // listen for messages
     socket.on("receive_message", (data: Message) => {
-      setMessages((prev) => [...prev, data]);
+      setMessages((prev) => {
+        fetchMessages();
+        return [...prev, data];
+      });
     });
 
     // cleanup
@@ -78,14 +84,19 @@ const Chat = () => {
   };
 
   return (
-    <div className="chat-container">
-      <h2>Chat</h2>
-      <div className="message-container">
-        {messages.map((msg, index) => (
-          <p key={index} className="message">
-            <b>{msg.sender}:</b> {msg.message}
-          </p>
-        ))}
+    <div className="main-chat-container">
+      <div className="chat-container">
+        <h2 className="chat-heading">Chat</h2>
+        <div className="message-container">
+          {messages.map((msg, index) => (
+            <p
+              key={index}
+              className={`message ${msg.senderId === user1Id?.toString() ? "sent" : "received"}`}
+            >
+              <b>{msg.sender}:</b> {msg.message}
+            </p>
+          ))}
+        </div>
       </div>
       <div className="chat-input-container">
         <input
