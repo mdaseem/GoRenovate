@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "./ProductListPage.style.css";
-import ProductPage from "../../HOC/ProductPage/ProductPage";
+import ProductPage from "../../HOC/Overlay/Overlay";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import Filters from "../Filters/view/Filters.view";
 import ProductView from "../../Atoms/ProductView/ProductView";

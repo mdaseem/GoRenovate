@@ -3,7 +3,7 @@ import "./LoginContainer.css";
 import LiveBackground from "../../Atoms/LiveBackground/LiveBackground";
 import Login from "../../Atoms/Login/Login";
 
-export const LoginContainer: React.FC = () => {
+const LoginContainer: React.FC = () => {
   return (
     <section className="login-container-wrapper">
       <div className="login-children-content1 login-children-content">
@@ -15,3 +15,5 @@ export const LoginContainer: React.FC = () => {
     </section>
   );
 };
+
+export default LoginContainer;
