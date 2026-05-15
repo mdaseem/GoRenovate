@@ -5,7 +5,7 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import ProductTile from "../../Atoms/ProductTile/productTile";
-import ProductPage from "../../HOC/ProductPage/ProductPage";
+import ProductPage from "../../HOC/Overlay/Overlay";
 import ProductView from "../../Atoms/ProductView/ProductView";
 
 type productType = {

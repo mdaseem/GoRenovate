@@ -15,10 +15,10 @@ const UserList = ({ setSelectedUser }: propType) => {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const users = useAppSelector((state) => state.user);
-  const isOpenChat = useAppSelector((state) => state.overlay.isOpenChat);
+  const isOpenChat = useAppSelector((state) => state.overlay.isUserListOpen);
 
   useEffect(() => {
-    if (session?.backendToken) {
+    if (session?.backendToken && isOpenChat) {
       // dispatch action to get users
       dispatch(getChatUsers({ token: session.backendToken }));
     }
@@ -35,12 +35,7 @@ const UserList = ({ setSelectedUser }: propType) => {
               setSelectedUser(user);
               dispatch(setOpenStateChat(true));
             }}
-            disabled={
-              // session?.user?.connections?.find(
-              //   (conn) => conn.userId?.toString() === user.id,
-              // )?.status !== "approved"
-              false
-            }
+            disabled={false}
             className="user-list-item"
           >
             {user.Name}

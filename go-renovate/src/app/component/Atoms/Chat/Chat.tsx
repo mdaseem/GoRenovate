@@ -2,6 +2,8 @@ import { socket } from "@/app/socket";
 import "./Chat.css";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { RootState } from "@/app/store/store";
+import { useAppSelector } from "@/app/store/hooks";
 
 interface Message {
   roomId: string;
@@ -14,11 +16,14 @@ interface Message {
 const Chat = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
   const { data: session } = useSession();
+  const isChatOpen = useAppSelector(
+    (state: RootState) => state.overlay.isOpenChat,
+  );
 
   const user1Id = session?.user?.id;
   const user2Id = session?.user?.connections?.[0]?.userId; // first connection
-
   const roomId = [user1Id, user2Id].sort().join("_");
 
   const fetchMessages = async () => {
@@ -43,25 +48,30 @@ const Chat = () => {
   }, [roomId]);
 
   useEffect(() => {
-    // connect socket
-    socket.connect();
+    if (((user1Id && user2Id) || session) && isChatOpen) {
+      // connect socket
+      socket.connect();
 
-    // join room
-    socket.emit("join_room", roomId);
+      // join room
+      socket.emit("join_room", roomId);
 
-    // listen for messages
-    socket.on("receive_message", (data: Message) => {
-      setMessages((prev) => {
-        fetchMessages();
-        return [...prev, data];
+      // listen for messages
+      socket.on("receive_message", (data: Message) => {
+        setMessages((prev) => {
+          fetchMessages();
+          return [...prev, data];
+        });
       });
-    });
-
-    // cleanup
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+      setIsConnected(true);
+      if (!isChatOpen && isConnected) {
+        // cleanup
+        return () => {
+          socket.disconnect();
+          setIsConnected(false);
+        };
+      }
+    }
+  }, [session, user1Id, user2Id, isChatOpen]);
 
   const sendMessage = () => {
     if (!message.trim()) return;
@@ -101,6 +111,7 @@ const Chat = () => {
       <div className="chat-input-container">
         <input
           value={message}
+          disabled={!isConnected}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type message..."
           className="chat-input"

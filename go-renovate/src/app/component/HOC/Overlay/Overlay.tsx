@@ -1,5 +1,5 @@
 import React from "react";
-import "./ProductPage.style.css";
+import "./Overlay.style.css";
 import Image from "next/image";
 
 type PropsType = {
@@ -10,7 +10,7 @@ type PropsType = {
   isLoginPage?: boolean;
 };
 
-function ProductPage(props: PropsType) {
+function Overlay(props: PropsType) {
   if(props.isDisable) {
     return <>{props.children}</>;
   }
@@ -28,4 +28,4 @@ function ProductPage(props: PropsType) {
   );
 }
 
-export default ProductPage;
+export default Overlay;
