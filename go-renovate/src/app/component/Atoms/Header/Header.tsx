@@ -31,8 +31,6 @@ export default function Header() {
       <h1 className="header-title">
         <p className="logo-title">
           <span className="logo-title">GoRe</span>
-          <span className="logo-title remaining-text">ovate</span>
-        </p>
         <Image
           src={MyHome}
           className="logo-title lolo-icon"
@@ -40,6 +38,8 @@ export default function Header() {
           width={15}
           height={15}
         />
+          <span className="logo-title remaining-text">ovate</span>
+        </p>
       </h1>
       <nav className="header-nav">
         <ul className="header-nav-list">

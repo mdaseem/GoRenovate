@@ -10,6 +10,7 @@
   flex-direction: column;
   width: 100%;
   text-align: center;
+  flex: 1;
 }
 .header-link-menu {
   text-decoration: none;
