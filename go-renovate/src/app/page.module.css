@@ -24,7 +24,6 @@
   font-family: var(--font-geist-mono);
   padding-left: 0;
   margin: 0;
-  font-size: 14px;
   line-height: 24px;
   letter-spacing: -0.01em;
   list-style-position: inside;
@@ -127,7 +126,7 @@ a.secondary {
   }
 
   .ctas a {
-    font-size: 14px;
+    /* font-size: 14px; */
     height: 40px;
     padding: 0 16px;
   }

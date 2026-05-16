@@ -3,6 +3,16 @@
   padding: 0;
   margin: 0;
 }
+@media screen and (max-width: 768px) {
+  input,
+  textarea,
+  select,
+  p,
+  button,
+  div {
+    font-size: 16px;
+  }
+}
 
 .auth-button-container {
   position: relative;
@@ -17,19 +27,31 @@
   top: 37%;
   aspect-ratio: 4;
   --_g: no-repeat radial-gradient(circle closest-side, #000 90%, #0000);
-  background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+  background:
+    var(--_g) 0% 50%,
+    var(--_g) 50% 50%,
+    var(--_g) 100% 50%;
   background-size: calc(100% / 3) 100%;
   animation: l7 1s infinite linear;
 }
 @keyframes l7 {
   33% {
-    background-size: calc(100% / 3) 0%, calc(100% / 3) 100%, calc(100% / 3) 100%;
+    background-size:
+      calc(100% / 3) 0%,
+      calc(100% / 3) 100%,
+      calc(100% / 3) 100%;
   }
   50% {
-    background-size: calc(100% / 3) 100%, calc(100% / 3) 0%, calc(100% / 3) 100%;
+    background-size:
+      calc(100% / 3) 100%,
+      calc(100% / 3) 0%,
+      calc(100% / 3) 100%;
   }
   66% {
-    background-size: calc(100% / 3) 100%, calc(100% / 3) 100%, calc(100% / 3) 0%;
+    background-size:
+      calc(100% / 3) 100%,
+      calc(100% / 3) 100%,
+      calc(100% / 3) 0%;
   }
 }
 @keyframes l17 {
@@ -69,21 +91,22 @@ a {
   position: fixed;
   inset: 0;
   background: white;
-
   z-index: -1;
   opacity: 0;
   pointer-events: none;
-
-  transform: translateY(400px) scale(0.98);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: translateY(400px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
 }
 .product-overlay.open {
-  z-index: 1000;
+  z-index: 1000000;
   opacity: 1;
   pointer-events: auto;
   position: fixed;
 
-  transform: translateY(20px) scale(1);
-  height: 100%;
-  overflow: scroll;
+  transform: translateY(0);
+  height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }

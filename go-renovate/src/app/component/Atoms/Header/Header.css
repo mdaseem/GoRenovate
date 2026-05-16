@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 33px;
+  padding: 22px;
   box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -18,7 +18,6 @@
   align-items: center;
   width: 17%;
   height: 54%;
-  font-size: 15px;
   display: flex;
   position: absolute;
   top: 0;
@@ -94,16 +93,11 @@
 }
 .lolo-icon {
   position: absolute;
-  top: 48.5px;
-  left: 92px;
-}
-.logo-n {
-  opacity: 0;
-  margin: 1px;
-  position: relative;
+  top: 38px;
+  left: 81.3px;
 }
 .remaining-text {
-  margin: 1px;
+  margin: 1px 1px 1px 16px;
   position: relative;
 }
 .profile-icon {

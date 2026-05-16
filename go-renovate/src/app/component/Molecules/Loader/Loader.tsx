@@ -39,6 +39,44 @@ export const Loader1 = () => {
   );
 };
 
+export const Loader2 = () => {
+  return (
+    <div className="loader-main-container">
+      <div className="main-chat-container">
+        <div className="chat-container">
+          <h2 className="chat-heading">Chat</h2>
+          <div className="message-container">
+            <p className="message sent loader-item" />
+            <p className="message message1 received loader-item" />
+            <p className="message message1 sent loader-item" />
+            <p className="message message1 received loader-item" />
+            <p className="message message1 sent loader-item" />
+            <p className="message message1 received loader-item" />
+            <p className="message message1 sent loader-item" />
+            <p className="message message1 received loader-item" />
+            <p className="message message1 sent loader-item" />
+            <p className="message message1 sent loader-item" />
+            <p className="message message1 received loader-item" />
+            <p className="message message1 sent loader-item" />
+            <p className="message received loader-item" />
+          </div>
+        </div>
+        <div className="chat-input-container">
+          <input
+            disabled={false}
+            placeholder="Type message..."
+            className="chat-input"
+          />
+
+          <button disabled={true} className="chat-send">
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Loader() {
   return (
     <div className="loader-main-container">

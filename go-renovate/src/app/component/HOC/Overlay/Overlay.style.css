@@ -1,7 +1,5 @@
 .product-detail-page-container {
-  border-radius: 5%;
   border: 1px solid;
-  padding: 80px 0 0 0;
   .product-container-in-overlay {
     .product-img {
       height: 100%;
