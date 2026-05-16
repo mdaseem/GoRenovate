@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import { useAppSelector } from "@/app/store/hooks";
+import { Loader2 } from "../../Molecules/Loader/Loader";
 
 interface Message {
   roomId: string;
@@ -92,6 +93,9 @@ const Chat = () => {
 
     setMessage("");
   };
+
+  if (!session) return "Something went wrong";
+  if (!messages.length && isChatOpen) return <Loader2 />;
 
   return (
     <div className="main-chat-container">

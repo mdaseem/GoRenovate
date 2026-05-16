@@ -12,19 +12,15 @@ import { setOpenMobileMenu } from "@/app/store/features/overLaySlice";
 export default function Header() {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
-  const store = useAppSelector((state) => state);
+  const store = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (
-      session?.user?.email &&
-      store.auth.token &&
-      store.auth.token != undefined
-    ) {
+    if (session?.user?.email && store.token && store.token != undefined) {
       dispatch(
         loginRequest({
           email: session?.user?.email || "",
           password: "",
-          token: store.auth.token || "",
+          token: store.token || "",
         }),
       );
     }
@@ -35,7 +31,6 @@ export default function Header() {
       <h1 className="header-title">
         <p className="logo-title">
           <span className="logo-title">GoRe</span>
-          <span className="logo-title logo-n">{`n`}</span>
           <span className="logo-title remaining-text">ovate</span>
         </p>
         <Image

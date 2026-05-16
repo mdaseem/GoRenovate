@@ -8,10 +8,12 @@ type PropsType = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isDisable: boolean;
   isLoginPage?: boolean;
+  shouldReturnNull?: boolean;
 };
 
 function Overlay(props: PropsType) {
-  if(props.isDisable) {
+  if (props.shouldReturnNull) return;
+  if (props.isDisable) {
     return <>{props.children}</>;
   }
   return (
@@ -20,9 +22,11 @@ function Overlay(props: PropsType) {
         props.isOpen ? "open" : ""
       }`}
     >
-      {props.isLoginPage ? null : (<button className="go-back" onClick={() => props.setIsOpen(false)}>
-        <Image src="/back.svg" width={20} height={20} alt="Back" />
-      </button>)}
+      {props.isLoginPage ? null : (
+        <button className="go-back" onClick={() => props.setIsOpen(false)}>
+          <Image src="/back.svg" width={20} height={20} alt="Back" />
+        </button>
+      )}
       <div className="overlay-content">{props.children}</div>
     </div>
   );

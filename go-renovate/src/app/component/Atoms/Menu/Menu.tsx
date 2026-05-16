@@ -8,10 +8,8 @@ import {
   setOpenStateUserList,
 } from "@/app/store/features/overLaySlice";
 import { logout } from "@/app/store/features/authSlice";
-import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import MyIcon from "../../../../../public/user_profile.svg";
 
 interface MenuProps {
   children?: React.ReactNode;
@@ -20,14 +18,14 @@ interface MenuProps {
 const Menu: React.FC<MenuProps> = (props: MenuProps) => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
-  const store = useAppSelector((state) => state);
+  const store = useAppSelector((state) => state.overlay);
 
   return (
     <div className="hamburger-menu-container">
       <nav className="header-nav">
         {session && (
           <>
-            {!store.overlay.isUserListOpen ? (
+            {!store.isUserListOpen ? (
               <Link
                 onClick={() => {
                   dispatch(setOpenMobileMenu(false));
@@ -52,10 +50,9 @@ const Menu: React.FC<MenuProps> = (props: MenuProps) => {
             >
               Logout
             </Link>
-            {/* {loading &&  <div className="loader" />} */}
           </>
         )}
-        {!store.overlay.isOpen && status === "authenticated" ? (
+        {!store.isOpen && status === "authenticated" ? (
           <Link
             className="header-link-menu"
             href=" "
@@ -65,25 +62,10 @@ const Menu: React.FC<MenuProps> = (props: MenuProps) => {
             }}
           >
             WishList
-            {/* {store.favoriteList.length > 0 && (
-              <p className="fav-count">{store.favoriteList.length}</p>
-            )} */}
           </Link>
         ) : (
           ""
         )}
-        {/* <div>
-              <button className="header-nav-profile header-link-menu">
-                <Image
-                  src={session?.user?.image || MyIcon}
-                  className="profile-icon"
-                  alt="User Image"
-                  width={30}
-                  height={30}
-                />
-              </button>
-
-              </div> */}
       </nav>
     </div>
   );

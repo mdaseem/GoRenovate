@@ -38,18 +38,8 @@ function Dashboard(props: propType) {
     Name: string;
     status: string;
   } | null>(null);
-  const store = useAppSelector((state: RootState) => state);
+  const store = useAppSelector((state: RootState) => state.overlay);
   const { data: session, status } = useSession();
-
-  // if (store.overlay.isUserListOpen && selectedUser) {
-  // }
-  // const UserList = dynamic(
-  //   () => import("@/app/component/Atoms/UserList/UserList"),
-  //   {
-  //     loading: () => <Loader />,
-  //     ssr: false,
-  //   },
-  // );
 
   if (!session?.loading && !session?.backendToken && !props.products) {
     switch (status) {
@@ -66,26 +56,29 @@ function Dashboard(props: propType) {
     <>
       <ProductListPage products={props.products} />
       <Overlay
-        isOpen={store.overlay.isOpen}
+        isOpen={store.isOpen}
         setIsOpen={(payload) => dispatch(setOpenState(payload))}
         isDisable={false}
+        shouldReturnNull={store.isOpen ? false : true}
       >
-        {store.overlay.isOpen && <WishListPage isOpen={store.overlay.isOpen} />}
+        {store.isOpen && <WishListPage isOpen={store.isOpen} />}
       </Overlay>
       <Overlay
-        isOpen={store.overlay.isOpenLogin}
+        isOpen={store.isOpenLogin}
         setIsOpen={(payload) => dispatch(setOpenStateLogin(payload))}
         isDisable={false}
         isLoginPage={false}
+        shouldReturnNull={store.isOpenLogin ? false : true}
       >
-        {store.overlay.isOpenLogin && <LoginContainer />}
+        {store.isOpenLogin && <LoginContainer />}
       </Overlay>
       <Overlay
         isDisable={false}
-        isOpen={store.overlay.isUserListOpen}
+        isOpen={store.isUserListOpen}
         setIsOpen={(payload) => dispatch(setOpenStateUserList(payload))}
+        shouldReturnNull={store.isUserListOpen ? false : true}
       >
-        {store.overlay.isUserListOpen ? (
+        {store.isUserListOpen ? (
           <UserList setSelectedUser={setSelectedUser} />
         ) : (
           "users loading..."
@@ -93,15 +86,17 @@ function Dashboard(props: propType) {
       </Overlay>
       <Overlay
         isDisable={false}
-        isOpen={store.overlay.isOpenChat}
+        isOpen={store.isOpenChat}
         setIsOpen={(payload) => dispatch(setOpenStateChat(payload))}
+        shouldReturnNull={store.isOpenChat ? false : true}
       >
         <Chat />
       </Overlay>
       <Overlay
         isDisable={false}
-        isOpen={store.overlay.isMobileMenuOpen}
+        isOpen={store.isMobileMenuOpen}
         setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
+        shouldReturnNull={store.isMobileMenuOpen ? false : true}
       >
         <Menu />
       </Overlay>

@@ -5,6 +5,12 @@
     flex-direction: column;
     gap: 0;
   }
+  .message {
+    width: 162px;
+  }
+  .message {
+    width: 190px;
+  }
 }
 .product-filters {
   flex: 1;
