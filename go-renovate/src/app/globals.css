@@ -100,7 +100,7 @@ a {
     transform 0.35s ease;
 }
 .product-overlay.open {
-  z-index: 1000;
+  z-index: 1000000;
   opacity: 1;
   pointer-events: auto;
   position: fixed;
