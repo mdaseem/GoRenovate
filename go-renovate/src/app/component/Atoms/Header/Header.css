@@ -30,6 +30,7 @@
   margin: 0;
   padding: 0;
   justify-content: end;
+  flex: 1;
 }
 .header-nav-item {
   background-color: #c4fd5b;
@@ -84,20 +85,24 @@
   background-color: #c4fd5b;
   color: white;
 }
+.header-title {
+  display: flex;
+}
 .logo-title {
   font-size: 1.5rem;
   font-weight: bold;
   color: black;
   text-decoration: none;
   display: inline;
+  flex: 1;
 }
-.lolo-icon {
+/* .lolo-icon {
   position: absolute;
   top: 38px;
   left: 81.3px;
-}
+} */
 .remaining-text {
-  margin: 1px 1px 1px 16px;
+  /* margin: 1px 1px 1px 16px; */
   position: relative;
 }
 .profile-icon {
