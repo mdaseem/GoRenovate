@@ -3,6 +3,9 @@
   padding: 0;
   margin: 0;
 }
+html {
+  -webkit-text-size-adjust: 100%;
+}
 @media screen and (max-width: 768px) {
   input,
   textarea,
@@ -109,4 +112,10 @@ a {
   height: 100dvh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+.overlay-sub-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }

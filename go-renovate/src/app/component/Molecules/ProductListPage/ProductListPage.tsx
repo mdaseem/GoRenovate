@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "./ProductListPage.style.css";
-import ProductPage from "../../HOC/Overlay/Overlay";
+import Overlay from "../../HOC/Overlay/Overlay";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import Filters from "../Filters/view/Filters.view";
 import ProductView from "../../Atoms/ProductView/ProductView";
@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import ProductList from "../ProductList/ProductList";
 import { Loader1 } from "../Loader/Loader";
+import { setOpenStateProductPage } from "@/app/store/features/overLaySlice";
 
 type productType = {
   _id: number;
@@ -25,6 +26,7 @@ function ProductListPage(props: { products: void | Response }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dispatch = useDispatch();
   const { data: session } = useSession();
+  const store = useSelector((state: RootState) => state.overlay);
 
   const productLists = useSelector((state: RootState) => state.productsList);
   const productListsData =
@@ -44,9 +46,14 @@ function ProductListPage(props: { products: void | Response }) {
 
   return (
     <div className="product-page-container">
-      <ProductPage isDisable={false} isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Overlay
+        isDisable={false}
+        isOpen={store.isOpenProductPage}
+        setIsOpen={(payload) => dispatch(setOpenStateProductPage(payload))}
+        shouldReturnNull={product && store.isOpenProductPage ? false : true}
+      >
         <ProductView product={product} />
-      </ProductPage>
+      </Overlay>
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
         {productListsData?.isloading && !props.products ? (
@@ -54,7 +61,9 @@ function ProductListPage(props: { products: void | Response }) {
         ) : (
           <ProductList
             productLists={productListsData}
-            setIsOpen={setIsOpen}
+            setIsOpen={(payload) => {
+              dispatch(setOpenStateProductPage(payload));
+            }}
             setProduct={setProduct}
           />
         )}

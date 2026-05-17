@@ -14,7 +14,7 @@ type productType = {
 type propType = {
   productLists: { data: productType[] };
   setProduct: React.Dispatch<React.SetStateAction<productType>>;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOpen: (payload: boolean) => void;
 };
 
 function ProductList(props: propType) {

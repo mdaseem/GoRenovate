@@ -18,7 +18,7 @@ type productType = {
 
 type propType = {
   product: productType;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOpen: (payload: boolean) => void;
   setProduct: React.Dispatch<React.SetStateAction<productType>>;
 };
 
