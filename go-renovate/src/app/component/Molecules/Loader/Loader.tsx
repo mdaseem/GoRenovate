@@ -77,6 +77,24 @@ export const Loader2 = () => {
   );
 };
 
+export const Loader3 = () => {
+  return (
+    <div className="user-list-container">
+      <h3>Connections </h3>
+      {[0, 1, 2, 3, 4, 5]?.map((user: number) => (
+        <button
+          key={user}
+          onClick={() => {}}
+          disabled={true}
+          className="user-list-item"
+        >
+          {" "}
+        </button>
+      ))}
+    </div>
+  );
+};
+
 export default function Loader() {
   return (
     <div className="loader-main-container">
