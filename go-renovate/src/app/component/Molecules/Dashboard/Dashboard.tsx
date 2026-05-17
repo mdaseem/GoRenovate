@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import ProductListPage from "../ProductListPage/ProductListPage";
 import Overlay from "../../HOC/Overlay/Overlay";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -40,6 +40,37 @@ function Dashboard(props: propType) {
   } | null>(null);
   const store = useAppSelector((state: RootState) => state.overlay);
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (
+      store.isOpen ||
+      store.isOpenChat ||
+      store.isOpenLogin ||
+      store.isUserListOpen ||
+      store.isMobileMenuOpen ||
+      store.isOpenProductPage
+    ) {
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    };
+  }, [
+    store.isOpen,
+    store.isOpenChat,
+    store.isOpenLogin,
+    store.isUserListOpen,
+    store.isMobileMenuOpen,
+    store.isOpenProductPage,
+  ]);
 
   if (!session?.loading && !session?.backendToken && !props.products) {
     switch (status) {
