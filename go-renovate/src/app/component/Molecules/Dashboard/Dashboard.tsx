@@ -107,13 +107,8 @@ function Dashboard(props: propType) {
         isDisable={false}
         isOpen={store.isUserListOpen}
         setIsOpen={(payload) => dispatch(setOpenStateUserList(payload))}
-        shouldReturnNull={store.isUserListOpen ? false : true}
       >
-        {store.isUserListOpen ? (
-          <UserList setSelectedUser={setSelectedUser} />
-        ) : (
-          "users loading..."
-        )}
+        {<UserList setSelectedUser={setSelectedUser} />}
       </Overlay>
       <Overlay
         isDisable={false}
