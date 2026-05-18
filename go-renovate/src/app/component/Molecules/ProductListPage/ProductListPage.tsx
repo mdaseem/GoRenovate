@@ -5,7 +5,7 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import Filters from "../Filters/view/Filters.view";
 import ProductView from "../../Atoms/ProductView/ProductView";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "@/app/store/features/productSlice";
+import { getProducts, setProducts } from "@/app/store/features/productSlice";
 import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import ProductList from "../ProductList/ProductList";
@@ -23,7 +23,6 @@ type productType = {
 
 function ProductListPage(props: { products: void | Response }) {
   const [product, setProduct] = React.useState<productType>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const store = useSelector((state: RootState) => state.overlay);
@@ -41,6 +40,8 @@ function ProductListPage(props: { products: void | Response }) {
   useEffect(() => {
     if (session?.backendToken && !props.products) {
       dispatch(getProducts({ token: session?.backendToken }));
+    } else if(props.products) {
+      dispatch(setProducts({ data: props.products }));
     }
   }, [session]);
 

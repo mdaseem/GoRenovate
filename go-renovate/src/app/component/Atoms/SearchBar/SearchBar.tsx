@@ -1,0 +1,117 @@
+import React, { use, useEffect } from "react";
+import "./SearchBar.css";
+import { RootState } from "@/app/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import ProductTile from "../ProductTile/productTile";
+import { setOpenStateProductPage } from "@/app/store/features/overLaySlice";
+import Overlay from "../../HOC/Overlay/Overlay";
+import ProductView from "../ProductView/ProductView";
+
+type productType = {
+  _id: number;
+  description: string;
+  actualPrice: number;
+  discountPrice: number;
+  rating: number;
+  imageUrl: string | StaticImport;
+} | null;
+
+function SearchBar() {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [product, setProduct] = React.useState<productType>(null);
+  const [onFocus, setOnFocus] = React.useState(false);
+  const store = useSelector((state: RootState) => state);
+  const [filteredProducts, setFilteredProducts] = React.useState<productType[]>(
+    [],
+  );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const filtered = store?.productsList?.prodList?.data?.filter(
+      (product: productType) =>
+        product?.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    setFilteredProducts(filtered);
+  }, [searchTerm]);
+
+  return (
+    <div className="search-bar-container">
+      <input
+        className="search-input"
+        onFocus={() => setOnFocus(true)}
+        onBlur={() => setOnFocus(false)}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="Search..."
+      />
+      {onFocus && !searchTerm.length ? (
+        <div className="search-results-container">
+          <div className="previous-searched-container">
+            <h3>Previously Searched</h3>
+            <div>
+              <p>Living Room</p>
+            </div>
+            <div>
+              <p>Living Room</p>
+            </div>
+            <div>
+              <p>Living Room</p>
+            </div>
+            <div>
+              <p>Living Room</p>
+            </div>
+          </div>
+          <div className="suggestion-searched-container">
+            <h3>Suggestions</h3>
+            <div>
+              <p>Living Room</p>
+            </div>
+            <div>
+              <p>Living Room</p>
+            </div>
+            <div>
+              <p>Living Room</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        onFocus && (
+          <div className="search-results-container">
+            <div className="search-results">
+              {filteredProducts?.length > 0 ? (
+                filteredProducts?.map((product: productType) => (
+                  <div key={product?._id} className="search-result-item">
+                    <ProductTile
+                      setIsOpen={(payload) => {
+                        dispatch(setOpenStateProductPage(payload));
+                      }}
+                      isForSearch={true}
+                      product={product}
+                      setProduct={setProduct}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>No results found.</p>
+              )}
+            </div>
+          </div>
+        )
+      )}
+      {onFocus && searchTerm.length && (
+        <Overlay
+          isDisable={false}
+          isOpen={store.overlay.isOpenProductPage}
+          setIsOpen={(payload) => dispatch(setOpenStateProductPage(payload))}
+          shouldReturnNull={
+            product && store.overlay.isOpenProductPage ? false : true
+          }
+        >
+          <ProductView product={product} />
+        </Overlay>
+      )}
+    </div>
+  );
+}
+
+export default SearchBar;

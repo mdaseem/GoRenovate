@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { loginRequest } from "@/app/store/features/authSlice";
 import { setOpenMobileMenu } from "@/app/store/features/overLaySlice";
+import SearchBar from "../SearchBar/SearchBar";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -31,16 +32,19 @@ export default function Header() {
       <h1 className="header-title">
         <p className="logo-title">
           <span className="logo-title">GoRe</span>
-        <Image
-          src={MyHome}
-          className="logo-title lolo-icon"
-          alt="My Icon"
-          width={15}
-          height={15}
-        />
+          <Image
+            src={MyHome}
+            className="logo-title lolo-icon"
+            alt="My Icon"
+            width={15}
+            height={15}
+          />
           <span className="logo-title remaining-text">ovate</span>
         </p>
       </h1>
+      <div className="search-bar">
+        <SearchBar />
+      </div>
       <nav className="header-nav">
         <ul className="header-nav-list">
           <li className="list-item">

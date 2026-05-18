@@ -17,6 +17,7 @@ type productType = {
 } | null;
 
 type propType = {
+  isForSearch?: boolean;
   product: productType;
   setIsOpen: (payload: boolean) => void;
   setProduct: React.Dispatch<React.SetStateAction<productType>>;
@@ -26,7 +27,7 @@ function ProductTile(props: propType) {
   const { product } = props;
   const favList = useSelector((state: RootState) => state.favoriteList);
   const isFav = favList?.filter(
-    (favprod: productType) => favprod?._id === product?._id
+    (favprod: productType) => favprod?._id === product?._id,
   );
 
   const FullStar = () => (
@@ -49,8 +50,8 @@ function ProductTile(props: propType) {
     for (let i = 0; i < (product?.rating || 0); i++) {
       stars.push(<FullStar key={i} />);
     }
-    return stars
-  }
+    return stars;
+  };
 
   return (
     <div className="tile-container">
@@ -69,15 +70,20 @@ function ProductTile(props: propType) {
           <p className="details-items prod-description">
             {product?.description}
           </p>
-          <p className="details-items prod-price-discount">
+          {/* <p className="details-items prod-price-discount">
             {product?.discountPrice} Rs
-          </p>
-          <p className="details-items prod-price-actual">
+          </p> */}
+          {/* <p className="details-items prod-price-actual">
             {product?.actualPrice} Rs
-          </p>
+          </p> */}
           <div className="price-strike-line" />
           <p className="details-items">{rateStar()}</p>
-          <MyFavorites prodData={product} isFav={isFav.length ? true : false} />
+          {!props.isForSearch && (
+            <MyFavorites
+              prodData={product}
+              isFav={isFav.length ? true : false}
+            />
+          )}
         </div>
       </div>
       <div className="prod-button-container">
@@ -88,7 +94,7 @@ function ProductTile(props: propType) {
           }}
           className="buy-prod"
         >
-          View 
+          View
         </button>
       </div>
     </div>
