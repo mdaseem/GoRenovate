@@ -54,7 +54,7 @@ function ProductTile(props: propType) {
   };
 
   return (
-    <div className="tile-container">
+    <div key={product?._id} className="tile-container">
       {/* <FavoriteIcon /> */}
       <div className="tile-sub-container">
         <Link href="" className="img-container">
@@ -76,7 +76,7 @@ function ProductTile(props: propType) {
           {/* <p className="details-items prod-price-actual">
             {product?.actualPrice} Rs
           </p> */}
-          <div className="price-strike-line" />
+          {/* <div className="price-strike-line" /> */}
           <p className="details-items">{rateStar()}</p>
           {!props.isForSearch && (
             <MyFavorites
@@ -88,7 +88,7 @@ function ProductTile(props: propType) {
       </div>
       <div className="prod-button-container">
         <button
-          onClick={() => {
+          onMouseDown={() => {
             props.setIsOpen(true);
             props.setProduct(props.product);
           }}
