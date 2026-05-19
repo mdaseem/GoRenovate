@@ -89,8 +89,8 @@
       width: 100%;
       object-fit: contain;
     }
-    .details-item {
-      text-align: left;
-    }
+  }
+  .details-items {
+    text-align: left;
   }
 }
