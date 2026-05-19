@@ -59,7 +59,7 @@ function SearchBar() {
       {onFocus && !searchTerm.length ? (
         <div className="search-results-container">
           <div className="previous-searched-container">
-            <h3>Previously Searched</h3>
+            <h4>Previously Searched</h4>
             <div>
               <p>Living Room</p>
             </div>
@@ -74,7 +74,7 @@ function SearchBar() {
             </div>
           </div>
           <div className="suggestion-searched-container">
-            <h3>Suggestions</h3>
+            <h4>Suggestions</h4>
             <div>
               <p>Living Room</p>
             </div>

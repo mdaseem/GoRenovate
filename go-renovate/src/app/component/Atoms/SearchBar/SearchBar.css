@@ -14,8 +14,8 @@
 .search-results-container {
   position: absolute;
   top: 100%;
-  left: 21%;
-  width: 62%;
+  width: 100%;
+  left: 0;
   background-color: white;
   border: 1px solid #ccc;
   border-top: none;
@@ -28,8 +28,8 @@
 .search-results-container-results {
   position: absolute;
   top: 100%;
-  left: 21%;
-  width: 62%;
+  left: 0;
+  width: 100%;
   background-color: white;
   border: 1px solid #ccc;
   border-top: none;
