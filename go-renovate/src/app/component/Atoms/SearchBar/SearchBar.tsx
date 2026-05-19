@@ -4,7 +4,7 @@ import { RootState } from "@/app/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import ProductTile from "../ProductTile/productTile";
-import { setOpenStateProductPage } from "@/app/store/features/overLaySlice";
+import { setOpenStateProductPageFromSearch } from "@/app/store/features/overLaySlice";
 import Overlay from "../../HOC/Overlay/Overlay";
 import ProductView from "../ProductView/ProductView";
 
@@ -36,6 +36,18 @@ function SearchBar() {
 
   return (
     <div className="search-bar-container">
+      <Overlay
+        isDisable={false}
+        isOpen={store.overlay.isOpenProductPageFromSearch}
+        setIsOpen={(payload) =>
+          dispatch(setOpenStateProductPageFromSearch(payload))
+        }
+        shouldReturnNull={
+          product && store.overlay.isOpenProductPageFromSearch ? false : true
+        }
+      >
+        <ProductView product={product} />
+      </Overlay>
       <input
         className="search-input"
         onFocus={() => setOnFocus(true)}
@@ -76,14 +88,15 @@ function SearchBar() {
         </div>
       ) : (
         onFocus && (
-          <div className="search-results-container">
+          <div className="search-results-container-results">
+            <h4>Results</h4>
             <div className="search-results">
               {filteredProducts?.length > 0 ? (
                 filteredProducts?.map((product: productType) => (
                   <div key={product?._id} className="search-result-item">
                     <ProductTile
                       setIsOpen={(payload) => {
-                        dispatch(setOpenStateProductPage(payload));
+                        dispatch(setOpenStateProductPageFromSearch(payload));
                       }}
                       isForSearch={true}
                       product={product}
@@ -97,18 +110,6 @@ function SearchBar() {
             </div>
           </div>
         )
-      )}
-      {onFocus && searchTerm.length && (
-        <Overlay
-          isDisable={false}
-          isOpen={store.overlay.isOpenProductPage}
-          setIsOpen={(payload) => dispatch(setOpenStateProductPage(payload))}
-          shouldReturnNull={
-            product && store.overlay.isOpenProductPage ? false : true
-          }
-        >
-          <ProductView product={product} />
-        </Overlay>
       )}
     </div>
   );
