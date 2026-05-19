@@ -35,7 +35,7 @@ function SearchBar() {
   }, [searchTerm]);
 
   return (
-    <div className="search-bar-container">
+    <div className={`search-bar-container ${onFocus ? "expanded" : ""}`}>
       <Overlay
         isDisable={false}
         isOpen={store.overlay.isOpenProductPageFromSearch}
