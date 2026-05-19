@@ -1,8 +1,14 @@
 .search-bar-container {
-  width: 70%;
+  width: 30%;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition:
+    flex-grow 900ms ease,
+    width 300ms ease;
+}
+.search-bar-container.expanded {
+  width: 70%;
 }
 .search-input {
   width: 100%;

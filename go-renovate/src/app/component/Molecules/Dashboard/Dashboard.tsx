@@ -48,7 +48,8 @@ function Dashboard(props: propType) {
       store.isOpenLogin ||
       store.isUserListOpen ||
       store.isMobileMenuOpen ||
-      store.isOpenProductPage
+      store.isOpenProductPage ||
+      store.isOpenProductPageFromSearch
     ) {
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
@@ -70,6 +71,7 @@ function Dashboard(props: propType) {
     store.isUserListOpen,
     store.isMobileMenuOpen,
     store.isOpenProductPage,
+    store.isOpenProductPageFromSearch,
   ]);
 
   if (!session?.loading && !session?.backendToken && !props.products) {

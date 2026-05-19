@@ -117,6 +117,11 @@ const Chat = () => {
           value={message}
           disabled={!isConnected}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              sendMessage();
+            }
+          }}
           placeholder="Type message..."
           className="chat-input"
         />
