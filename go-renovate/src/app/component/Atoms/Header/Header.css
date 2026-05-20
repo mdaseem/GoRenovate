@@ -81,10 +81,6 @@
       color: green;
     }
   }
-  .header-nav-profile {
-    background-color: green;
-    color: white;
-  }
 }
 .header-nav-profile:hover {
   background-color: #c4fd5b;
@@ -116,7 +112,9 @@
 }
 
 @media (max-width: 768px) {
-  .search-bar {
+  .profile-icon {
+    height: 24px;
+    width: 24px;
   }
   .header-title {
     flex: 16;

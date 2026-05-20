@@ -1,5 +1,5 @@
 .search-bar-container {
-  width: 30%;
+  width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -98,5 +98,35 @@
   }
   .details-items {
     text-align: left;
+  }
+}
+
+@media (max-width: 400px) {
+  .search-input {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+  .search-results-container-results {
+    padding: 0px 15px;
+  }
+  .previous-searched-container {
+    padding: 4px;
+    font-size: 12px;
+  }
+  .suggestion-searched-container {
+    padding: 4px;
+    font-size: 12px;
+  }
+  .search-bar-container {
+    width: 70%;
+  }
+  .search-bar-container.expanded {
+    width: 90%;
+  }
+  .header-title {
+    flex: 16;
+  }
+  .header-nav {
+    flex: 4;
   }
 }
