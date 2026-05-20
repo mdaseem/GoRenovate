@@ -1,7 +1,6 @@
 import React from "react";
 import Dashboard from "./component/Molecules/Dashboard/Dashboard";
 import axios, { AxiosResponse } from "axios";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 
@@ -29,7 +28,7 @@ async function getProducts() {
               actualPrice: number;
               discountPrice: number;
               rating: number;
-              imageUrl: string | StaticImport;
+              imageUrl: string[];
             } | null;
           }
         >,

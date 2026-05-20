@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import "./WishListPage.css";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import ProductTile from "../../Atoms/ProductTile/productTile";
@@ -14,7 +13,7 @@ type productType = {
   actualPrice: number;
   discountPrice: number;
   rating: number;
-  imageUrl: string | StaticImport;
+  imageUrl: string[];
 } | null;
 
 type PropsType = {

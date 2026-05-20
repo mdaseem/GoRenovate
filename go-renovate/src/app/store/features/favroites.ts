@@ -6,7 +6,7 @@ type prodType = {
   _id: number;
   name: string;
   price: number;
-  image: string;
+  image: string[];
 };
 
 export const favListSlice = createSlice({
@@ -15,7 +15,7 @@ export const favListSlice = createSlice({
   reducers: {
     setFavsData: (store, { payload }) => {
       const prodfound = store?.filter(
-        (item: prodType) => item._id === payload._id
+        (item: prodType) => item._id === payload._id,
       );
       if (prodfound.length) {
         return store;
@@ -24,14 +24,14 @@ export const favListSlice = createSlice({
       }
       return store;
     },
-    unsetFavState: (store,{payload}) => {
-        const prodAfterUnFav = store?.filter(
-            (item: prodType) => item._id != payload._id
-          );
-          return prodAfterUnFav
-    }
+    unsetFavState: (store, { payload }) => {
+      const prodAfterUnFav = store?.filter(
+        (item: prodType) => item._id != payload._id,
+      );
+      return prodAfterUnFav;
+    },
   },
 });
 
-export const { setFavsData,unsetFavState } = favListSlice.actions;
+export const { setFavsData, unsetFavState } = favListSlice.actions;
 export default favListSlice.reducer;

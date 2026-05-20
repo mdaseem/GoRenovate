@@ -14,7 +14,7 @@ type productType = {
   actualPrice: number;
   discountPrice: number;
   rating: number;
-  imageUrl: string | StaticImport;
+  imageUrl: string[];
 } | null;
 
 function SearchBar() {
