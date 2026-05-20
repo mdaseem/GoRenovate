@@ -81,10 +81,6 @@
       color: green;
     }
   }
-  .header-nav-profile {
-    background-color: green;
-    color: white;
-  }
 }
 .header-nav-profile:hover {
   background-color: #c4fd5b;
