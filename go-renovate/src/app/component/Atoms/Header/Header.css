@@ -116,7 +116,9 @@
 }
 
 @media (max-width: 768px) {
-  .search-bar {
+  .profile-icon {
+    height: 24px;
+    width: 24px;
   }
   .header-title {
     flex: 16;
