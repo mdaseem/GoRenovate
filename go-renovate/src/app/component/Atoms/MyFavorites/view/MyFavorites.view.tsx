@@ -2,7 +2,6 @@ import React from "react";
 import "../style/MyFavorites.style.css";
 import { useDispatch } from "react-redux";
 import { setFavsData, unsetFavState } from "@/app/store/features/favroites";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 type productType = {
   _id: number;
@@ -10,7 +9,7 @@ type productType = {
   actualPrice: number;
   discountPrice: number;
   rating: number;
-  imageUrl: string | StaticImport;
+  imageUrl: string[];
 } | null;
 
 type propType = {

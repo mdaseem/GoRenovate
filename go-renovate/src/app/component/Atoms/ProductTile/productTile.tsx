@@ -13,7 +13,7 @@ type productType = {
   actualPrice: number;
   discountPrice: number;
   rating: number;
-  imageUrl: string | StaticImport;
+  imageUrl: string[];
 } | null;
 
 type propType = {
@@ -25,6 +25,7 @@ type propType = {
 
 function ProductTile(props: propType) {
   const { product } = props;
+  const imageUrl = product?.imageUrl?.[0] || "";
   const favList = useSelector((state: RootState) => state.favoriteList);
   const isFav = favList?.filter(
     (favprod: productType) => favprod?._id === product?._id,
@@ -60,7 +61,7 @@ function ProductTile(props: propType) {
         <Link href="" className="img-container">
           <Image
             className="product-img"
-            src={product?.imageUrl || ""}
+            src={imageUrl}
             alt="product bag"
             width={230}
             height={220}

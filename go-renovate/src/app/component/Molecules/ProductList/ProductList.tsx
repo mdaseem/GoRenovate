@@ -1,6 +1,5 @@
 import React from "react";
 import ProductTile from "../../Atoms/ProductTile/productTile";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 type productType = {
   _id: number;
@@ -8,7 +7,7 @@ type productType = {
   actualPrice: number;
   discountPrice: number;
   rating: number;
-  imageUrl: string | StaticImport;
+  imageUrl: string[];
 } | null;
 
 type propType = {
