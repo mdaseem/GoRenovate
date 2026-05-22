@@ -69,7 +69,9 @@
   display: none;
 }
 .password-label {
-  transition: flex-grow 900ms ease, width 300ms ease;
+  transition:
+    flex-grow 900ms ease,
+    width 300ms ease;
 }
 .password-label.expanded {
   flex-grow: 3;
@@ -117,6 +119,62 @@
   text-decoration: none;
   padding: 2px;
   text-align: center;
+}
+
+.login-input.input-error {
+  border-color: #e05c5c;
+  outline-color: #e05c5c;
+  background-color: #fff5f5;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.login-input.input-success {
+  border-color: #4caf7d;
+  outline-color: #4caf7d;
+  background-color: #f4fff8;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.validation-message {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  animation: fadeSlideIn 0.18s ease forwards;
+}
+
+.error-message {
+  color: #e05c5c;
+}
+
+.success-message {
+  color: #4caf7d;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-submit.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(30%);
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
 }
 
 @media (max-width: 440px) {
