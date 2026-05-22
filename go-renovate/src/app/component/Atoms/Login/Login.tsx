@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import "./Login.css";
 import AuthButtons from "../AuthButtons/AuthButtons";
 import Link from "next/link";
 import { useAppDispatch } from "@/app/store/hooks";
 import { SignupRequest } from "@/app/store/features/authSlice";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -13,6 +13,30 @@ export default function Login() {
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const dispatch = useAppDispatch();
+  const { data: session } = useSession();
+
+  const signInOrSignUp = async () => {
+    if (isLogin) {
+      await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+    } else if (!isLogin && password === confirmPassword) {
+      dispatch(
+        SignupRequest({
+          email: email,
+          password: "password",
+        }),
+      );
+    }
+  };
+
+  const onEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      signInOrSignUp();
+    }
+  };
   return (
     <div className="login-container">
       <div className="login-box">
@@ -51,6 +75,7 @@ export default function Login() {
                 name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => onEnter(e)}
                 required
               />
             </label>
@@ -67,6 +92,7 @@ export default function Login() {
                 name="confirm-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyDown={(e) => onEnter(e)}
                 required
               />
             </label>
@@ -76,24 +102,12 @@ export default function Login() {
           <button
             className="login-submit submit-buttons"
             onClick={async () => {
-              if (isLogin) {
-                await signIn("credentials", {
-                  email,
-                  password,
-                  redirect: false,
-                });
-              } else if (!isLogin && password === confirmPassword) {
-                dispatch(
-                  SignupRequest({
-                    email: email,
-                    password: "password",
-                  }),
-                );
-              }
+              await signInOrSignUp();
             }}
           >
             {isLogin ? "Login" : "Signup"}
           </button>
+          {/* {!session?.loading ? <div className="loader" /> : null} */}
           <div className="or-line">
             <div className="line" />
             <p className="or-para">or</p>

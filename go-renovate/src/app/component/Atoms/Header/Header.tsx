@@ -29,7 +29,14 @@ export default function Header() {
   return (
     <header className="header">
       <h1 className="header-title">
-        <Image src="/MyLogo.gif" alt="logo" width={180} height={80} />
+        <Image
+          //  loading="lazy"
+          priority={true}
+          src="/MyLogo.gif"
+          alt="logo"
+          width={180}
+          height={80}
+        />
       </h1>
       <div className="search-bar">
         <SearchBar />
@@ -37,16 +44,18 @@ export default function Header() {
       <nav className="header-nav">
         <ul className="header-nav-list">
           <li className="list-item">
-            <button className="header-nav-profile">
-              <Image
-                src={session?.user?.image || MyIcon}
-                onClick={() => dispatch(setOpenMobileMenu(true))}
-                className="profile-icon"
-                alt="User Image"
-                width={30}
-                height={30}
-              />
-            </button>
+            {session && (
+              <button className="header-nav-profile">
+                <Image
+                  src={session?.user?.image || MyIcon}
+                  onClick={() => dispatch(setOpenMobileMenu(true))}
+                  className="profile-icon"
+                  alt="User Image"
+                  width={30}
+                  height={30}
+                />
+              </button>
+            )}
           </li>
         </ul>
       </nav>
