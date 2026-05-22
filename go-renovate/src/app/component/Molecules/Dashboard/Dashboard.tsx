@@ -17,15 +17,13 @@ function Dashboard(props: propType) {
   const store = useAppSelector((state: RootState) => state.overlay);
   const { data: session, status } = useSession();
 
-  const LoginContainer =
-    store.isOpenLogin &&
-    dynamic(
-      () => import("@/app/component/Molecules/LoginContainer/LoginContainer"),
-      {
-        loading: () => <Loader />,
-        ssr: false,
-      },
-    );
+  const LoginContainer = dynamic(
+    () => import("@/app/component/Molecules/LoginContainer/LoginContainer"),
+    {
+      loading: () => <Loader />,
+      ssr: false,
+    },
+  );
 
   useStopScrollOnOverlay();
 
