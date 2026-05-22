@@ -17,7 +17,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Go Renovate",
   description: "Go get your home interior renovated with Go Renovate",
-  viewport: "width=device-width, initial-scale=1",
 };
 
 export const viewport: Viewport = {

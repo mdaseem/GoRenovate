@@ -2,7 +2,6 @@ import React, { use, useEffect } from "react";
 import "./SearchBar.css";
 import { RootState } from "@/app/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import ProductTile from "../ProductTile/productTile";
 import { setOpenStateProductPageFromSearch } from "@/app/store/features/overLaySlice";
 import Overlay from "../../HOC/Overlay/Overlay";
@@ -21,13 +20,16 @@ function SearchBar() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [product, setProduct] = React.useState<productType>(null);
   const [onFocus, setOnFocus] = React.useState(false);
-  const store = useSelector((state: RootState) => state);
+  const productsList = useSelector(
+    (state: RootState) => state.overlay.productsList,
+  );
+  const overlay = useSelector((state: RootState) => state.overlay.overlay);
   const [filteredProducts, setFilteredProducts] = React.useState<productType[]>(
     [],
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    const filtered = store?.productsList?.prodList?.data?.filter(
+    const filtered = productsList?.prodList?.data?.filter(
       (product: productType) =>
         product?.description?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
@@ -38,12 +40,12 @@ function SearchBar() {
     <div className={`search-bar-container ${onFocus ? "expanded" : ""}`}>
       <Overlay
         isDisable={false}
-        isOpen={store.overlay.isOpenProductPageFromSearch}
+        isOpen={overlay?.isOpenProductPageFromSearch}
         setIsOpen={(payload) =>
           dispatch(setOpenStateProductPageFromSearch(payload))
         }
         shouldReturnNull={
-          product && store.overlay.isOpenProductPageFromSearch ? false : true
+          product && overlay?.isOpenProductPageFromSearch ? false : true
         }
       >
         <ProductView product={product} />
