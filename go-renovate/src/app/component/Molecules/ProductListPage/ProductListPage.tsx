@@ -40,7 +40,7 @@ function ProductListPage(props: { products: void | Response }) {
   useEffect(() => {
     if (session?.backendToken && !props.products) {
       dispatch(getProducts({ token: session?.backendToken }));
-    } else if(props.products) {
+    } else if (props.products) {
       dispatch(setProducts({ data: props.products }));
     }
   }, [session]);

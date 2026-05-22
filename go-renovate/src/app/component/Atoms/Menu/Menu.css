@@ -35,3 +35,10 @@
     flex: 6;
   }
 }
+
+@media (min-width: 1080px) {
+  .header-nav {
+    flex: 1;
+    padding: 0 5px;
+  }
+}
