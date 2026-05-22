@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import "./Header.css";
 import MyIcon from "../../../../../public/user_profile.svg";
-import MyHome from "../../../../../public/house_icon.svg";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -30,17 +29,7 @@ export default function Header() {
   return (
     <header className="header">
       <h1 className="header-title">
-        <p className="logo-title">
-          <span className="logo-title">GoRe</span>
-          <Image
-            src={MyHome}
-            className="logo-title lolo-icon"
-            alt="My Icon"
-            width={15}
-            height={15}
-          />
-          <span className="logo-title remaining-text">ovate</span>
-        </p>
+        <Image src="/MyLogo.gif" alt="logo" width={180} height={80} />
       </h1>
       <div className="search-bar">
         <SearchBar />

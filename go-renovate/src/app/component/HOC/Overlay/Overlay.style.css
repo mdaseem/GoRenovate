@@ -1,10 +1,8 @@
 .product-detail-page-container {
   border: 1px solid;
   .product-container-in-overlay {
-    .product-img {
-      height: 100%;
-      flex: 1;
-    }
+    display: flex;
+    justify-content: center;
   }
   .product-detail-info {
     flex: 1;
