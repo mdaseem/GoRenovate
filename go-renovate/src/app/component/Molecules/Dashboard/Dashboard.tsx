@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
-import ProductListPage from "../ProductListPage/ProductListPage";
+// import ProductListPage from "../ProductListPage/ProductListPage";
 import Loader from "../Loader/Loader";
 import { useSession } from "next-auth/react";
 import RenderFromOverlay from "../../Atoms/RenderFromOverlay/RenderFromOverlay";
 import { useStopScrollOnOverlay } from "../../CustomHooks/useStopScrollOnOverlay";
 import LoginContainer from "../LoginContainer/LoginContainer";
+import HomePage from "../HomePage/HomePage";
 
 type propType = {
   products: void | Response;
@@ -16,20 +17,22 @@ function Dashboard(props: propType) {
 
   useStopScrollOnOverlay();
 
+  if (status === "loading" && !session) {
+    return <Loader />;
+  }
+
   if (!session?.loading && !session?.backendToken && !props.products) {
-    switch (status) {
-      case "loading":
-        return <Loader />;
-      case "unauthenticated":
-        return <LoginContainer />;
-      default:
-        return <LoginContainer />;
+    if (status === "unauthenticated") {
+      return <LoginContainer />;
+    } else {
+      return <LoginContainer />;
     }
   }
 
   return (
     <>
-      <ProductListPage products={props.products} />
+      {/* <ProductListPage products={props.products} /> */}
+      <HomePage />
       <RenderFromOverlay />
     </>
   );
