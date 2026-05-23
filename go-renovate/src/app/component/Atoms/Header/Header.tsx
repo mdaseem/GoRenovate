@@ -38,9 +38,7 @@ export default function Header() {
           height={80}
         />
       </h1>
-      <div className="search-bar">
-        <SearchBar />
-      </div>
+      <div className="search-bar">{session && <SearchBar />}</div>
       <nav className="header-nav">
         <ul className="header-nav-list">
           <li className="list-item">
