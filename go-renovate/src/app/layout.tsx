@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./store/Provider";
 import Header from "./component/Atoms/Header/Header";
+import RenderFromOverlay from "./component/Atoms/RenderFromOverlay/RenderFromOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
             <Header />
             {/* <Suspense fallback={<Loader />}> */}
             {children}
+            <RenderFromOverlay />
             {/* </Suspense> */}
           </>
         </Providers>

@@ -15,9 +15,11 @@ import UserList from "../../Atoms/UserList/UserList";
 import Menu from "../../Atoms/Menu/Menu";
 import dynamic from "next/dynamic";
 import Loader, { Loader1 } from "../../Molecules/Loader/Loader";
+import { useStopScrollOnOverlay } from "../../CustomHooks/useStopScrollOnOverlay";
 
 function RenderFromOverlay() {
   const dispatch = useAppDispatch();
+  useStopScrollOnOverlay();
   const [selectedUser, setSelectedUser] = React.useState<{
     id: string;
     Name: string;
