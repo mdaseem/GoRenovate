@@ -191,8 +191,9 @@ export default function HomePage() {
 
           <div className={styles.categoryGrid}>
             {categories.map((cat) => (
-              <a
-                href={`#${cat.title.toLowerCase().replace(/\s+/g, "-")}`}
+              <Link
+                // href={`#${cat.title.toLowerCase().replace(/\s+/g, "-")}`}
+                href={"/products"}
                 key={cat.id}
                 className={styles.categoryCard}
               >
@@ -201,7 +202,7 @@ export default function HomePage() {
                 <h3 className={styles.cardTitle}>{cat.title}</h3>
                 <p className={styles.cardDesc}>{cat.description}</p>
                 <span className={styles.cardArrow}>→</span>
-              </a>
+              </Link>
             ))}
           </div>
         </section>
@@ -260,7 +261,7 @@ export default function HomePage() {
                 <div className={styles.testimonialStars}>
                   {"★".repeat(t.rating)}
                 </div>
-                {/* <p className={styles.testimonialQuote}>"{t.quote}"</p> */}
+                <p className={styles.testimonialQuote}>{`"${t.quote}"`}</p>
                 <div className={styles.testimonialAuthor}>
                   <span className={styles.testimonialAvatar}>{t.name[0]}</span>
                   <div>

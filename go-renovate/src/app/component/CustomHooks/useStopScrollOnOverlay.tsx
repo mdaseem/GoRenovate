@@ -1,3 +1,4 @@
+"use client";
 import { useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import { useEffect } from "react";
