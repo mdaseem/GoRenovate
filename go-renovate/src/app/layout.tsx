@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Go Renovate",
   description: "Go get your home interior renovated with Go Renovate",
+  icons: {
+    icon: "/my_logo.png",
+  },
 };
 
 export const viewport: Viewport = {

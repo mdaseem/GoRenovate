@@ -298,7 +298,7 @@ export default function HomePage() {
           <div className={styles.footerBrand}>
             <Link href="/" className={styles.logo}>
               <span className={styles.logoMark}>R</span>
-              <span className={styles.logoText}>Renovare</span>
+              <span className={styles.logoText}>Gorenovate</span>
             </Link>
             <p className={styles.footerTagline}>
               Crafting beautiful homes across India since 2012.
@@ -321,7 +321,7 @@ export default function HomePage() {
             </div>
             <div className={styles.footerCol}>
               <h4>Contact</h4>
-              <a href="mailto:hello@renovare.in">hello@renovare.in</a>
+              <a href="mailto:hello@gorenovate.in">hello@gorenovate.in</a>
               <a href="tel:+918000000000">+91 80 0000 0000</a>
               <a href="#">Bengaluru, India</a>
             </div>
@@ -329,7 +329,7 @@ export default function HomePage() {
         </div>
         <div className={styles.footerBottom}>
           <span>
-            © {new Date().getFullYear()} Renovare. All rights reserved.
+            © {new Date().getFullYear()} Gorenovate All rights reserved.
           </span>
           <div className={styles.footerLegal}>
             <a href="#">Privacy Policy</a>

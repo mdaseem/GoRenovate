@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import "./ProductListPage.style.css";
 import Overlay from "../../HOC/Overlay/Overlay";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import Filters from "../Filters/view/Filters.view";
 import ProductView from "../../Atoms/ProductView/ProductView";
 import { useDispatch, useSelector } from "react-redux";
