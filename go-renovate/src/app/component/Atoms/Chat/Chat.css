@@ -7,6 +7,13 @@
   border-radius: 8px;
   width: 100%;
 }
+.time-sent {
+  display: block;
+  font-size: 0.8em;
+  color: #242323;
+  margin-top: 4px;
+  text-align: right;
+}
 .chat-input {
   padding: 10px;
   border: 1px solid #ddd;
@@ -68,9 +75,4 @@
 }
 .received {
   align-self: flex-start;
-}
-@media (max-width: 700px) {
-  .chat-heading {
-    margin-left: 0px;
-  }
 }
