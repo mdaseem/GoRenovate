@@ -25,7 +25,10 @@ const Chat = () => {
 
   const user1Id = session?.user?.id;
   const user2Id = session?.user?.connections?.[0]?.userId; // first connection
-  const roomId = [user1Id, user2Id].sort().join("_");
+  let roomId = [user1Id, user2Id].sort().join("_");
+  if (!user2Id) {
+    roomId = "public";
+  }
 
   const fetchMessages = async () => {
     try {
@@ -82,7 +85,7 @@ const Chat = () => {
       message: message,
       sender: session?.user?.name || "",
       senderId: user1Id?.toString() || "",
-      receiverId: user2Id?.toString() || "",
+      receiverId: user2Id?.toString() || "unknown",
     };
 
     // send to backend
@@ -102,12 +105,12 @@ const Chat = () => {
       <div className="chat-container">
         <h2 className="chat-heading">Chat</h2>
         <div className="message-container">
-          {messages.map((msg, index) => (
+          {messages?.map((msg, index) => (
             <p
               key={index}
-              className={`message ${msg.senderId === user1Id?.toString() ? "sent" : "received"}`}
+              className={`message ${msg?.senderId === user1Id?.toString() ? "sent" : "received"}`}
             >
-              <b>{msg.sender}:</b> {msg.message}
+              <b>{msg?.sender}:</b> {msg?.message}
             </p>
           ))}
         </div>
