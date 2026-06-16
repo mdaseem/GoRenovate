@@ -12,6 +12,7 @@ interface Message {
   senderId: string;
   receiverId: string;
   sender: string;
+  updatedAt: string;
 }
 
 const Chat = () => {
@@ -86,6 +87,7 @@ const Chat = () => {
       sender: session?.user?.name || "",
       senderId: user1Id?.toString() || "",
       receiverId: user2Id?.toString() || "unknown",
+      updatedAt: new Date().toISOString(),
     };
 
     // send to backend
@@ -111,6 +113,13 @@ const Chat = () => {
               className={`message ${msg?.senderId === user1Id?.toString() ? "sent" : "received"}`}
             >
               <b>{msg?.sender}:</b> {msg?.message}
+              <span className="time-sent">
+                {new Date(msg?.updatedAt).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </span>
             </p>
           ))}
         </div>
