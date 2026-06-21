@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: #f0ede8;
+  background: #fff;
   font-family: "Inter", sans-serif;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .categoryTitle {
-  font-family: "Playfair Display", Georgia, serif;
+  /* font-family: "Playfair Display", Georgia, serif; */
   font-size: 1.35rem;
   font-weight: 700;
   color: #1a1f2e;
@@ -56,8 +56,8 @@
   bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #1a1f2e;
-  color: #fff;
+  background: #c4fd5b;
+  color: #000;
   border: none;
   border-radius: 100px;
   padding: 0.85rem 1.75rem;
@@ -90,7 +90,8 @@
 }
 
 .cartFab:hover {
-  background: #07e207;
+  background: green;
+  color: #fff;
   transform: translateX(-50%) translateY(-2px);
   box-shadow: 0 12px 40px rgba(200, 118, 42, 0.35);
 }
@@ -110,8 +111,8 @@
 }
 
 .fabBadge {
-  background: green;
-  color: #fff;
+  background: white;
+  color: #000;
   width: 1.4rem;
   height: 1.4rem;
   border-radius: 50%;
