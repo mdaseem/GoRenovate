@@ -50,6 +50,7 @@
   align-items: center;
   gap: 10px;
   border-radius: 100%;
+  pointer-events: auto;
 }
 .list-item {
   text-decoration: none;
@@ -82,10 +83,10 @@
     }
   }
 }
-.header-nav-profile:hover {
+/* .header-nav-profile:hover {
   background-color: #c4fd5b;
   color: white;
-}
+} */
 .header-title {
   display: flex;
   flex: 13;
