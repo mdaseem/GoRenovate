@@ -33,6 +33,7 @@
 }
 .prod-description {
   font-weight: 500;
+  max-width: 220px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

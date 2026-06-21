@@ -10,6 +10,7 @@ import { RootState } from "@/app/store/store";
 import ProductList from "../ProductList/ProductList";
 import { Loader1 } from "../Loader/Loader";
 import { setOpenStateProductPage } from "@/app/store/features/overLaySlice";
+import VendorPage from "../../VendorPage/VendorPage";
 
 type productType = {
   _id: number;
@@ -52,7 +53,8 @@ function ProductListPage(props: { products: void | Response }) {
         setIsOpen={(payload) => dispatch(setOpenStateProductPage(payload))}
         shouldReturnNull={product && store.isOpenProductPage ? false : true}
       >
-        <ProductView product={product} />
+        {/* <ProductView product={product} /> */}
+        <VendorPage />
       </Overlay>
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">

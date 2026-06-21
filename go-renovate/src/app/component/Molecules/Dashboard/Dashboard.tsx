@@ -12,9 +12,9 @@ type propType = {
 function Dashboard(props: propType) {
   const { data: session, status } = useSession();
 
-  if (status === "loading" && !session) {
-    return <Loader />;
-  }
+  // if (status === "loading" && !session) {
+  //   return <Loader />;
+  // }
 
   if (!session?.loading && !session?.backendToken && !props.products) {
     if (status === "unauthenticated") {

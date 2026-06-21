@@ -11,16 +11,34 @@
     flex: 1;
   }
 }
+.overlay-header-container {
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  /* width: 100%; */
+}
+.temp-space {
+  flex: 12;
+  background-color: white;
+}
+.header-back {
+  flex: 1;
+  background-color: white;
+}
 .go-back {
   margin: 20px;
+  flex: 1;
   padding: 22px 0 15px;
   background-color: white;
   border: 0px solid white;
   cursor: pointer;
   height: min-content;
-  position: sticky;
   top: 0;
   z-index: 100;
+  text-align: left;
 }
 .product-detail-page-content {
   display: flex;
