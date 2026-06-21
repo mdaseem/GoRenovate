@@ -83,7 +83,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
       <div className={styles.drawer} ref={drawerRef} tabIndex={-1}>
         <div className={styles.drawerHeader}>
           <h2 className={styles.drawerTitle}>
-            Your Quote
+            Your Cart
             {totalQuantity > 0 && (
               <span className={styles.itemCount}>
                 · {totalQuantity} service{totalQuantity !== 1 ? "s" : ""}

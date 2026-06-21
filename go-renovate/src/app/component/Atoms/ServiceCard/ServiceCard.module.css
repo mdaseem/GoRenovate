@@ -5,13 +5,17 @@
   padding: 1.25rem;
   display: flex;
   gap: 1rem;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
   position: relative;
 }
 
 .card:hover {
-  box-shadow: 0 6px 24px rgba(26, 31, 46, 0.1);
-  transform: translateY(-2px);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transform: rotateY(15deg) rotateX(8deg) translateZ(10px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
 }
 
 .popularRibbon {
@@ -20,7 +24,7 @@
   right: 1rem;
   background: #07e207;
   color: #fff;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -43,7 +47,7 @@
 }
 
 .serviceName {
-  font-family: 'Playfair Display', Georgia, serif;
+  /* font-family: 'Playfair Display', Georgia, serif; */
   font-size: 1rem;
   font-weight: 700;
   color: #1a1f2e;
@@ -55,7 +59,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.67rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -74,7 +78,7 @@
 }
 
 .serviceDescription {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.82rem;
   color: #6b7280;
   line-height: 1.55;
@@ -89,7 +93,7 @@
 }
 
 .includeChip {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.68rem;
   color: #4b5563;
   background: #f3f4f6;
@@ -113,7 +117,7 @@
 }
 
 .price {
-  font-family: 'Playfair Display', Georgia, serif;
+  /* font-family: 'Playfair Display', Georgia, serif; */
   font-size: 1.2rem;
   font-weight: 700;
   color: #1a1f2e;
@@ -121,13 +125,13 @@
 }
 
 .priceUnit {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.72rem;
   color: #9ca3af;
 }
 
 .estimatedDays {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.72rem;
   color: #9ca3af;
   margin-top: 0.1rem;
@@ -143,12 +147,12 @@
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  background: #1a1f2e;
-  color: #f8f6f1;
+  background: #c4fd5b;
+  color: #000;
   border: none;
   border-radius: 8px;
   padding: 0.55rem 1.1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
@@ -157,7 +161,7 @@
 }
 
 .addButton:hover {
-  background: #07e207;
+  background: green;
 }
 
 .addButton:focus-visible {
@@ -199,7 +203,7 @@
 }
 
 .qtyValue {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   color: #1a1f2e;

@@ -157,7 +157,7 @@ const VendorPage: React.FC = () => {
           <span className={styles.fabIcon} aria-hidden="true">
             🗂️
           </span>
-          <span>View Quote</span>
+          <span>View Cart</span>
           <span className={styles.fabBadge} aria-hidden="true">
             {totalItems}
           </span>
