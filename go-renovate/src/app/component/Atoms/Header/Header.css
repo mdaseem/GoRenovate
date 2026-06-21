@@ -50,7 +50,7 @@
   align-items: center;
   gap: 10px;
   border-radius: 100%;
-  pointer-events: auto;
+  cursor: pointer;
 }
 .list-item {
   text-decoration: none;
