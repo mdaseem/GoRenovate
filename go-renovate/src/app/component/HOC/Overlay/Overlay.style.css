@@ -18,7 +18,7 @@
   position: sticky;
   top: 0;
   z-index: 10000;
-  /* width: 100%; */
+  box-shadow: 0 5px 4px rgba(0, 0, 0, .1);
 }
 .temp-space {
   flex: 12;
@@ -29,9 +29,9 @@
   background-color: white;
 }
 .go-back {
-  margin: 20px;
+  /* margin: 20px; */
   flex: 1;
-  padding: 22px 0 15px;
+  padding: 33px 10px 33px;
   background-color: white;
   border: 0px solid white;
   cursor: pointer;

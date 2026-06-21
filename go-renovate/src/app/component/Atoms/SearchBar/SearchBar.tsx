@@ -20,13 +20,12 @@ function SearchBar() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [product, setProduct] = React.useState<productType>(null);
   const [onFocus, setOnFocus] = React.useState(false);
-  const productsList = useSelector(
-    (state: RootState) => state.overlay.productsList,
-  );
+  const productsList = useSelector((state: RootState) => state.productsList);
   const overlay = useSelector((state: RootState) => state.overlay.overlay);
   const [filteredProducts, setFilteredProducts] = React.useState<productType[]>(
     [],
   );
+
   const dispatch = useDispatch();
   useEffect(() => {
     const filtered = productsList?.prodList?.data?.filter(
