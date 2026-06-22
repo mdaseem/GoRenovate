@@ -88,15 +88,17 @@ function ProductTile(props: propType) {
         </div>
       </div>
       <div className="prod-button-container">
-        <button
-          onMouseDown={() => {
-            props.setIsOpen(true);
-            props.setProduct(props.product);
-          }}
-          className="buy-prod"
-        >
-          View
-        </button>
+        <Link href={`/products/${product?._id}`}>
+          <button
+            onMouseDown={() => {
+              // props.setIsOpen(true);
+              props.setProduct(props.product);
+            }}
+            className="buy-prod"
+          >
+            View
+          </button>
+        </Link>
       </div>
     </div>
   );

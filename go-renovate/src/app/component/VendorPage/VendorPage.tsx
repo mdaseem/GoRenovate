@@ -7,6 +7,8 @@ import { MOCK_VENDOR } from "./VendorData";
 import { useCart } from "../CustomHooks/useCart";
 import ServiceCard from "../Atoms/ServiceCard/ServiceCard";
 import CartDrawer from "../Atoms/CartDrawer/CartDrawer";
+import { useSession } from "next-auth/react";
+import LoginContainer from "../Molecules/LoginContainer/LoginContainer";
 
 interface ToastMessage {
   id: number;
@@ -21,6 +23,7 @@ const VendorPage: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { data: session, status } = useSession();
 
   const {
     items,
@@ -92,6 +95,12 @@ const VendorPage: React.FC = () => {
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(totalPrice);
+
+  if (!session?.loading && !session?.backendToken) {
+    if (status === "unauthenticated") {
+      return <LoginContainer />;
+    }
+  }
 
   return (
     <div className={styles.page}>
