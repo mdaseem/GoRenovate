@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import ProductListPage from "../ProductListPage/ProductListPage";
-import Loader from "../Loader/Loader";
 import { useSession } from "next-auth/react";
 import LoginContainer from "../LoginContainer/LoginContainer";
 

@@ -47,15 +47,15 @@ function ProductListPage(props: { products: void | Response }) {
 
   return (
     <div className="product-page-container">
-      <Overlay
+      {/* <Overlay
         isDisable={false}
         isOpen={store.isOpenProductPage}
         setIsOpen={(payload) => dispatch(setOpenStateProductPage(payload))}
         shouldReturnNull={product && store.isOpenProductPage ? false : true}
-      >
+      > */}
         {/* <ProductView product={product} /> */}
-        <VendorPage />
-      </Overlay>
+        {/* <VendorPage /> */}
+      {/* </Overlay> */}
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
         {productListsData?.isloading && !props.products ? (
