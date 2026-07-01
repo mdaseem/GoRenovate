@@ -177,7 +177,6 @@
   }
 
   .cartFab {
-    width: calc(100% - 2rem);
     justify-content: space-between;
   }
 }
