@@ -3,9 +3,7 @@ import React, { KeyboardEvent } from "react";
 import "./Login.css";
 import AuthButtons from "../AuthButtons/AuthButtons";
 import Link from "next/link";
-import { useAppDispatch } from "@/app/store/hooks";
-import { SignupRequest } from "@/app/store/features/authSlice";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -17,8 +15,8 @@ export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  const dispatch = useAppDispatch();
-  const { data: session } = useSession();
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const [emailTouched, setEmailTouched] = React.useState(false);
   const [passwordTouched, setPasswordTouched] = React.useState(false);
@@ -54,25 +52,54 @@ export default function Login() {
 
   const signInOrSignUp = async () => {
     if (isLogin) {
-      await signIn("credentials", {
+      const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
-    } else if (!isLogin && password === confirmPassword) {
-      dispatch(
-        SignupRequest({
-          email: email,
-          password: "password",
-        }),
+      if (result?.error) {
+        setFormError("Invalid email or password.");
+      }
+      return;
+    }
+
+    // https://go-renovate-server.onrender.com/signup
+    const res = await fetch("https://go-renovate-server.onrender.com/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      setFormError(data?.message || "Signup failed. Please try again.");
+      return;
+    }
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+    if (result?.error) {
+      setFormError(
+        "Account created, but automatic sign-in failed. Please log in.",
       );
     }
   };
 
   const handleSubmit = async () => {
     touchAllFields();
-    if (!isFormValid) return;
-    await signInOrSignUp();
+    if (!isFormValid || isSubmitting) return;
+    setFormError(null);
+    setIsSubmitting(true);
+    try {
+      await signInOrSignUp();
+    } catch {
+      setFormError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const onEnter = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -195,13 +222,17 @@ export default function Login() {
         </form>
         <div className="submit-buttons-container">
           <button
-            className={`login-submit submit-buttons ${!isFormValid ? "btn-disabled" : ""}`}
-            disabled={!isFormValid}
+            className={`login-submit submit-buttons ${!isFormValid || isSubmitting ? "btn-disabled" : ""}`}
+            disabled={!isFormValid || isSubmitting}
             onClick={handleSubmit}
           >
-            {isLogin ? "Login" : "Signup"}
+            {isSubmitting ? "..." : isLogin ? "Login" : "Signup"}
           </button>
-          {/* {!session?.loading ? <div className="loader" /> : null} */}
+          {formError && (
+            <span className="validation-message error-message">
+              {formError}
+            </span>
+          )}
           <div className="or-line">
             <div className="line" />
             <p className="or-para">or</p>
@@ -213,7 +244,10 @@ export default function Login() {
           <Link
             href=""
             className="signup-submit"
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setFormError(null);
+            }}
           >
             {isLogin ? "Signup" : "Login"}
           </Link>

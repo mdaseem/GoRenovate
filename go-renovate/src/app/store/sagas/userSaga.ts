@@ -2,6 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import { loginFailure } from "../features/authSlice";
 import { SagaIterator } from "redux-saga";
 import axios, { AxiosResponse } from "axios";
+import { signOut } from "next-auth/react";
 import { getChatUsers, setChatUsers } from "../features/userSlice";
 
 // http://localhost:3002/user/userlist
@@ -30,23 +31,19 @@ async function getUser(token: string) {
           }
         >,
       ) => response.data,
-    )
-    .catch((error) => {
-      console.log("Error fetching users:", error);
-    });
+    );
 }
 
 function* handleRequest(action: ReturnType<typeof getChatUsers>): SagaIterator {
-  // https://go-renovate-server.onrender.com/products
   try {
     const chatUsers: Response = yield call(getUser, action.payload.token);
 
     yield put(setChatUsers({ data: chatUsers }));
-    if(chatUsers.status === 401 ) {
-      yield put(loginFailure(("Token expired. Please login again.")));
-    }
   } catch (error: unknown) {
-    if (error instanceof Error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      yield call(signOut, { redirect: false });
+      yield put(loginFailure("Session expired. Please log in again."));
+    } else if (error instanceof Error) {
       yield put(loginFailure(error.message));
     } else {
       yield put(loginFailure("An unknown error occurred"));

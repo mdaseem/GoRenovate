@@ -1,30 +1,16 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import "./Header.css";
 import MyIcon from "../../../../../public/user_profile.svg";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { loginRequest } from "@/app/store/features/authSlice";
+import { useAppDispatch } from "@/app/store/hooks";
 import { setOpenMobileMenu } from "@/app/store/features/overLaySlice";
 import SearchBar from "../SearchBar/SearchBar";
 
 export default function Header() {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
-  const store = useAppSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (session?.user?.email && store.token && store.token != undefined) {
-      dispatch(
-        loginRequest({
-          email: session?.user?.email || "",
-          password: "",
-          token: store.token || "",
-        }),
-      );
-    }
-  }, [session]);
 
   return (
     <header className="header">
