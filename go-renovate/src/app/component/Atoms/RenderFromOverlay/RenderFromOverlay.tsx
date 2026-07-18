@@ -4,7 +4,6 @@ import Overlay from "../../HOC/Overlay/Overlay";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import {
-  setOpenMobileMenu,
   setOpenState,
   setOpenStateChat,
   setOpenStateLogin,
@@ -12,7 +11,6 @@ import {
 } from "@/app/store/features/overLaySlice";
 import Chat from "../../Atoms/Chat/Chat";
 import UserList from "../../Atoms/UserList/UserList";
-import Menu from "../../Atoms/Menu/Menu";
 import dynamic from "next/dynamic";
 import Loader, { Loader1 } from "../../Molecules/Loader/Loader";
 import { useStopScrollOnOverlay } from "../../CustomHooks/useStopScrollOnOverlay";
@@ -80,14 +78,6 @@ function RenderFromOverlay() {
         shouldReturnNull={store.isOpenChat ? false : true}
       >
         <Chat />
-      </Overlay>
-      <Overlay
-        isDisable={false}
-        isOpen={store.isMobileMenuOpen}
-        setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
-        shouldReturnNull={store.isMobileMenuOpen ? false : true}
-      >
-        <Menu />
       </Overlay>
     </>
   );

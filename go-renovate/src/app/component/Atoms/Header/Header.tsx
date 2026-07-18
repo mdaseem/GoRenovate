@@ -1,16 +1,31 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "./Header.css";
 import MyIcon from "../../../../../public/user_profile.svg";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useAppDispatch } from "@/app/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { RootState } from "@/app/store/store";
 import { setOpenMobileMenu } from "@/app/store/features/overLaySlice";
 import SearchBar from "../SearchBar/SearchBar";
+import Overlay from "../../HOC/Overlay/Overlay";
+import Menu from "../Menu/Menu";
 
 export default function Header() {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
+  const isMobileMenuOpen = useAppSelector(
+    (state: RootState) => state.overlay.isMobileMenuOpen,
+  );
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
+  const wasMenuOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (wasMenuOpenRef.current && !isMobileMenuOpen) {
+      profileButtonRef.current?.focus();
+    }
+    wasMenuOpenRef.current = isMobileMenuOpen;
+  }, [isMobileMenuOpen]);
 
   return (
     <header className="header">
@@ -20,6 +35,7 @@ export default function Header() {
           priority={true}
           src="/MyLogo.gif"
           alt="logo"
+          className="logo-image"
           width={180}
           height={80}
         />
@@ -29,16 +45,36 @@ export default function Header() {
         <ul className="header-nav-list">
           <li className="list-item">
             {session && (
-              <button className="header-nav-profile">
-                <Image
-                  src={session?.user?.image || MyIcon}
-                  onClick={() => dispatch(setOpenMobileMenu(true))}
-                  className="profile-icon"
-                  alt="User Image"
-                  width={30}
-                  height={30}
-                />
-              </button>
+              <div className="header-profile-menu-wrapper">
+                <button
+                  type="button"
+                  ref={profileButtonRef}
+                  className="header-nav-profile"
+                  aria-haspopup="menu"
+                  aria-expanded={isMobileMenuOpen}
+                  aria-controls="account-menu"
+                  aria-label="Account menu"
+                  onClick={() => dispatch(setOpenMobileMenu(!isMobileMenuOpen))}
+                >
+                  <Image
+                    src={session?.user?.image || MyIcon}
+                    className="profile-icon"
+                    alt=""
+                    width={32}
+                    height={32}
+                  />
+                </button>
+                <Overlay
+                  id="account-menu"
+                  isDisable={false}
+                  isOpen={isMobileMenuOpen}
+                  setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
+                  shouldReturnNull={!isMobileMenuOpen}
+                  variant="menu"
+                >
+                  <Menu />
+                </Overlay>
+              </div>
             )}
           </li>
         </ul>

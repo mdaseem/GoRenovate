@@ -114,6 +114,11 @@ a {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+@media (prefers-reduced-motion: reduce) {
+  .product-overlay {
+    transition: none;
+  }
+}
 .overlay-sub-container {
   position: absolute;
   top: 0;

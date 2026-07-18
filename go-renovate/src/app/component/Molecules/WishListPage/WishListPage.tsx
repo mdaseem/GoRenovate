@@ -3,7 +3,7 @@ import React from "react";
 import "./WishListPage.css";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
-import ProductTile from "../../Atoms/ProductTile/productTile";
+import VendorCard from "../../Atoms/VendorCard/VendorCard";
 import ProductPage from "../../HOC/Overlay/Overlay";
 import ProductView from "../../Atoms/ProductView/ProductView";
 
@@ -27,9 +27,9 @@ function WishListPage(props: PropsType) {
 
   const ProductList = () => {
     return favsList?.map((product: productType) => (
-      <ProductTile
+      <VendorCard
         key={product?._id}
-        product={product}
+        vendor={product}
         setProduct={setProduct}
         setIsOpen={setIsOpen}
       />
