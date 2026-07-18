@@ -1,6 +1,4 @@
 import React, { useCallback } from "react";
-// import type { ServiceOption } from '../types/vendor';
-// import { MATERIAL_COLORS, UNIT_LABELS } from '../data/vendorData';
 import styles from "./ServiceCard.module.css";
 import { ServiceOption } from "../../VendorPage/vendor";
 import { MATERIAL_COLORS, UNIT_LABELS } from "../../VendorPage/VendorData";

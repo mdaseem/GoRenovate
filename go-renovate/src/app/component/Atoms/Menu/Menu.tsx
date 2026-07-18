@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
 import "./Menu.css";
-import Link from "next/link";
+import Image from "next/image";
+import MyIcon from "../../../../../public/user_profile.svg";
 import {
   setOpenMobileMenu,
   setOpenState,
@@ -11,62 +12,85 @@ import { logout } from "@/app/store/features/authSlice";
 import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
-interface MenuProps {
-  children?: React.ReactNode;
-}
-
-const Menu: React.FC<MenuProps> = (props: MenuProps) => {
+const Menu: React.FC = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
   const store = useAppSelector((state) => state.overlay);
 
+  const closeMenu = () => dispatch(setOpenMobileMenu(false));
+
   return (
-    <div className="hamburger-menu-container">
-      <nav className="header-nav">
-        {session && (
-          <>
-            {!store.isUserListOpen ? (
-              <Link
-                onClick={() => {
-                  dispatch(setOpenMobileMenu(false));
-                  dispatch(setOpenStateUserList(true));
-                }}
-                className="header-link-menu"
-                href=""
-              >
-                Chat
-              </Link>
-            ) : (
-              ""
+    <div className="account-menu">
+      {session && (
+        <div className="account-menu-header">
+          <Image
+            src={session.user?.image || MyIcon}
+            alt=""
+            width={36}
+            height={36}
+            className="account-menu-avatar"
+          />
+          <div className="account-menu-identity">
+            <span className="account-menu-name">
+              {session.user?.name || "My Account"}
+            </span>
+            {session.user?.email && (
+              <span className="account-menu-email">{session.user.email}</span>
             )}
-            <Link
-              className="header-link-menu"
-              onClick={() => {
-                signOut();
-                dispatch(setOpenMobileMenu(false));
-                dispatch(logout());
-              }}
-              href="/"
-            >
-              Logout
-            </Link>
-          </>
-        )}
-        {!store.isOpen && status === "authenticated" ? (
-          <Link
-            className="header-link-menu"
-            href=" "
+          </div>
+        </div>
+      )}
+
+      <div className="account-menu-items">
+        {session && !store.isUserListOpen && (
+          <button
+            type="button"
+            role="menuitem"
+            className="account-menu-item"
             onClick={() => {
-              dispatch(setOpenMobileMenu(false));
+              closeMenu();
+              dispatch(setOpenStateUserList(true));
+            }}
+          >
+            Chat
+          </button>
+        )}
+
+        {!store.isOpen && status === "authenticated" && (
+          <button
+            type="button"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={() => {
+              closeMenu();
               dispatch(setOpenState(true));
             }}
           >
-            WishList
-          </Link>
-        ) : (
-          ""
+            Wishlist
+          </button>
         )}
-      </nav>
+      </div>
+
+      {session && (
+        <>
+          <div className="account-menu-divider" role="separator" />
+          <button
+            type="button"
+            role="menuitem"
+            className="account-menu-item account-menu-item-danger"
+            onClick={() => {
+              signOut();
+              closeMenu();
+              dispatch(logout());
+            }}
+          >
+            <span className="account-menu-item-icon" aria-hidden="true">
+              ↪
+            </span>
+            Logout
+          </button>
+        </>
+      )}
     </div>
   );
 };

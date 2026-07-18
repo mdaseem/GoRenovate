@@ -43,39 +43,49 @@
     margin-bottom: 20px;
     border-radius: 5px;
   }
-  .tile-container {
-    width: 245px;
+  .vendor-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ece9e3;
+    border-radius: 12px;
+    box-sizing: border-box;
   }
   .product-img-loader {
-    border-radius: 20px;
-    height: 245px;
+    border-radius: 10px;
+    height: 100px;
     width: 100px;
     background-color: #e0e0e0;
   }
   .img-container-loader {
-    border-radius: 20px;
-    height: 100%;
-    width: 100%;
-    background-color: #e0e0e0;
+    flex-shrink: 0;
   }
-  .prod-button-container {
-    display: flex;
-    align-items: flex-start;
+  .vendor-card-details {
+    flex: 1;
+  }
+  .vendor-card-action {
+    flex-shrink: 0;
     .buy-prod {
+      width: 90px;
+      height: 38px;
       background-color: #e0e0e0;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
     }
   }
   .loader-item {
     height: 10px;
-    margin-top: 2px;
+    margin-top: 8px;
     background-color: #e0e0e0;
+    border-radius: 4px;
   }
-  .prod-price-discount {
-    width: 20%;
-    text-align: left;
-    margin: 2px 0;
+  .vendor-name-loader {
+    width: 60%;
+  }
+  .vendor-rating-loader {
+    width: 25%;
   }
 }
 
@@ -99,15 +109,8 @@
     .product-page-filters {
       display: none;
     }
-    .tile-container {
-      width: 46%;
-    }
-    .product-img {
-      width: 100%;
-    }
     .product-page-list {
-      gap: 14px;
-      justify-content: center;
+      gap: 10px;
     }
   }
 }

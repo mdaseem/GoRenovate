@@ -54,7 +54,13 @@ function MyFavorites(props: propType) {
 
   return (
     <div className="fav-container">
-      <button className="fav-click" onClick={favClickAction}>
+      <button
+        type="button"
+        className="fav-click"
+        onClick={favClickAction}
+        aria-pressed={isFav}
+        aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
+      >
         {checkIfFavPresent() && (
           <svg
             xmlns="http://www.w3.org/2000/svg"

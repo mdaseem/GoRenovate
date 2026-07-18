@@ -1,5 +1,5 @@
 import React from "react";
-import ProductTile from "../../Atoms/ProductTile/productTile";
+import VendorCard from "../../Atoms/VendorCard/VendorCard";
 
 type productType = {
   _id: number;
@@ -19,9 +19,9 @@ type propType = {
 function ProductList(props: propType) {
   const productList = props.productLists?.data?.map((product: productType) => {
     return (
-      <ProductTile
+      <VendorCard
         key={product?._id}
-        product={product}
+        vendor={product}
         setProduct={props.setProduct}
         setIsOpen={props.setIsOpen}
       />

@@ -14,13 +14,35 @@
   margin-bottom: 3rem;
 }
 
-.categorySectionHeader {
+.categoryHeading {
+  margin: 0;
+}
+
+.categoryToggle {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0 0 0.75rem;
+  border: none;
   border-bottom: 1px solid #ddd9d2;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.categoryToggle:hover {
+  border-bottom-color: #1a1f2e;
+}
+
+.categoryToggle:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 .categoryIcon {
@@ -29,11 +51,11 @@
 }
 
 .categoryTitle {
-  /* font-family: "Playfair Display", Georgia, serif; */
   font-size: 1.35rem;
   font-weight: 700;
   color: #1a1f2e;
   margin: 0;
+  flex: 1;
 }
 
 .serviceCount {
@@ -44,16 +66,165 @@
   font-weight: 400;
 }
 
+.chevron {
+  flex-shrink: 0;
+  color: #6b7280;
+  transition: transform 0.25s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
 .servicesGrid {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 1.25rem;
 }
 
-/* Floating Cart Button */
+.servicesGrid[hidden] {
+  display: none;
+}
+
+.categoryMenuFab {
+  position: fixed;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1a1f2e;
+  color: #f8f6f1;
+  border: none;
+  border-radius: 100px;
+  padding: 0.7rem 1.4rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(26, 31, 46, 0.3);
+  transition: background 0.2s ease, transform 0.15s ease;
+  z-index: 55;
+}
+
+.categoryMenuFab:hover {
+  background: #2a3245;
+}
+
+.categoryMenuFab:focus-visible {
+  outline: 2px solid #c4fd5b;
+  outline-offset: 3px;
+}
+
+/* Opens directly above the fixed menu button. */
+.categoryMenuPanel {
+  position: fixed;
+  bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(320px, calc(100vw - 2rem));
+  max-height: 60vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  z-index: 56;
+  animation: categoryMenuIn 0.18s ease;
+}
+
+/* When the cart pill is also showing (reserved slot above the menu button,
+   see .cartFab), the panel opens above the pill instead so they don't clash. */
+.categoryMenuPanelRaised {
+  bottom: calc(9.5rem + env(safe-area-inset-bottom));
+}
+
+@keyframes categoryMenuIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.categoryMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.88rem;
+  color: #1a1f2e;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.categoryMenuItem:hover {
+  background: #f3f4f6;
+}
+
+.categoryMenuItem:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: -2px;
+}
+
+.categoryMenuItem[aria-current="true"] {
+  background: #eefbd8;
+  font-weight: 700;
+}
+
+.categoryMenuItemIcon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.categoryMenuItemLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.categoryMenuItemCount {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .categoryMenuFab {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.8rem;
+  }
+
+  .categoryMenuPanel {
+    width: calc(100vw - 1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .categoryMenuFab {
+    transition: none;
+  }
+
+  .categoryMenuPanel {
+    animation: none;
+  }
+}
+
 .cartFab {
   position: sticky;
-  bottom: 1.5rem;
+  bottom: 5.25rem;
   left: 50%;
   transform: translateX(-50%);
   background: #c4fd5b;
@@ -130,10 +301,9 @@
   font-size: 0.82rem;
 }
 
-/* Toast */
 .toast {
   position: sticky;
-  bottom: 5.5rem;
+  bottom: 9.5rem;
   left: 50%;
   transform: translateX(-50%);
   background: #1a1f2e;
@@ -177,7 +347,6 @@
   }
 
   .cartFab {
-    width: calc(100% - 2rem);
     justify-content: space-between;
   }
 }
@@ -189,5 +358,9 @@
 
   .toast {
     animation: none;
+  }
+
+  .chevron {
+    transition: none;
   }
 }

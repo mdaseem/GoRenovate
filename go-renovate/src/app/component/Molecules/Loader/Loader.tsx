@@ -3,20 +3,15 @@ import "./Loader.css";
 
 function ProductLoader() {
   return (
-    <div className="tile-container">
-      <div className="tile-sub-container">
-        <div className="img-container-loader">
-          <div className="product-img-loader" />
-        </div>
-        <div className="details-container">
-          <p className="details-items prod-description loader-item"></p>
-          <p className="details-items prod-price-discount loader-item"></p>
-          <p className="details-items prod-price-actual loader-item"></p>
-          <div className="price-strike-line loader-item" />
-          <p className="details-items loader-item"></p>
-        </div>
+    <div className="vendor-card">
+      <div className="img-container-loader">
+        <div className="product-img-loader" />
       </div>
-      <div className="prod-button-container">
+      <div className="vendor-card-details">
+        <p className="loader-item vendor-name-loader"></p>
+        <p className="loader-item vendor-rating-loader"></p>
+      </div>
+      <div className="vendor-card-action">
         <button className="buy-prod" />
       </div>
     </div>

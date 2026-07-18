@@ -2,7 +2,6 @@ import React from "react";
 import axios, { AxiosResponse } from "axios";
 import { getServerSession } from "next-auth";
 import Dashboard from "../component/Molecules/Dashboard/Dashboard";
-import { redirect } from "next/navigation";
 import { authOptions } from "../authOptions";
 
 async function getProducts() {
@@ -10,9 +9,6 @@ async function getProducts() {
   const token = session?.backendToken;
   if (!token) {
     return;
-  }
-  if (!session) {
-    redirect("/login");
   }
 
   return axios

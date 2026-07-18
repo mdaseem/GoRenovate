@@ -7,12 +7,9 @@
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 .fav-container {
-  top: 77%;
-  margin-left: 83%;
   display: inline;
-  position: absolute;
   border-radius: 100%;
-  z-index: 1;
+  flex-shrink: 0;
 }
 .fav-click {
   background-color: #fff;
@@ -25,33 +22,5 @@
   .fav-icon:hover {
     fill: red;
     transform: translateY(-0px) scale(1.2);
-  }
-}
-
-@media (max-width: 700px) {
-  .details-container {
-    position: relative;
-  }
-  .fav-container {
-    margin-left: 90%;
-    top: 65%;
-  }
-}
-
-@media (max-width: 650px) {
-  .fav-container {
-    margin-left: 87%;
-  }
-}
-
-@media (max-width: 450px) {
-  .fav-container {
-    margin-left: 86%;
-  }
-}
-
-@media (max-width: 400px) {
-  .fav-container {
-    margin-left: 82%;
   }
 }
