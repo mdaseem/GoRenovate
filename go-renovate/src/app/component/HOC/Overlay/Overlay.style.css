@@ -13,32 +13,53 @@
 }
 .overlay-header-container {
   display: flex;
-  align-items: left;
-  justify-content: left;
+  align-items: center;
+  justify-content: flex-start;
   position: sticky;
   top: 0;
   z-index: 10000;
+  padding: 5px;
+  background-color: white;
   box-shadow: 0 5px 4px rgba(0, 0, 0, .1);
 }
 .temp-space {
-  flex: 12;
+  flex: 1;
   background-color: white;
 }
 .header-back {
-  flex: 1;
-  background-color: white;
+  display: flex;
+  align-items: center;
 }
 .go-back {
-  /* margin: 20px; */
-  flex: 1;
-  padding: 33px 10px 33px;
-  background-color: white;
-  border: 0px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 50%;
   cursor: pointer;
-  height: min-content;
-  top: 0;
-  z-index: 100;
-  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.go-back:hover {
+  background: #f3f4f6;
+}
+.go-back:active {
+  background: #ece9e3;
+}
+.go-back:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .go-back {
+    width: 40px;
+    height: 40px;
+  }
 }
 .product-detail-page-content {
   display: flex;
@@ -57,10 +78,6 @@
     padding: 0 10px;
   }
 }
-
-/* variant="menu": a small anchored dropdown. Expects to be rendered
-   inside a `position: relative` trigger container, which it anchors to
-   via top/right rather than covering the viewport. */
 .overlay-menu-panel {
   position: absolute;
   top: calc(100% + 0.5rem);
