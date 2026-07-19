@@ -85,6 +85,39 @@
   margin: 0 0 0.75rem;
 }
 
+.viewMoreButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #278b2e;
+  cursor: pointer;
+}
+
+.viewMoreButton:hover {
+  text-decoration: underline;
+}
+
+.viewMoreButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.viewMoreButton svg {
+  transition: transform 0.15s ease;
+}
+
+.viewMoreButton:hover svg {
+  transform: translateX(2px);
+}
+
 .includesList {
   display: flex;
   flex-wrap: wrap;

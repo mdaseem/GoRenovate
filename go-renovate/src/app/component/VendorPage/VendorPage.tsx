@@ -9,6 +9,8 @@ import ServiceCard from "../Atoms/ServiceCard/ServiceCard";
 import CartDrawer from "../Atoms/CartDrawer/CartDrawer";
 import { useSession } from "next-auth/react";
 import LoginContainer from "../Molecules/LoginContainer/LoginContainer";
+import Overlay from "../HOC/Overlay/Overlay";
+import ServiceDetail from "../Molecules/ServiceDetail/ServiceDetail";
 
 interface ToastMessage {
   id: number;
@@ -25,10 +27,17 @@ const VendorPage: React.FC = () => {
   );
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<{
+    service: ServiceOption;
+    categoryLabel: string;
+  } | null>(null);
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const [headerHeight, setHeaderHeight] = useState(90); // matches Header's approx rendered height until measured
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const categoryMenuButtonRef = useRef<HTMLButtonElement>(null);
   const categoryMenuPanelRef = useRef<HTMLDivElement>(null);
+  const sectionElsRef = useRef<Map<string, HTMLElement>>(new Map());
   const { data: session, status } = useSession();
 
   const {
@@ -52,6 +61,67 @@ const VendorPage: React.FC = () => {
       if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     };
   }, []);
+
+  // Header publishes its real, responsive height (see Header.tsx). Track it
+  // so the sticky category headings and scroll-to-category math stay correct
+  // across breakpoints instead of relying on a guessed offset.
+  useEffect(() => {
+    const headerEl = document.querySelector<HTMLElement>("header.header");
+    if (headerEl) setHeaderHeight(headerEl.offsetHeight);
+
+    const handleHeaderResize = (event: Event) => {
+      const detail = (event as CustomEvent<number>).detail;
+      if (typeof detail === "number") setHeaderHeight(detail);
+    };
+
+    window.addEventListener("site-header-resize", handleHeaderResize);
+    return () =>
+      window.removeEventListener("site-header-resize", handleHeaderResize);
+  }, []);
+
+  // Scroll-spy: keep activeCategoryId in sync with whichever category
+  // heading is currently pinned below the header, so the jump-to-category
+  // menu highlight tracks scroll position, not just explicit menu clicks.
+  useEffect(() => {
+    const categoryIds = vendor.categories.map((category) => category.id);
+
+    let observer: IntersectionObserver | null = null;
+
+    const setup = () => {
+      observer?.disconnect();
+
+      const sections = categoryIds
+        .map((id) => sectionElsRef.current.get(id))
+        .filter((el): el is HTMLElement => Boolean(el));
+
+      if (!sections.length) return;
+
+      const topInset = headerHeight + 1;
+      const bottomInset = Math.max(window.innerHeight - headerHeight - 80, 0);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries.filter((entry) => entry.isIntersecting);
+          if (!visible.length) return;
+          const topMost = visible.reduce((a, b) =>
+            a.boundingClientRect.top <= b.boundingClientRect.top ? a : b,
+          );
+          const id = topMost.target.id.replace("category-section-", "");
+          setActiveCategoryId(id);
+        },
+        { rootMargin: `-${topInset}px 0px -${bottomInset}px 0px`, threshold: 0 },
+      );
+
+      sections.forEach((section) => observer?.observe(section));
+    };
+
+    setup();
+    window.addEventListener("resize", setup);
+    return () => {
+      window.removeEventListener("resize", setup);
+      observer?.disconnect();
+    };
+  }, [headerHeight, vendor.categories]);
 
   const handleAddService = useCallback(
     (service: ServiceOption, categoryLabel: string) => {
@@ -77,6 +147,14 @@ const VendorPage: React.FC = () => {
     [getQuantity, updateQuantity],
   );
 
+  const handleViewMore = useCallback(
+    (service: ServiceOption, categoryLabel: string) => {
+      setSelectedService({ service, categoryLabel });
+      setIsDetailOpen(true);
+    },
+    [],
+  );
+
   const toggleCategory = useCallback((categoryId: string) => {
     setOpenCategoryIds((prev) => {
       const next = new Set(prev);
@@ -89,15 +167,29 @@ const VendorPage: React.FC = () => {
     });
   }, []);
 
-  const handleCategoryChange = useCallback((categoryId: string) => {
-    setActiveCategoryId(categoryId);
-    const el = document.getElementById(`category-section-${categoryId}`);
-    if (el) {
-      const headerHeight = 90; // approx sticky site header height
-      const y = el.getBoundingClientRect().top + window.scrollY - headerHeight;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  }, []);
+  const handleCategoryChange = useCallback(
+    (categoryId: string) => {
+      setActiveCategoryId(categoryId);
+      const el = document.getElementById(`category-section-${categoryId}`);
+      if (el) {
+        const y =
+          el.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    },
+    [headerHeight],
+  );
+
+  const registerSectionRef = useCallback(
+    (categoryId: string) => (el: HTMLElement | null) => {
+      if (el) {
+        sectionElsRef.current.set(categoryId, el);
+      } else {
+        sectionElsRef.current.delete(categoryId);
+      }
+    },
+    [],
+  );
 
   const handleBack = useCallback(() => {
     window.history.back();
@@ -228,13 +320,6 @@ const VendorPage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      {/* <VendorHeader
-        vendor={vendor}
-        activeCategoryId={activeCategoryId}
-        onCategoryChange={handleCategoryChange}
-        onBack={handleBack}
-      /> */}
-
       <main className={styles.main} id="main-content">
         {vendor.categories.map((category) => {
           const isOpen = openCategoryIds.has(category.id);
@@ -245,9 +330,16 @@ const VendorPage: React.FC = () => {
             <section
               key={category.id}
               id={`category-section-${category.id}`}
+              ref={registerSectionRef(category.id)}
               className={styles.categorySection}
             >
-              <h2 className={styles.categoryHeading}>
+              <h2
+                className={`${styles.categoryHeading} ${
+                  activeCategoryId === category.id
+                    ? styles.categoryHeadingActive
+                    : ""
+                }`}
+              >
                 <button
                   type="button"
                   id={toggleId}
@@ -302,6 +394,7 @@ const VendorPage: React.FC = () => {
                       onAdd={handleAddService}
                       onIncrement={handleIncrement}
                       onDecrement={handleDecrement}
+                      onViewMore={handleViewMore}
                     />
                   </li>
                 ))}
@@ -415,6 +508,24 @@ const VendorPage: React.FC = () => {
         onClear={clearCart}
         onRequestQuote={handleRequestQuote}
       />
+
+      <Overlay
+        isOpen={isDetailOpen}
+        setIsOpen={setIsDetailOpen}
+        isDisable={false}
+        shouldReturnNull={!isDetailOpen}
+      >
+        {selectedService && (
+          <ServiceDetail
+            service={selectedService.service}
+            categoryLabel={selectedService.categoryLabel}
+            quantity={getQuantity(selectedService.service.id)}
+            onAdd={handleAddService}
+            onIncrement={handleIncrement}
+            onDecrement={handleDecrement}
+          />
+        )}
+      </Overlay>
     </div>
   );
 };
