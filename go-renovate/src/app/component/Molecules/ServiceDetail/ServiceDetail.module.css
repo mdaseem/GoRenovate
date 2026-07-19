@@ -1,0 +1,325 @@
+.detail {
+  display: flex;
+  flex-direction: column;
+  max-width: 760px;
+  margin: 0 auto;
+  font-family: "Inter", sans-serif;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 60vh;
+  background: #f3f4f6;
+  overflow: hidden;
+  outline: none;
+}
+
+.carouselTrack {
+  display: flex;
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carouselSlide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.carouselImage {
+  object-fit: cover;
+}
+
+.carouselNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(26, 31, 46, 0.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s ease;
+}
+
+.carouselNav:hover {
+  background: rgba(26, 31, 46, 0.8);
+}
+
+.carouselNav:focus-visible {
+  outline: 2px solid #c4fd5b;
+  outline-offset: 2px;
+}
+
+.carouselNavPrev {
+  left: 0.75rem;
+}
+
+.carouselNavNext {
+  right: 0.75rem;
+}
+
+.carouselCounter {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(26, 31, 46, 0.6);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 100px;
+}
+
+.carouselDots {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.carouselDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.carouselDotActive {
+  background: #fff;
+  width: 18px;
+  border-radius: 100px;
+}
+
+.body {
+  padding: 1.5rem 1.5rem 0;
+}
+
+.category {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #278b2e;
+}
+
+.headingRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1f2e;
+  line-height: 1.25;
+}
+
+.materialTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.materialSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.popularBadge {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 100px;
+  background: #eefbd8;
+  color: #278b2e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.description {
+  margin: 1rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.includesList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+}
+
+.includeChip {
+  background: #f3f4f6;
+  color: #333;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 100px;
+}
+
+.estimatedDays {
+  margin: 1.1rem 0 0;
+  font-size: 0.82rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1px solid #ece9e3;
+  box-shadow: 0 -8px 24px rgba(26, 31, 46, 0.08);
+}
+
+.pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.price {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #1a1f2e;
+  line-height: 1;
+}
+
+.priceUnit {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.addButton {
+  background: #1a1f2e;
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  background: #2a3245;
+}
+
+.addButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: #f3f4f6;
+  border-radius: 100px;
+  padding: 0.35rem 0.5rem;
+}
+
+.qtyButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.qtyButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.qtyValue {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+@media (max-width: 768px) {
+  .body {
+    padding: 1.25rem 1.25rem 0;
+  }
+
+  .footer {
+    padding: 0.85rem 1.25rem calc(0.85rem + env(safe-area-inset-bottom));
+  }
+
+  .name {
+    font-size: 1.25rem;
+  }
+
+  .carousel {
+    aspect-ratio: 1 / 1;
+    max-height: 50vh;
+  }
+
+  .carouselNav {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carouselTrack {
+    transition: none;
+  }
+
+  .addButton {
+    transition: none;
+  }
+
+  .carouselDot {
+    transition: none;
+  }
+}

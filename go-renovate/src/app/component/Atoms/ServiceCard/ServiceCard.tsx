@@ -10,6 +10,7 @@ interface ServiceCardProps {
   onAdd: (service: ServiceOption, categoryLabel: string) => void;
   onIncrement: (serviceId: string) => void;
   onDecrement: (serviceId: string) => void;
+  onViewMore: (service: ServiceOption, categoryLabel: string) => void;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -19,6 +20,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   onAdd,
   onIncrement,
   onDecrement,
+  onViewMore,
 }) => {
   const material = MATERIAL_COLORS[service.materialTag];
   const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
@@ -26,6 +28,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   const handleAdd = useCallback(() => {
     onAdd(service, categoryLabel);
   }, [service, categoryLabel, onAdd]);
+
+  const handleViewMore = useCallback(() => {
+    onViewMore(service, categoryLabel);
+  }, [service, categoryLabel, onViewMore]);
 
   const handleIncrement = useCallback(() => {
     onIncrement(service.id);
@@ -69,6 +75,30 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         </div>
 
         <p className={styles.serviceDescription}>{service.description}</p>
+
+        <button
+          type="button"
+          className={styles.viewMoreButton}
+          onClick={handleViewMore}
+          aria-label={`View more details about ${service.name}`}
+        >
+          View more
+          <svg
+            aria-hidden="true"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M9 6L15 12L9 18"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
 
         <ul className={styles.includesList} aria-label="What's included">
           {service.includes.map((item) => (

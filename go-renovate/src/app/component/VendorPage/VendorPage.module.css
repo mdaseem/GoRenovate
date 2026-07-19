@@ -1,5 +1,4 @@
 .page {
-  min-height: 100vh;
   background: #fff;
   font-family: "Inter", sans-serif;
 }
@@ -15,7 +14,20 @@
 }
 
 .categoryHeading {
+  position: sticky;
+  /* Falls back to the last hardcoded header height until Header.tsx's
+     ResizeObserver measures the real, responsive value on mount. */
+  top: var(--site-header-height, 90px);
+  z-index: 20;
   margin: 0;
+  background: #fff;
+  padding-top: 0.6rem;
+  box-shadow: 0 1px 0 rgba(26, 31, 46, 0.06);
+  transition: box-shadow 0.2s ease;
+}
+
+.categoryHeadingActive {
+  box-shadow: 0 6px 16px -8px rgba(26, 31, 46, 0.18), 0 1px 0 rgba(26, 31, 46, 0.08);
 }
 
 .categoryToggle {
@@ -349,6 +361,19 @@
   .cartFab {
     justify-content: space-between;
   }
+
+  .categoryHeading {
+    padding-top: 0.4rem;
+  }
+
+  .categoryTitle {
+    font-size: 1.15rem;
+  }
+
+  .serviceCount {
+    display: block;
+    margin-left: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -361,6 +386,10 @@
   }
 
   .chevron {
+    transition: none;
+  }
+
+  .categoryHeading {
     transition: none;
   }
 }

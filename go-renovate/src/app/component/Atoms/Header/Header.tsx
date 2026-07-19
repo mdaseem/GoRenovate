@@ -19,6 +19,7 @@ export default function Header() {
   );
   const profileButtonRef = useRef<HTMLButtonElement>(null);
   const wasMenuOpenRef = useRef(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (wasMenuOpenRef.current && !isMobileMenuOpen) {
@@ -27,8 +28,34 @@ export default function Header() {
     wasMenuOpenRef.current = isMobileMenuOpen;
   }, [isMobileMenuOpen]);
 
+  // Publish the real, responsive header height so other fixed/sticky UI
+  // (e.g. VendorPage's sticky category headings) can offset below it
+  // instead of relying on a guessed pixel value.
+  useEffect(() => {
+    const node = headerRef.current;
+    if (!node) return;
+
+    const publishHeight = () => {
+      const height = node.offsetHeight;
+      document.documentElement.style.setProperty(
+        "--site-header-height",
+        `${height}px`,
+      );
+      window.dispatchEvent(
+        new CustomEvent<number>("site-header-resize", { detail: height }),
+      );
+    };
+
+    publishHeight();
+
+    const resizeObserver = new ResizeObserver(publishHeight);
+    resizeObserver.observe(node);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
   return (
-    <header className="header">
+    <header className="header" ref={headerRef}>
       <h1 className="header-title">
         <Image
           //  loading="lazy"
