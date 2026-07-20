@@ -34,7 +34,7 @@ const Chat = () => {
   const fetchMessages = async () => {
     try {
       const res = await fetch(
-        `https://go-renovate-server.onrender.com/rooms/${roomId}`,
+        `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/rooms/${roomId}`,
       );
 
       const data = await res.json();

@@ -5,11 +5,9 @@ import { getProducts, setLoading, setProducts } from "../features/productSlice";
 import axios from "axios";
 import { signOut } from "next-auth/react";
 
-// http://localhost:3002/products
-// https://go-renovate-server.onrender.com/products
 function getProductCall(token: string) {
   return axios
-    .get<Response>("https://go-renovate-server.onrender.com/products", {
+    .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/products`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -5,11 +5,9 @@ import axios, { AxiosResponse } from "axios";
 import { signOut } from "next-auth/react";
 import { getChatUsers, setChatUsers } from "../features/userSlice";
 
-// http://localhost:3002/user/userlist
-// https://go-renovate-server.onrender.com/user/userlist
 async function getUser(token: string) {
   return axios
-    .get<Response>("https://go-renovate-server.onrender.com/user/userlist", {
+    .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/user/userlist`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
