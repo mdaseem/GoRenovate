@@ -1,44 +1,37 @@
 "use client";
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import styles from "./VendorPage.module.css";
 import { ServiceOption } from "./vendor";
 import { MOCK_VENDOR } from "./VendorData";
 import { useCart } from "../CustomHooks/useCart";
-import ServiceCard from "../Atoms/ServiceCard/ServiceCard";
 import CartDrawer from "../Atoms/CartDrawer/CartDrawer";
-import { useSession } from "next-auth/react";
 import LoginContainer from "../Molecules/LoginContainer/LoginContainer";
 import Overlay from "../HOC/Overlay/Overlay";
 import ServiceDetail from "../Molecules/ServiceDetail/ServiceDetail";
-
-interface ToastMessage {
-  id: number;
-  text: string;
-}
+import { useHeaderHeight } from "./hooks/useHeaderHeight";
+import { useToast } from "./hooks/useToast";
+import { useCategoryScrollSpy } from "./hooks/useCategoryScrollSpy";
+import { useCategoryMenu } from "./hooks/useCategoryMenu";
+import CategorySection from "./components/CategorySection";
+import CategoryJumpMenu from "./components/CategoryJumpMenu";
+import CartFab from "./components/CartFab";
+import Toast from "./components/Toast";
 
 const VendorPage: React.FC = () => {
   const vendor = MOCK_VENDOR;
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(
-    vendor.categories[0]?.id ?? "",
-  );
+  const { data: session, status } = useSession();
+
   const [openCategoryIds, setOpenCategoryIds] = useState<Set<string>>(
     () => new Set(vendor.categories[0]?.id ? [vendor.categories[0].id] : []),
   );
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<{
     service: ServiceOption;
     categoryLabel: string;
   } | null>(null);
-  const [toast, setToast] = useState<ToastMessage | null>(null);
-  const [headerHeight, setHeaderHeight] = useState(90); // matches Header's approx rendered height until measured
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const categoryMenuButtonRef = useRef<HTMLButtonElement>(null);
-  const categoryMenuPanelRef = useRef<HTMLDivElement>(null);
-  const sectionElsRef = useRef<Map<string, HTMLElement>>(new Map());
-  const { data: session, status } = useSession();
 
   const {
     items,
@@ -50,78 +43,10 @@ const VendorPage: React.FC = () => {
     clearCart,
   } = useCart();
 
-  const showToast = useCallback((text: string) => {
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToast({ id: Date.now(), text });
-    toastTimerRef.current = setTimeout(() => setToast(null), 2000);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    };
-  }, []);
-
-  // Header publishes its real, responsive height (see Header.tsx). Track it
-  // so the sticky category headings and scroll-to-category math stay correct
-  // across breakpoints instead of relying on a guessed offset.
-  useEffect(() => {
-    const headerEl = document.querySelector<HTMLElement>("header.header");
-    if (headerEl) setHeaderHeight(headerEl.offsetHeight);
-
-    const handleHeaderResize = (event: Event) => {
-      const detail = (event as CustomEvent<number>).detail;
-      if (typeof detail === "number") setHeaderHeight(detail);
-    };
-
-    window.addEventListener("site-header-resize", handleHeaderResize);
-    return () =>
-      window.removeEventListener("site-header-resize", handleHeaderResize);
-  }, []);
-
-  // Scroll-spy: keep activeCategoryId in sync with whichever category
-  // heading is currently pinned below the header, so the jump-to-category
-  // menu highlight tracks scroll position, not just explicit menu clicks.
-  useEffect(() => {
-    const categoryIds = vendor.categories.map((category) => category.id);
-
-    let observer: IntersectionObserver | null = null;
-
-    const setup = () => {
-      observer?.disconnect();
-
-      const sections = categoryIds
-        .map((id) => sectionElsRef.current.get(id))
-        .filter((el): el is HTMLElement => Boolean(el));
-
-      if (!sections.length) return;
-
-      const topInset = headerHeight + 1;
-      const bottomInset = Math.max(window.innerHeight - headerHeight - 80, 0);
-
-      observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries.filter((entry) => entry.isIntersecting);
-          if (!visible.length) return;
-          const topMost = visible.reduce((a, b) =>
-            a.boundingClientRect.top <= b.boundingClientRect.top ? a : b,
-          );
-          const id = topMost.target.id.replace("category-section-", "");
-          setActiveCategoryId(id);
-        },
-        { rootMargin: `-${topInset}px 0px -${bottomInset}px 0px`, threshold: 0 },
-      );
-
-      sections.forEach((section) => observer?.observe(section));
-    };
-
-    setup();
-    window.addEventListener("resize", setup);
-    return () => {
-      window.removeEventListener("resize", setup);
-      observer?.disconnect();
-    };
-  }, [headerHeight, vendor.categories]);
+  const { toast, showToast } = useToast();
+  const headerHeight = useHeaderHeight();
+  const { activeCategoryId, setActiveCategoryId, registerSectionRef } =
+    useCategoryScrollSpy(vendor.categories, headerHeight);
 
   const handleAddService = useCallback(
     (service: ServiceOption, categoryLabel: string) => {
@@ -177,34 +102,8 @@ const VendorPage: React.FC = () => {
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     },
-    [headerHeight],
+    [headerHeight, setActiveCategoryId],
   );
-
-  const registerSectionRef = useCallback(
-    (categoryId: string) => (el: HTMLElement | null) => {
-      if (el) {
-        sectionElsRef.current.set(categoryId, el);
-      } else {
-        sectionElsRef.current.delete(categoryId);
-      }
-    },
-    [],
-  );
-
-  const handleBack = useCallback(() => {
-    window.history.back();
-  }, []);
-
-  const toggleCategoryMenu = useCallback(() => {
-    setIsCategoryMenuOpen((prev) => !prev);
-  }, []);
-
-  const closeCategoryMenu = useCallback((focusTrigger: boolean) => {
-    setIsCategoryMenuOpen(false);
-    if (focusTrigger) {
-      categoryMenuButtonRef.current?.focus();
-    }
-  }, []);
 
   const handleCategoryMenuSelect = useCallback(
     (categoryId: string) => {
@@ -215,91 +114,25 @@ const VendorPage: React.FC = () => {
         return next;
       });
       handleCategoryChange(categoryId);
-      closeCategoryMenu(true);
     },
-    [handleCategoryChange, closeCategoryMenu],
+    [handleCategoryChange],
   );
 
-  // Close the jump-menu on outside click / Escape, matching the WAI-ARIA menu button pattern.
-  useEffect(() => {
-    if (!isCategoryMenuOpen) return;
-
-    const handlePointerDown = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        categoryMenuPanelRef.current?.contains(target) ||
-        categoryMenuButtonRef.current?.contains(target)
-      ) {
-        return;
-      }
-      setIsCategoryMenuOpen(false);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeCategoryMenu(true);
-      }
-    };
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isCategoryMenuOpen, closeCategoryMenu]);
-
-  // Move focus into the menu when it opens, for keyboard users.
-  useEffect(() => {
-    if (isCategoryMenuOpen) {
-      categoryMenuPanelRef.current
-        ?.querySelector<HTMLButtonElement>('[role="menuitem"]')
-        ?.focus();
-    }
-  }, [isCategoryMenuOpen]);
+  const {
+    isOpen: isCategoryMenuOpen,
+    buttonRef: categoryMenuButtonRef,
+    panelRef: categoryMenuPanelRef,
+    toggle: toggleCategoryMenu,
+    close: closeCategoryMenu,
+    selectCategory: selectCategoryFromMenu,
+    handleKeyDown: handleCategoryMenuKeyDown,
+    handleBlur: handleCategoryMenuBlur,
+  } = useCategoryMenu({ onSelectCategory: handleCategoryMenuSelect });
 
   // Avoid two floating overlays fighting for attention.
   useEffect(() => {
-    if (isCartOpen) setIsCategoryMenuOpen(false);
-  }, [isCartOpen]);
-
-  const handleCategoryMenuKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      const items = Array.from(
-        categoryMenuPanelRef.current?.querySelectorAll<HTMLButtonElement>(
-          '[role="menuitem"]',
-        ) ?? [],
-      );
-      if (!items.length) return;
-      const currentIndex = items.indexOf(
-        document.activeElement as HTMLButtonElement,
-      );
-
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        items[(currentIndex + 1) % items.length]?.focus();
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        items[(currentIndex - 1 + items.length) % items.length]?.focus();
-      } else if (event.key === "Home") {
-        event.preventDefault();
-        items[0]?.focus();
-      } else if (event.key === "End") {
-        event.preventDefault();
-        items[items.length - 1]?.focus();
-      }
-    },
-    [],
-  );
-
-  const handleCategoryMenuBlur = useCallback(
-    (event: React.FocusEvent<HTMLDivElement>) => {
-      if (!event.currentTarget.contains(event.relatedTarget as Node)) {
-        setIsCategoryMenuOpen(false);
-      }
-    },
-    [],
-  );
+    if (isCartOpen) closeCategoryMenu();
+  }, [isCartOpen, closeCategoryMenu]);
 
   const handleRequestQuote = useCallback(() => {
     setIsCartOpen(false);
@@ -321,182 +154,45 @@ const VendorPage: React.FC = () => {
   return (
     <div className={styles.page}>
       <main className={styles.main} id="main-content">
-        {vendor.categories.map((category) => {
-          const isOpen = openCategoryIds.has(category.id);
-          const toggleId = `category-toggle-${category.id}`;
-          const panelId = `category-panel-${category.id}`;
-
-          return (
-            <section
-              key={category.id}
-              id={`category-section-${category.id}`}
-              ref={registerSectionRef(category.id)}
-              className={styles.categorySection}
-            >
-              <h2
-                className={`${styles.categoryHeading} ${
-                  activeCategoryId === category.id
-                    ? styles.categoryHeadingActive
-                    : ""
-                }`}
-              >
-                <button
-                  type="button"
-                  id={toggleId}
-                  className={styles.categoryToggle}
-                  aria-expanded={isOpen}
-                  aria-controls={panelId}
-                  onClick={() => toggleCategory(category.id)}
-                >
-                  <span className={styles.categoryIcon} aria-hidden="true">
-                    {category.icon}
-                  </span>
-                  <span className={styles.categoryTitle}>
-                    {category.label}
-                    <span className={styles.serviceCount}>
-                      · {category.services.length} services
-                    </span>
-                  </span>
-                  <svg
-                    className={`${styles.chevron} ${
-                      isOpen ? styles.chevronOpen : ""
-                    }`}
-                    aria-hidden="true"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M6 9L12 15L18 9"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              </h2>
-
-              <ul
-                id={panelId}
-                className={styles.servicesGrid}
-                role="list"
-                aria-labelledby={toggleId}
-                hidden={!isOpen}
-              >
-                {category.services.map((service) => (
-                  <li key={service.id} role="listitem">
-                    <ServiceCard
-                      service={service}
-                      categoryLabel={category.label}
-                      quantity={getQuantity(service.id)}
-                      onAdd={handleAddService}
-                      onIncrement={handleIncrement}
-                      onDecrement={handleDecrement}
-                      onViewMore={handleViewMore}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
+        {vendor.categories.map((category) => (
+          <CategorySection
+            key={category.id}
+            category={category}
+            isActive={activeCategoryId === category.id}
+            isOpen={openCategoryIds.has(category.id)}
+            registerRef={registerSectionRef(category.id)}
+            onToggle={toggleCategory}
+            getQuantity={getQuantity}
+            onAddService={handleAddService}
+            onIncrement={handleIncrement}
+            onDecrement={handleDecrement}
+            onViewMore={handleViewMore}
+          />
+        ))}
       </main>
 
-      <button
-        type="button"
-        ref={categoryMenuButtonRef}
-        className={styles.categoryMenuFab}
-        onClick={toggleCategoryMenu}
-        aria-haspopup="menu"
-        aria-expanded={isCategoryMenuOpen}
-        aria-controls="category-jump-menu"
-      >
-        <svg
-          aria-hidden="true"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path
-            d="M4 6H20M4 12H20M4 18H14"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span>Menu</span>
-      </button>
-
-      {isCategoryMenuOpen && (
-        <div
-          id="category-jump-menu"
-          ref={categoryMenuPanelRef}
-          role="menu"
-          aria-label="Jump to category"
-          className={`${styles.categoryMenuPanel} ${
-            totalItems > 0 ? styles.categoryMenuPanelRaised : ""
-          }`}
-          onKeyDown={handleCategoryMenuKeyDown}
-          onBlur={handleCategoryMenuBlur}
-        >
-          {vendor.categories.map((category) => (
-            <button
-              key={category.id}
-              type="button"
-              role="menuitem"
-              className={styles.categoryMenuItem}
-              aria-current={
-                activeCategoryId === category.id ? "true" : undefined
-              }
-              onClick={() => handleCategoryMenuSelect(category.id)}
-            >
-              <span className={styles.categoryMenuItemIcon} aria-hidden="true">
-                {category.icon}
-              </span>
-              <span className={styles.categoryMenuItemLabel}>
-                {category.label}
-              </span>
-              <span className={styles.categoryMenuItemCount} aria-hidden="true">
-                {category.services.length}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
+      <CategoryJumpMenu
+        categories={vendor.categories}
+        activeCategoryId={activeCategoryId}
+        isOpen={isCategoryMenuOpen}
+        isRaised={totalItems > 0}
+        buttonRef={categoryMenuButtonRef}
+        panelRef={categoryMenuPanelRef}
+        onToggle={toggleCategoryMenu}
+        onSelect={selectCategoryFromMenu}
+        onKeyDown={handleCategoryMenuKeyDown}
+        onBlur={handleCategoryMenuBlur}
+      />
 
       {totalItems > 0 && (
-        <button
-          className={styles.cartFab}
+        <CartFab
+          totalItems={totalItems}
+          formattedTotal={formattedTotal}
           onClick={() => setIsCartOpen(true)}
-          type="button"
-          aria-label={`Open quote cart — ${totalItems} services, total ${formattedTotal}`}
-        >
-          <span className={styles.fabIcon} aria-hidden="true">
-            🗂️
-          </span>
-          <span>View Cart</span>
-          <span className={styles.fabBadge} aria-hidden="true">
-            {totalItems}
-          </span>
-          <span className={styles.fabPrice} aria-hidden="true">
-            {formattedTotal}
-          </span>
-        </button>
+        />
       )}
 
-      {toast && (
-        <div
-          className={styles.toast}
-          role="status"
-          aria-live="polite"
-          key={toast?.id}
-        >
-          {toast?.text}
-        </div>
-      )}
+      {toast && <Toast key={toast.id} text={toast.text} />}
 
       <CartDrawer
         items={items}
