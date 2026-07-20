@@ -4,7 +4,7 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import Image from "next/image";
 import { ImageCarousel } from "../../Molecules/ImageCarousel/ImageCarousel";
 type productType = {
-  _id: number;
+  id: number;
   description: string;
   actualPrice: number;
   discountPrice: number;

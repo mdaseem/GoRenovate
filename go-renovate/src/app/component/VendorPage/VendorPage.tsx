@@ -3,13 +3,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import styles from "./VendorPage.module.css";
-import { ServiceOption } from "./vendor";
-import { MOCK_VENDOR } from "./VendorData";
+import { ServiceOption, Vendor } from "./vendor";
 import { useCart } from "../CustomHooks/useCart";
 import CartDrawer from "../Atoms/CartDrawer/CartDrawer";
 import LoginContainer from "../Molecules/LoginContainer/LoginContainer";
 import Overlay from "../HOC/Overlay/Overlay";
 import ServiceDetail from "../Molecules/ServiceDetail/ServiceDetail";
+import ErrorState from "../Atoms/ErrorState/ErrorState";
 import { useHeaderHeight } from "./hooks/useHeaderHeight";
 import { useToast } from "./hooks/useToast";
 import { useCategoryScrollSpy } from "./hooks/useCategoryScrollSpy";
@@ -19,12 +19,16 @@ import CategoryJumpMenu from "./components/CategoryJumpMenu";
 import CartFab from "./components/CartFab";
 import Toast from "./components/Toast";
 
-const VendorPage: React.FC = () => {
-  const vendor = MOCK_VENDOR;
+type propType = {
+  vendor?: Vendor;
+};
+
+const VendorPage: React.FC<propType> = ({ vendor }) => {
   const { data: session, status } = useSession();
+  const categories = vendor?.categories ?? [];
 
   const [openCategoryIds, setOpenCategoryIds] = useState<Set<string>>(
-    () => new Set(vendor.categories[0]?.id ? [vendor.categories[0].id] : []),
+    () => new Set(categories[0]?.id ? [categories[0].id] : []),
   );
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -46,7 +50,7 @@ const VendorPage: React.FC = () => {
   const { toast, showToast } = useToast();
   const headerHeight = useHeaderHeight();
   const { activeCategoryId, setActiveCategoryId, registerSectionRef } =
-    useCategoryScrollSpy(vendor.categories, headerHeight);
+    useCategoryScrollSpy(categories, headerHeight);
 
   const handleAddService = useCallback(
     (service: ServiceOption, categoryLabel: string) => {
@@ -151,10 +155,22 @@ const VendorPage: React.FC = () => {
     }
   }
 
+  if (!vendor) {
+    return (
+      <ErrorState
+        variant="page"
+        title="Couldn't load this vendor"
+        message="This vendor may no longer be available. Please try again or go back to browsing."
+        actionLabel="Back to products"
+        href="/products"
+      />
+    );
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main} id="main-content">
-        {vendor.categories.map((category) => (
+        {categories.map((category) => (
           <CategorySection
             key={category.id}
             category={category}
@@ -172,7 +188,7 @@ const VendorPage: React.FC = () => {
       </main>
 
       <CategoryJumpMenu
-        categories={vendor.categories}
+        categories={categories}
         activeCategoryId={activeCategoryId}
         isOpen={isCategoryMenuOpen}
         isRaised={totalItems > 0}

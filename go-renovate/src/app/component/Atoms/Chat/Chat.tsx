@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
 import { useAppSelector } from "@/app/store/hooks";
 import { Loader2 } from "../../Molecules/Loader/Loader";
+import ErrorState from "../ErrorState/ErrorState";
 
 interface Message {
   roomId: string;
@@ -19,6 +20,8 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const { data: session } = useSession();
   const isChatOpen = useAppSelector(
     (state: RootState) => state.overlay.isOpenChat,
@@ -32,16 +35,25 @@ const Chat = () => {
   }
 
   const fetchMessages = async () => {
+    setIsLoadingMessages(true);
+    setLoadError(null);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/rooms/${roomId}`,
       );
 
+      if (!res.ok) {
+        throw new Error(`Failed to load messages (${res.status})`);
+      }
+
       const data = await res.json();
 
-      setMessages(data.messages);
+      setMessages(data?.messages ?? []);
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch chat messages:", error);
+      setLoadError("Couldn't load messages. Please try again.");
+    } finally {
+      setIsLoadingMessages(false);
     }
   };
 
@@ -99,8 +111,27 @@ const Chat = () => {
     setMessage("");
   };
 
-  if (!session) return "Something went wrong";
-  if (!messages.length && isChatOpen) return <Loader2 />;
+  if (!session) {
+    return (
+      <ErrorState
+        title="You're signed out"
+        message="Please sign in again to use chat."
+      />
+    );
+  }
+
+  if (loadError && !messages.length) {
+    return (
+      <ErrorState
+        title="Couldn't load chat"
+        message={loadError}
+        actionLabel="Retry"
+        onAction={fetchMessages}
+      />
+    );
+  }
+
+  if (isLoadingMessages && !messages.length && isChatOpen) return <Loader2 />;
 
   return (
     <div className="main-chat-container">

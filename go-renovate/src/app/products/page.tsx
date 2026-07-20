@@ -12,7 +12,7 @@ async function getProducts() {
   }
 
   return axios
-    .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/products`, {
+    .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -35,7 +35,7 @@ async function getProducts() {
       ) => response.data,
     )
     .catch((error) => {
-      console.log("Error fetching products:", error);
+      console.error("Error fetching products:", error);
     });
 }
 

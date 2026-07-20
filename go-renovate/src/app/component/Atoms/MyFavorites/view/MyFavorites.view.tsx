@@ -4,8 +4,8 @@ import { useDispatch } from "react-redux";
 import { setFavsData, unsetFavState } from "@/app/store/features/favroites";
 
 type productType = {
-  _id: number;
-  description: string;
+  id: number;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;

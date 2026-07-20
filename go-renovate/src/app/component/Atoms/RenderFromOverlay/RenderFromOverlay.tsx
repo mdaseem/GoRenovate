@@ -14,6 +14,7 @@ import UserList from "../../Atoms/UserList/UserList";
 import dynamic from "next/dynamic";
 import Loader, { Loader1 } from "../../Molecules/Loader/Loader";
 import { useStopScrollOnOverlay } from "../../CustomHooks/useStopScrollOnOverlay";
+import ErrorBoundary from "../../HOC/ErrorBoundary/ErrorBoundary";
 
 function RenderFromOverlay() {
   const dispatch = useAppDispatch();
@@ -53,7 +54,9 @@ function RenderFromOverlay() {
         isDisable={false}
         shouldReturnNull={store.isOpen ? false : true}
       >
-        <WishListPage isOpen={store.isOpen} />
+        <ErrorBoundary title="Wishlist is unavailable">
+          {WishListPage && <WishListPage isOpen={store.isOpen} />}
+        </ErrorBoundary>
       </Overlay>
       <Overlay
         isOpen={store.isOpenLogin}
@@ -62,14 +65,18 @@ function RenderFromOverlay() {
         isLoginPage={false}
         shouldReturnNull={store.isOpenLogin ? false : true}
       >
-        <LoginContainer />
+        <ErrorBoundary title="Login is unavailable">
+          {LoginContainer && <LoginContainer />}
+        </ErrorBoundary>
       </Overlay>
       <Overlay
         isDisable={false}
         isOpen={store.isUserListOpen}
         setIsOpen={(payload) => dispatch(setOpenStateUserList(payload))}
       >
-        {<UserList setSelectedUser={setSelectedUser} />}
+        <ErrorBoundary title="Connections list is unavailable">
+          <UserList setSelectedUser={setSelectedUser} />
+        </ErrorBoundary>
       </Overlay>
       <Overlay
         isDisable={false}
@@ -77,7 +84,9 @@ function RenderFromOverlay() {
         setIsOpen={(payload) => dispatch(setOpenStateChat(payload))}
         shouldReturnNull={store.isOpenChat ? false : true}
       >
-        <Chat />
+        <ErrorBoundary title="Chat is unavailable">
+          <Chat />
+        </ErrorBoundary>
       </Overlay>
     </>
   );

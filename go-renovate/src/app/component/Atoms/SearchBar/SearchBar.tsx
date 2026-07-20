@@ -11,7 +11,7 @@ import Overlay from "../../HOC/Overlay/Overlay";
 import ProductView from "../ProductView/ProductView";
 
 type productType = {
-  _id: number;
+  id: number;
   description: string;
   actualPrice: number;
   discountPrice: number;
@@ -133,7 +133,7 @@ function SearchBar() {
           >
             {filteredProducts?.map((product: productType) => (
               <li
-                key={product?._id}
+                key={product?.id}
                 className="search-result-item"
                 onClick={onSelectResult}
               >

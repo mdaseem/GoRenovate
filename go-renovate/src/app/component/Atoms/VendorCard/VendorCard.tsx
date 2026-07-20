@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 
 type vendorType = {
-  _id: number;
-  description: string;
+  id: number;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;
@@ -27,7 +27,7 @@ function VendorCard(props: propType) {
   const imageUrl = vendor?.imageUrl?.[0] || "";
   const favList = useSelector((state: RootState) => state.favoriteList);
   const isFav = favList?.filter(
-    (favVendor: vendorType) => favVendor?._id === vendor?._id,
+    (favVendor: vendorType) => favVendor?.id === vendor?.id,
   );
 
   const FullStar = () => (
@@ -54,25 +54,35 @@ function VendorCard(props: propType) {
   };
 
   return (
-    <div key={vendor?._id} className="vendor-card">
+    <div key={vendor?.id} className="vendor-card">
       <Link
-        href={`/products/${vendor?._id}`}
+        href={`/products/${vendor?.id}`}
         className="vendor-card-img-link"
         aria-hidden="true"
         tabIndex={-1}
       >
-        <Image
-          className="vendor-card-img"
-          src={imageUrl}
-          alt=""
-          width={160}
-          height={160}
-        />
+        {imageUrl ? (
+          <Image
+            className="vendor-card-img"
+            src={imageUrl}
+            alt=""
+            width={160}
+            height={160}
+          />
+        ) : (
+          <Image
+            className="vendor-card-img"
+            src="/house.jpg"
+            alt="this is placeholder image"
+            width={160}
+            height={160}
+          />
+        )}
       </Link>
 
       <div className="vendor-card-details">
         <div className="vendor-card-top">
-          <p className="vendor-card-name">{vendor?.description}</p>
+          <p className="vendor-card-name">{vendor?.name}</p>
           {!props.isForSearch && (
             <MyFavorites
               prodData={vendor}
@@ -85,9 +95,9 @@ function VendorCard(props: propType) {
 
       <div className="vendor-card-action">
         <Link
-          href={`/products/${vendor?._id}`}
+          href={`/products/${vendor?.id}`}
           className="vendor-card-view-btn"
-          aria-label={`View ${vendor?.description ?? "vendor"}`}
+          aria-label={`View ${vendor?.name ?? "vendor"}`}
           onClick={() => props.setProduct(props.vendor)}
         >
           View

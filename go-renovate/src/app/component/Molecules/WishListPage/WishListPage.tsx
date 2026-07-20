@@ -8,7 +8,7 @@ import ProductPage from "../../HOC/Overlay/Overlay";
 import ProductView from "../../Atoms/ProductView/ProductView";
 
 type productType = {
-  _id: number;
+  id: number;
   description: string;
   actualPrice: number;
   discountPrice: number;
@@ -28,7 +28,7 @@ function WishListPage(props: PropsType) {
   const ProductList = () => {
     return favsList?.map((product: productType) => (
       <VendorCard
-        key={product?._id}
+        key={product?.id}
         vendor={product}
         setProduct={setProduct}
         setIsOpen={setIsOpen}
