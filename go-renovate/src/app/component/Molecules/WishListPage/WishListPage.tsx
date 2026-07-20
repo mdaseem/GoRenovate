@@ -9,7 +9,7 @@ import ProductView from "../../Atoms/ProductView/ProductView";
 
 type productType = {
   id: number;
-  description: string;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;

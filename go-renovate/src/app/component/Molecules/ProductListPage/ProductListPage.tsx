@@ -15,7 +15,7 @@ import ErrorState from "../../Atoms/ErrorState/ErrorState";
 
 type productType = {
   id: number;
-  description: string;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;
