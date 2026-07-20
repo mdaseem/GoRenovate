@@ -12,7 +12,7 @@ import ProductView from "../ProductView/ProductView";
 
 type productType = {
   id: number;
-  description: string;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;
@@ -59,7 +59,7 @@ function SearchBar() {
   useEffect(() => {
     const filtered = productsList?.prodList?.data?.filter(
       (product: productType) =>
-        product?.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+        product?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredProducts(filtered);
   }, [searchTerm, productsList?.prodList?.data]);
