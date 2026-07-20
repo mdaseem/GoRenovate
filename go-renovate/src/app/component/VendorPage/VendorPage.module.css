@@ -329,10 +329,6 @@
 }
 
 .toast {
-  /* Same reasoning as .cartFab above: `fixed` (not `sticky`) so it always
-     appears pinned near the bottom of the screen regardless of how tall
-     <main> is, and a capped max-width so long messages wrap instead of
-     overflowing the viewport and skewing the centering transform. */
   position: fixed;
   bottom: calc(9.5rem + env(safe-area-inset-bottom));
   left: 50%;
