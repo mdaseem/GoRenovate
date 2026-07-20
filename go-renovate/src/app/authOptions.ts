@@ -42,9 +42,7 @@ export const authOptions: NextAuthOptions = {
       */
       async authorize(credentials) {
         try {
-          // https://go-renovate-server.onrender.com/auth
-          // http://localhost:3002/auth
-          const res = await fetch("https://go-renovate-server.onrender.com/auth", {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/auth`, {
             method: "POST",
 
             headers: {
@@ -128,9 +126,7 @@ export const authOptions: NextAuthOptions = {
         */
         if (!token.backendToken) {
           try {
-            // http://localhost:3002/auth
-            // https://go-renovate-server.onrender.com/auth
-            const backendRes = await fetch("https://go-renovate-server.onrender.com/auth", {
+            const backendRes = await fetch(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/auth`, {
               method: "POST",
               credentials: "include",
 

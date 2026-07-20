@@ -63,8 +63,7 @@ export default function Login() {
       return;
     }
 
-    // https://go-renovate-server.onrender.com/signup
-    const res = await fetch("https://go-renovate-server.onrender.com/signup", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
