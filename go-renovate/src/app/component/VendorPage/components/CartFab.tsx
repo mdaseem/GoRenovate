@@ -21,7 +21,7 @@ const CartFab: React.FC<CartFabProps> = ({
     <span className={styles.fabIcon} aria-hidden="true">
       🗂️
     </span>
-    <span>View Cart</span>
+    <span className={styles.fabLabel}>View Cart</span>
     <span className={styles.fabBadge} aria-hidden="true">
       {totalItems}
     </span>
