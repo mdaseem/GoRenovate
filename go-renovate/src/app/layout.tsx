@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./store/Provider";
 import Header from "./component/Atoms/Header/Header";
 import RenderFromOverlay from "./component/Atoms/RenderFromOverlay/RenderFromOverlay";
+import ErrorBoundary from "./component/HOC/ErrorBoundary/ErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,10 +45,14 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers>
           <>
-            <Header />
+            <ErrorBoundary title="Navigation is unavailable">
+              <Header />
+            </ErrorBoundary>
             {/* <Suspense fallback={<Loader />}> */}
             {children}
-            <RenderFromOverlay />
+            <ErrorBoundary title="This feature is unavailable right now">
+              <RenderFromOverlay />
+            </ErrorBoundary>
             {/* </Suspense> */}
           </>
         </Providers>

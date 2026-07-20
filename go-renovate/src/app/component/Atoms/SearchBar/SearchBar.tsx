@@ -11,8 +11,8 @@ import Overlay from "../../HOC/Overlay/Overlay";
 import ProductView from "../ProductView/ProductView";
 
 type productType = {
-  _id: number;
-  description: string;
+  id: number;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;
@@ -59,7 +59,7 @@ function SearchBar() {
   useEffect(() => {
     const filtered = productsList?.prodList?.data?.filter(
       (product: productType) =>
-        product?.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+        product?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredProducts(filtered);
   }, [searchTerm, productsList?.prodList?.data]);
@@ -133,7 +133,7 @@ function SearchBar() {
           >
             {filteredProducts?.map((product: productType) => (
               <li
-                key={product?._id}
+                key={product?.id}
                 className="search-result-item"
                 onClick={onSelectResult}
               >

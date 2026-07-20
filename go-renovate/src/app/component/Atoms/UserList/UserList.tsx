@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { useSession } from "next-auth/react";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { Loader3 } from "../../Molecules/Loader/Loader";
+import ErrorState from "../ErrorState/ErrorState";
 
 type propType = {
   setSelectedUser: Dispatch<
@@ -29,11 +30,36 @@ const UserList = ({ setSelectedUser }: propType) => {
     }
   }, [isOpenUserList, isOpenChat, session, isOpen]);
 
-  if (!(users?.chatUsers.length > 0))
+  const retryFetchUsers = () => {
+    if (session?.backendToken) {
+      dispatch(getChatUsers({ token: session?.backendToken }));
+    }
+  };
+
+  if (users?.error && !(users?.chatUsers.length > 0)) {
+    return (
+      <ErrorState
+        title="Couldn't load connections"
+        message={users.error}
+        actionLabel="Retry"
+        onAction={retryFetchUsers}
+      />
+    );
+  }
+
+  if (users?.isLoading && !(users?.chatUsers.length > 0))
     return (
       <div className="loader-userlist">
         <Loader3 />
       </div>
+    );
+
+  if (!(users?.chatUsers.length > 0))
+    return (
+      <ErrorState
+        title="No connections yet"
+        message="Start a conversation to see it appear here."
+      />
     );
 
   return (

@@ -2,8 +2,8 @@ import React from "react";
 import VendorCard from "../../Atoms/VendorCard/VendorCard";
 
 type productType = {
-  _id: number;
-  description: string;
+  id: number;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;
@@ -20,7 +20,7 @@ function ProductList(props: propType) {
   const productList = props.productLists?.data?.map((product: productType) => {
     return (
       <VendorCard
-        key={product?._id}
+        key={product?.id}
         vendor={product}
         setProduct={props.setProduct}
         setIsOpen={props.setIsOpen}

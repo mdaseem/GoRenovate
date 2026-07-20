@@ -1,11 +1,9 @@
 "use client";
 import React from "react";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import Image from "next/image";
 import { ImageCarousel } from "../../Molecules/ImageCarousel/ImageCarousel";
 type productType = {
-  _id: number;
-  description: string;
+  id: number;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;

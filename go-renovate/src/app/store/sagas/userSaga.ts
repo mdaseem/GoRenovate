@@ -3,7 +3,11 @@ import { loginFailure } from "../features/authSlice";
 import { SagaIterator } from "redux-saga";
 import axios, { AxiosResponse } from "axios";
 import { signOut } from "next-auth/react";
-import { getChatUsers, setChatUsers } from "../features/userSlice";
+import {
+  getChatUsers,
+  setChatUsers,
+  setChatUsersError,
+} from "../features/userSlice";
 
 async function getUser(token: string) {
   return axios
@@ -41,10 +45,11 @@ function* handleRequest(action: ReturnType<typeof getChatUsers>): SagaIterator {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       yield call(signOut, { redirect: false });
       yield put(loginFailure("Session expired. Please log in again."));
-    } else if (error instanceof Error) {
-      yield put(loginFailure(error.message));
+      yield put(setChatUsersError("Session expired. Please log in again."));
     } else {
-      yield put(loginFailure("An unknown error occurred"));
+      yield put(
+        setChatUsersError("Couldn't load your connections. Please try again."),
+      );
     }
   }
 }

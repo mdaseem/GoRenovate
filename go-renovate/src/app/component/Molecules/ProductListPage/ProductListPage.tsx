@@ -11,10 +11,11 @@ import ProductList from "../ProductList/ProductList";
 import { Loader1 } from "../Loader/Loader";
 import { setOpenStateProductPage } from "@/app/store/features/overLaySlice";
 import VendorPage from "../../VendorPage/VendorPage";
+import ErrorState from "../../Atoms/ErrorState/ErrorState";
 
 type productType = {
-  _id: number;
-  description: string;
+  id: number;
+  name: string;
   actualPrice: number;
   discountPrice: number;
   rating: number;
@@ -34,8 +35,14 @@ function ProductListPage(props: { products: void | Response }) {
       : {
           data: productLists?.prodList?.data,
           isloading: productLists?.isloading,
-          error: null,
+          error: productLists?.error ?? null,
         };
+
+  const retryFetchProducts = () => {
+    if (session?.backendToken) {
+      dispatch(getProducts({ token: session?.backendToken }));
+    }
+  };
 
   useEffect(() => {
     if (session?.backendToken && !props.products) {
@@ -45,12 +52,26 @@ function ProductListPage(props: { products: void | Response }) {
     }
   }, [session]);
 
+  const hasProducts = (productListsData?.data?.length ?? 0) > 0;
+
   return (
     <div className="product-page-container">
       <div className="product-page-filters">{<Filters />}</div>
       <div className="product-page-list">
         {productListsData?.isloading && !props.products ? (
           <Loader1 />
+        ) : productListsData?.error && !hasProducts ? (
+          <ErrorState
+            title="Couldn't load products"
+            message={productListsData.error}
+            actionLabel="Retry"
+            onAction={retryFetchProducts}
+          />
+        ) : !hasProducts ? (
+          <ErrorState
+            title="No products found"
+            message="Check back soon — new services are added regularly."
+          />
         ) : (
           <ProductList
             productLists={productListsData}

@@ -6,6 +6,7 @@ const initialState: any = {
   isOpenLogin: false,
   prodList: [] as ProductType[],
   isloading: false,
+  error: null as string | null,
 };
 type ProductType = {
   id: number;
@@ -20,18 +21,26 @@ export const productSlice = createSlice({
   reducers: {
     setProducts: (store, { payload }) => {
       store.prodList = payload;
+      store.error = null;
       return store;
     },
     getProducts: (store, { payload }) => {
       store.isloading = true;
+      store.error = null;
       return store;
     },
     setLoading: (store, { payload }) => {
       store.isloading = payload.data;
       return store;
-    }
+    },
+    setProductsError: (store, { payload }) => {
+      store.error = payload;
+      store.isloading = false;
+      return store;
+    },
   },
 });
 
-export const { setProducts, getProducts, setLoading } = productSlice.actions;
+export const { setProducts, getProducts, setLoading, setProductsError } =
+  productSlice.actions;
 export default productSlice.reducer;
