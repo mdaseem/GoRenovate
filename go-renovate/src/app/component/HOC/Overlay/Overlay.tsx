@@ -11,6 +11,7 @@ type PropsType = {
   shouldReturnNull?: boolean;
   variant?: "page" | "menu";
   id?: string;
+  headerExtra?: React.ReactNode;
 };
 
 function MenuOverlay({
@@ -111,7 +112,7 @@ function Overlay(props: PropsType) {
               </button>
             )}
           </div>
-          <div className="temp-space" />
+          <div className="temp-space">{props.headerExtra}</div>
         </div>
         <div className="overlay-content">{props.children}</div>
       </div>

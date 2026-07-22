@@ -41,34 +41,39 @@ const ServiceImageCarousel: React.FC<ServiceImageCarouselProps> = ({
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (images.length <= 1) return;
       if (event.key === "ArrowLeft") {
         event.preventDefault();
+        event.stopPropagation();
         goPrev();
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
+        event.stopPropagation();
         goNext();
       }
     },
-    [goPrev, goNext],
+    [images.length, goPrev, goNext],
   );
 
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
+      if (images.length <= 1) return;
       touchStartX.current = event.touches[0].clientX;
     },
-    [],
+    [images.length],
   );
 
   const handleTouchEnd = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
-      if (touchStartX.current === null) return;
+      if (images.length <= 1 || touchStartX.current === null) return;
+      event.stopPropagation();
       const deltaX = event.changedTouches[0].clientX - touchStartX.current;
       touchStartX.current = null;
       const SWIPE_THRESHOLD = 40;
       if (deltaX > SWIPE_THRESHOLD) goPrev();
       else if (deltaX < -SWIPE_THRESHOLD) goNext();
     },
-    [goPrev, goNext],
+    [images.length, goPrev, goNext],
   );
 
   if (!images.length) return null;

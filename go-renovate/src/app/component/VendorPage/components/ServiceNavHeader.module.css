@@ -1,0 +1,59 @@
+.nav {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: #f3f4f6;
+  color: #1a1f2e;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.navButton:hover:not(:disabled) {
+  background: #ece9e3;
+}
+
+.navButton:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.navButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.counter {
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  min-width: 3.2rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navButton {
+    transition: none;
+  }
+}
