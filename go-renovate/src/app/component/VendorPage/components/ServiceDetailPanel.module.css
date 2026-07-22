@@ -1,0 +1,109 @@
+.panel {
+  position: relative;
+  min-height: 100%;
+  /* Let the browser handle vertical scroll natively; horizontal swipes are
+     read from touch coordinates in JS. */
+  touch-action: pan-y;
+}
+
+.slide {
+  will-change: transform, opacity;
+}
+
+.slideNext {
+  animation: slideInNext 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slidePrev {
+  animation: slideInPrev 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInNext {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInPrev {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.navArrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: none;
+  background: rgba(26, 31, 46, 0.85);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000001;
+  box-shadow: 0 8px 24px rgba(26, 31, 46, 0.25);
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.navArrow:hover {
+  background: #1a1f2e;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.navArrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.navArrow:focus-visible {
+  outline: 2px solid #c4fd5b;
+  outline-offset: 2px;
+}
+
+.navArrowPrev {
+  left: clamp(0.75rem, 3vw, 2rem);
+}
+
+.navArrowNext {
+  right: clamp(0.75rem, 3vw, 2rem);
+}
+
+/* Arrows are a desktop affordance; mobile relies on the swipe gesture so the
+   detail content isn't cramped by fixed side buttons. */
+@media (max-width: 768px) {
+  .navArrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slideNext,
+  .slidePrev {
+    animation: none;
+  }
+
+  .navArrow {
+    transition: none;
+  }
+
+  .navArrow:hover,
+  .navArrow:active {
+    transform: translateY(-50%);
+  }
+}
