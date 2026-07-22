@@ -165,8 +165,8 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
         variant="page"
         title="Couldn't load this vendor"
         message="This vendor may no longer be available. Please try again or go back to browsing."
-        actionLabel="Back to products"
-        href="/products"
+        actionLabel="Back to vendors"
+        href="/vendors"
       />
     );
   }

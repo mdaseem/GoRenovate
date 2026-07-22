@@ -56,7 +56,7 @@ function VendorCard(props: propType) {
   return (
     <div key={vendor?.id} className="vendor-card">
       <Link
-        href={`/products/${vendor?.id}`}
+        href={`/vendors/${vendor?.id}`}
         className="vendor-card-img-link"
         aria-hidden="true"
         tabIndex={-1}
@@ -95,7 +95,7 @@ function VendorCard(props: propType) {
 
       <div className="vendor-card-action">
         <Link
-          href={`/products/${vendor?.id}`}
+          href={`/vendors/${vendor?.id}`}
           className="vendor-card-view-btn"
           aria-label={`View ${vendor?.name ?? "vendor"}`}
           onClick={() => props.setProduct(props.vendor)}

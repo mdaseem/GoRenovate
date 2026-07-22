@@ -193,7 +193,7 @@ export default function HomePage() {
             {categories.map((cat) => (
               <Link
                 // href={`#${cat.title.toLowerCase().replace(/\s+/g, "-")}`}
-                href={"/products"}
+                href={"/vendors"}
                 key={cat.id}
                 className={styles.categoryCard}
               >
