@@ -7,6 +7,8 @@ import {
   setOpenMobileMenu,
   setOpenState,
   setOpenStateUserList,
+  setOpenStateAIChat,
+  setOpenStateLogin,
 } from "@/app/store/features/overLaySlice";
 import { logout } from "@/app/store/features/authSlice";
 import { signOut, useSession } from "next-auth/react";
@@ -21,7 +23,7 @@ const Menu: React.FC = () => {
 
   return (
     <div className="account-menu">
-      {session && (
+      {session ? (
         <div className="account-menu-header">
           <Image
             src={session.user?.image || MyIcon}
@@ -39,9 +41,42 @@ const Menu: React.FC = () => {
             )}
           </div>
         </div>
+      ) : (
+        <div className="account-menu-header">
+          <Image
+            src={MyIcon}
+            alt=""
+            width={36}
+            height={36}
+            className="account-menu-avatar"
+          />
+          <div className="account-menu-identity">
+            <span className="account-menu-name">Welcome</span>
+            <span className="account-menu-email">
+              Sign in for the full experience
+            </span>
+          </div>
+        </div>
       )}
 
       <div className="account-menu-items">
+        {!session && status !== "loading" && (
+          <button
+            type="button"
+            role="menuitem"
+            className="account-menu-item account-menu-item-primary"
+            onClick={() => {
+              closeMenu();
+              dispatch(setOpenStateLogin(true));
+            }}
+          >
+            <span className="account-menu-item-icon" aria-hidden="true">
+              →
+            </span>
+            Login
+          </button>
+        )}
+
         {session && !store.isUserListOpen && (
           <button
             type="button"
@@ -67,6 +102,20 @@ const Menu: React.FC = () => {
             }}
           >
             Wishlist
+          </button>
+        )}
+
+        {session && !store.isOpenAIChat && (
+          <button
+            type="button"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={() => {
+              closeMenu();
+              dispatch(setOpenStateAIChat(true));
+            }}
+          >
+            Ask AI
           </button>
         )}
       </div>

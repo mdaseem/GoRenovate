@@ -5,6 +5,7 @@ import overLay from "./features/overLaySlice";
 import productsState from "./features/productSlice";
 import users from "./features/userSlice";
 import favs from "./features/favroites";
+import aiChat from "./features/aiChatSlice";
 import rootSaga from "./sagas/rootSaga";
 
 const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   overlay: overLay,
   productsList: productsState,
   user: users,
+  aiChat,
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {

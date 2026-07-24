@@ -17,10 +17,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Go Renovate",
-  description: "Go get your home interior renovated with Go Renovate",
+  metadataBase: new URL("https://gorenovate.in"),
+  title: {
+    default: "Go Renovate — Home Renovation Vendors & Quotes",
+    template: "%s",
+  },
+  description:
+    "Go get your home interior renovated with Go Renovate. Browse verified renovation vendors, compare services, and request a free quote.",
   icons: {
     icon: "/my_logo.png",
+  },
+  openGraph: {
+    siteName: "Go Renovate",
+    type: "website",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

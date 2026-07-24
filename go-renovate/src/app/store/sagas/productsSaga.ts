@@ -10,12 +10,10 @@ import {
 import axios from "axios";
 import { signOut } from "next-auth/react";
 
-function getProductCall(token: string) {
+function getProductCall(token?: string) {
   return axios
     .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     })
     .then((response) => response.data);
 }

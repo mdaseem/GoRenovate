@@ -10,6 +10,7 @@ const initialState: any = {
   isOpenProductPage: false,
   isOpenProductPageFromSearch: false,
   isMobileSearchOpen: false,
+  isOpenAIChat: false,
 };
 
 export const overlaySlice = createSlice({
@@ -48,6 +49,10 @@ export const overlaySlice = createSlice({
       store.isMobileSearchOpen = payload;
       return store;
     },
+    setOpenStateAIChat: (store, { payload }) => {
+      store.isOpenAIChat = payload;
+      return store;
+    },
   },
 });
 
@@ -60,5 +65,6 @@ export const {
   setOpenStateProductPage,
   setOpenStateProductPageFromSearch,
   setOpenMobileSearch,
+  setOpenStateAIChat,
 } = overlaySlice.actions;
 export default overlaySlice.reducer;
