@@ -86,6 +86,15 @@
   background: #fdecea;
 }
 
+.account-menu-item-primary {
+  color: #278b2e;
+  font-weight: 700;
+}
+
+.account-menu-item-primary:hover {
+  background: #eef8ec;
+}
+
 .account-menu-divider {
   height: 1px;
   background: #ece9e3;

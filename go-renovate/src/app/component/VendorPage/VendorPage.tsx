@@ -6,8 +6,9 @@ import styles from "./VendorPage.module.css";
 import { ServiceOption, Vendor } from "./vendor";
 import { useCart } from "../CustomHooks/useCart";
 import CartDrawer from "../Atoms/CartDrawer/CartDrawer";
-import LoginContainer from "../Molecules/LoginContainer/LoginContainer";
 import Overlay from "../HOC/Overlay/Overlay";
+import { useAppDispatch } from "@/app/store/hooks";
+import { setOpenStateLogin } from "@/app/store/features/overLaySlice";
 import ErrorState from "../Atoms/ErrorState/ErrorState";
 import { useHeaderHeight } from "./hooks/useHeaderHeight";
 import { useToast } from "./hooks/useToast";
@@ -26,7 +27,8 @@ type propType = {
 };
 
 const VendorPage: React.FC<propType> = ({ vendor }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
+  const dispatch = useAppDispatch();
   const categories = vendor?.categories ?? [];
 
   const [openCategoryIds, setOpenCategoryIds] = useState<Set<string>>(
@@ -129,9 +131,13 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
   }, [isCartOpen, closeCategoryMenu]);
 
   const handleRequestQuote = useCallback(() => {
+    if (!session?.backendToken) {
+      dispatch(setOpenStateLogin(true));
+      return;
+    }
     setIsCartOpen(false);
     showToast("We'll contact you within 2 hours with a detailed quote!");
-  }, [showToast]);
+  }, [session?.backendToken, dispatch, showToast]);
 
   const closeServiceDetail = serviceNav.close;
   const handleDetailOpenChange = useCallback<
@@ -152,12 +158,6 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(totalPrice);
-
-  if (!session?.loading && !session?.backendToken) {
-    if (status === "unauthenticated") {
-      return <LoginContainer />;
-    }
-  }
 
   if (!vendor) {
     return (

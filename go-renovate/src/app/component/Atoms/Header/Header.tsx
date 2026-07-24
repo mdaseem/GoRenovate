@@ -71,38 +71,36 @@ export default function Header() {
       <nav className="header-nav">
         <ul className="header-nav-list">
           <li className="list-item">
-            {session && (
-              <div className="header-profile-menu-wrapper">
-                <button
-                  type="button"
-                  ref={profileButtonRef}
-                  className="header-nav-profile"
-                  aria-haspopup="menu"
-                  aria-expanded={isMobileMenuOpen}
-                  aria-controls="account-menu"
-                  aria-label="Account menu"
-                  onClick={() => dispatch(setOpenMobileMenu(!isMobileMenuOpen))}
-                >
-                  <Image
-                    src={session?.user?.image || MyIcon}
-                    className="profile-icon"
-                    alt=""
-                    width={32}
-                    height={32}
-                  />
-                </button>
-                <Overlay
-                  id="account-menu"
-                  isDisable={false}
-                  isOpen={isMobileMenuOpen}
-                  setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
-                  shouldReturnNull={!isMobileMenuOpen}
-                  variant="menu"
-                >
-                  <Menu />
-                </Overlay>
-              </div>
-            )}
+            <div className="header-profile-menu-wrapper">
+              <button
+                type="button"
+                ref={profileButtonRef}
+                className="header-nav-profile"
+                aria-haspopup="menu"
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="account-menu"
+                aria-label={session ? "Account menu" : "Account and login menu"}
+                onClick={() => dispatch(setOpenMobileMenu(!isMobileMenuOpen))}
+              >
+                <Image
+                  src={session?.user?.image || MyIcon}
+                  className="profile-icon"
+                  alt=""
+                  width={32}
+                  height={32}
+                />
+              </button>
+              <Overlay
+                id="account-menu"
+                isDisable={false}
+                isOpen={isMobileMenuOpen}
+                setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
+                shouldReturnNull={!isMobileMenuOpen}
+                variant="menu"
+              >
+                <Menu />
+              </Overlay>
+            </div>
           </li>
         </ul>
       </nav>

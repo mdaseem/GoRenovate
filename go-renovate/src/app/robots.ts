@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
     },
 
-    sitemap: "https://go-renovate.vercel.app/sitemap.xml",
+    sitemap: "https://gorenovate.in/sitemap.xml",
   };
 }

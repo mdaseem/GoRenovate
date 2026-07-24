@@ -39,16 +39,14 @@ function ProductListPage(props: { products: void | Response }) {
         };
 
   const retryFetchProducts = () => {
-    if (session?.backendToken) {
-      dispatch(getProducts({ token: session?.backendToken }));
-    }
+    dispatch(getProducts({ token: session?.backendToken }));
   };
 
   useEffect(() => {
-    if (session?.backendToken && !props.products) {
-      dispatch(getProducts({ token: session?.backendToken }));
-    } else if (props.products) {
+    if (props.products) {
       dispatch(setProducts({ data: props.products }));
+    } else {
+      dispatch(getProducts({ token: session?.backendToken }));
     }
   }, [session]);
 

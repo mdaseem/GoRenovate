@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Overlay from "../../HOC/Overlay/Overlay";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
@@ -8,6 +9,7 @@ import {
   setOpenStateChat,
   setOpenStateLogin,
   setOpenStateUserList,
+  setOpenStateAIChat,
 } from "@/app/store/features/overLaySlice";
 import Chat from "../../Atoms/Chat/Chat";
 import UserList from "../../Atoms/UserList/UserList";
@@ -18,6 +20,7 @@ import ErrorBoundary from "../../HOC/ErrorBoundary/ErrorBoundary";
 
 function RenderFromOverlay() {
   const dispatch = useAppDispatch();
+  const { status } = useSession();
   useStopScrollOnOverlay();
   const [selectedUser, setSelectedUser] = React.useState<{
     id: string;
@@ -25,6 +28,12 @@ function RenderFromOverlay() {
     status: string;
   } | null>(null);
   const store = useAppSelector((state: RootState) => state.overlay);
+
+  useEffect(() => {
+    if (store.isOpenLogin && status === "authenticated") {
+      dispatch(setOpenStateLogin(false));
+    }
+  }, [store.isOpenLogin, status, dispatch]);
 
   const WishListPage =
     store.isOpen &&
@@ -45,6 +54,13 @@ function RenderFromOverlay() {
         ssr: false,
       },
     );
+
+  const AIChat =
+    store.isOpenAIChat &&
+    dynamic(() => import("@/app/component/Atoms/AIChat/AIChat"), {
+      loading: () => <Loader1 />,
+      ssr: false,
+    });
 
   return (
     <>
@@ -86,6 +102,16 @@ function RenderFromOverlay() {
       >
         <ErrorBoundary title="Chat is unavailable">
           <Chat />
+        </ErrorBoundary>
+      </Overlay>
+      <Overlay
+        isDisable={false}
+        isOpen={store.isOpenAIChat}
+        setIsOpen={(payload) => dispatch(setOpenStateAIChat(payload))}
+        shouldReturnNull={store.isOpenAIChat ? false : true}
+      >
+        <ErrorBoundary title="Assistant is unavailable">
+          {AIChat && <AIChat />}
         </ErrorBoundary>
       </Overlay>
     </>
