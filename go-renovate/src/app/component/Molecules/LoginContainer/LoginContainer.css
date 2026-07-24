@@ -2,8 +2,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-image: url("/Texture_img.png");
+  position: relative;
+  min-height: 100%;
+  background:
+    radial-gradient(120% 90% at 12% 8%, rgba(196, 253, 91, 0.35), transparent 60%),
+    radial-gradient(110% 90% at 88% 92%, rgba(7, 184, 7, 0.16), transparent 55%),
+    linear-gradient(180deg, #f8faf6 0%, #edf3e9 100%);
 }
 .login-children-content {
   flex: 1;
@@ -15,19 +19,33 @@
   flex: 1;
   display: flex;
   flex-wrap: wrap;
+  overflow-y: auto;
 }
 
 @media (max-width: 1246px) {
   .login-container-wrapper {
     flex-direction: column;
+    overflow-y: auto;
   }
   .login-children-content1 {
-    /* position: absolute; */
+    /* decorative background video: dropped below to save battery/data
+       on mobile, see the display:none rule at the 768px breakpoint */
   }
    .login-children-content2 {
     position: absolute;
+    inset: 0;
   }
   .login-container {
     justify-content: normal;
  }
+}
+
+@media (max-width: 768px) {
+  /* On phones the video sits fully behind the opaque login card and is
+     never actually seen — keep the DOM node (LiveBackground still
+     mounts it) but stop it from painting/decoding to save battery and
+     mobile data. */
+  .login-children-content1 {
+    display: none;
+  }
 }

@@ -6,119 +6,199 @@
   height: 100%;
   width: 100%;
 }
+
+.login-box {
+  background-color: #fff;
+  border-radius: 20px;
+  flex-direction: column;
+  gap: 18px;
+  width: 57%;
+  padding: 44px;
+  display: flex;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.login-title {
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  color: #14181c;
+}
+
+.go-title {
+  color: #07b807;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.login-label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.password-field.hide-field {
+  display: none;
+}
+
+.password-container {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.password-container .password-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-input {
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.password-input-wrapper .login-input {
+  padding-right: 44px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.password-toggle:hover {
+  color: #14181c;
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid #07b807;
+  outline-offset: 2px;
+}
+
+.submit-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.submit-buttons {
+  padding: 12px 15px;
+  min-height: 48px;
+  border: none;
+  border-radius: 8px;
+  background-color: #c4fd5b;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.submit-buttons:hover {
+  background-color: #4caf7d;
+  color: white;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .link-buttons {
   display: flex;
   gap: 4px;
   justify-content: center;
   align-items: center;
+  font-size: 14px;
 }
+
 .line {
-  position: absolute;
+  flex: 1;
   height: 1px;
-  width: 100%;
   background-color: rgb(206, 202, 202);
-  margin: auto 0;
 }
+
 .or-para {
-  position: relative;
-  background-color: white;
-  padding: 0 8px;
-  z-index: 1;
-  border-radius: 100%;
-  width: 7%;
-  display: flex;
-  justify-content: center;
-}
-.or-line {
-  position: relative;
-  width: 100%;
-  display: flex;
-  gap: 8px;
+  white-space: nowrap;
   color: gray;
-  font-weight: 600;
-  align-items: center;
-  justify-content: center;
-  margin: 18px 0;
+  font-size: 13px;
+  font-weight: 500;
 }
-.login-box {
-  background-color: #fff;
-  border: 1px solid #fff;
-  border-radius: 5%;
-  flex-direction: column;
-  gap: 15px;
-  width: 57%;
-  padding: 44px;
-  display: flex;
-}
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-.login-subtitle {
-  display: inline;
-}
-.go-title {
-  color: #07e207;
-}
-.login-label {
-  font-weight: 600;
+
+.or-line {
   width: 100%;
-}
-.hide-label {
-  display: none;
-}
-.password-label {
-  transition:
-    flex-grow 900ms ease,
-    width 300ms ease;
-}
-.password-label.expanded {
-  flex-grow: 3;
-  width: auto;
-}
-.password-label.shrink {
-  flex-grow: 0;
-  width: 0;
-}
-.password-container {
   display: flex;
-  flex-direction: row;
-  gap: 8px;
-}
-.login-input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-  margin-top: 8px;
-}
-.submit-buttons-container {
-  display: flex;
-  flex-direction: column;
   gap: 10px;
-  align-items: flex-start;
+  align-items: center;
 }
-.submit-buttons {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #c4fd5b;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-.submit-buttons:hover {
-  background-color: green;
-  color: white;
-}
+
 .signup-submit {
-  color: blue;
+  color: #0d6efd;
   text-decoration: none;
-  padding: 2px;
+  background: none;
+  border: none;
+  padding: 6px 4px;
   text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.signup-submit:hover,
+.signup-submit:focus-visible {
+  text-decoration: underline;
+}
+
+.login-input:focus-visible,
+.signup-submit:focus-visible {
+  outline: 2px solid #07b807;
+  outline-offset: 2px;
 }
 
 .login-input.input-error {
@@ -177,21 +257,44 @@
     filter 0.2s ease;
 }
 
-@media (max-width: 440px) {
-  .login-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
+@media (prefers-reduced-motion: reduce) {
+  .validation-message,
+  .password-field,
+  .submit-buttons,
+  .spinner {
+    animation: none;
+    transition: none;
   }
 }
 
 @media (max-width: 768px) {
   .login-box {
-    padding: 30px;
-    width: 90%;
-    margin-top: 29%;
+    padding: 28px 20px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    gap: 16px;
   }
+
   .login-container {
     justify-content: normal;
+    padding: 24px 16px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
+
+  /* Stack password + confirm password fields on narrow screens instead
+     of the side-by-side desktop layout — two inputs in a row is too
+     cramped once the card drops below ~420px wide. */
+  .password-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 440px) {
+  .login-title {
+    font-size: 20px;
   }
 }

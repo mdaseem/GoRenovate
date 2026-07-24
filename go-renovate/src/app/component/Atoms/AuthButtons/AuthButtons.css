@@ -1,21 +1,32 @@
 .auth-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
+  padding: 12px 15px;
+  min-height: 48px;
+  border: 1.5px solid rgb(211, 209, 209);
+  border-radius: 8px;
   background-color: white;
-  border: 2px solid rgb(211, 209, 209);
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 8px;
   width: 100%;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .auth-button:hover {
-  background-color: green;
-  color: white;
+  background-color: #f5f5f5;
+  border-color: rgb(180, 178, 178);
 }
+
+.auth-button:focus-visible {
+  outline: 2px solid #07b807;
+  outline-offset: 2px;
+}
+
 .signin-text {
   display: inline;
-  margin: auto 4px;
 }

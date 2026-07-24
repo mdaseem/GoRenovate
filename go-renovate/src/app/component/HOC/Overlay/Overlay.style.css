@@ -1,22 +1,18 @@
-.product-detail-page-container {
-  border: 1px solid;
-  .product-container-in-overlay {
-    display: flex;
-    justify-content: center;
-  }
-  .product-detail-info {
-    flex: 1;
-  }
-  .overlay-content {
-    flex: 1;
-  }
+.product-container-in-overlay {
+  display: flex;
+  justify-content: center;
+}
+.overlay-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .overlay-header-container {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   z-index: 10000;
   padding: 5px;
   background-color: white;
