@@ -1,0 +1,160 @@
+.details {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid #ece9e3;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.name {
+  font-family: "Inter", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #eefbd8;
+  color: #278b2e;
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.65rem;
+  border-radius: 100px;
+}
+
+.tagline {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0.6rem 0 0;
+  max-width: 60ch;
+  overflow-wrap: break-word;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ratingText {
+  font-family: "Inter", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.noReviews {
+  font-family: "Inter", sans-serif;
+  font-size: 0.88rem;
+  color: #9ca3af;
+  margin: 0.9rem 0 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.statGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  margin: 1.5rem 0 0;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.statLabel {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.statValue {
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.badgeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge {
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1a1f2e;
+  background: #f8f6f1;
+  border: 1px solid #ece9e3;
+  border-radius: 100px;
+  padding: 0.35rem 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .name {
+    font-size: 1.55rem;
+  }
+
+  .statGrid {
+    gap: 1rem 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .name {
+    font-size: 1.35rem;
+  }
+
+  .tagline {
+    font-size: 0.92rem;
+  }
+
+  .statGrid {
+    gap: 0.85rem 1.4rem;
+  }
+}

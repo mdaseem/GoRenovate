@@ -1,6 +1,23 @@
 import React from "react";
+import { Playfair_Display, DM_Sans } from "next/font/google";
 import styles from "./HomePage.module.css";
 import Link from "next/link";
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-display",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-body",
+});
 
 const categories = [
   {
@@ -115,7 +132,7 @@ const testimonials = [
 
 export default function HomePage() {
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${playfairDisplay.variable} ${dmSans.variable}`}>
       <main>
         {/* HERO */}
         <section className={styles.hero}>
@@ -198,7 +215,9 @@ export default function HomePage() {
                 className={styles.categoryCard}
               >
                 {cat.tag && <span className={styles.cardTag}>{cat.tag}</span>}
-                <span className={styles.cardIcon}>{cat.icon}</span>
+                <span className={styles.cardIcon} aria-hidden="true">
+                  {cat.icon}
+                </span>
                 <h3 className={styles.cardTitle}>{cat.title}</h3>
                 <p className={styles.cardDesc}>{cat.description}</p>
                 <span className={styles.cardArrow}>→</span>
@@ -306,24 +325,26 @@ export default function HomePage() {
           </div>
           <div className={styles.footerLinks}>
             <div className={styles.footerCol}>
-              <h4>Services</h4>
-              <a href="#">Full Renovation</a>
-              <a href="#">Kitchen</a>
-              <a href="#">Bathroom</a>
-              <a href="#">Smart Home</a>
+              <h3>Services</h3>
+              <Link href="/vendors">Full Renovation</Link>
+              <Link href="/vendors">Kitchen</Link>
+              <Link href="/vendors">Bathroom</Link>
+              <Link href="/vendors">Smart Home</Link>
             </div>
             <div className={styles.footerCol}>
-              <h4>Company</h4>
-              <a href="#">About Us</a>
-              <a href="#">Our Work</a>
-              <a href="#">Careers</a>
-              <a href="#">Blog</a>
+              <h3>Company</h3>
+              <a href="#about">About Us</a>
+              <a href="#work">Our Work</a>
+              {/* No destination page yet — plain (non-href) so it doesn't
+                  present as a broken link to keyboard/screen-reader users. */}
+              <a>Careers</a>
+              <a>Blog</a>
             </div>
             <div className={styles.footerCol}>
-              <h4>Contact</h4>
+              <h3>Contact</h3>
               <a href="mailto:hello@gorenovate.in">hello@gorenovate.in</a>
               <a href="tel:+918000000000">+91 80 0000 0000</a>
-              <a href="#">Bengaluru, India</a>
+              <a>Bengaluru, India</a>
             </div>
           </div>
         </div>
@@ -332,8 +353,8 @@ export default function HomePage() {
             © {new Date().getFullYear()} Gorenovate All rights reserved.
           </span>
           <div className={styles.footerLegal}>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+            <a>Privacy Policy</a>
+            <a>Terms of Service</a>
           </div>
         </div>
       </footer>

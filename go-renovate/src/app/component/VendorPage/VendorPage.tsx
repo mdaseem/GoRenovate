@@ -16,6 +16,7 @@ import { useCategoryScrollSpy } from "./hooks/useCategoryScrollSpy";
 import { useCategoryMenu } from "./hooks/useCategoryMenu";
 import { useServiceNavigation } from "./hooks/useServiceNavigation";
 import CategorySection from "./components/CategorySection";
+import VendorDetails from "./components/VendorDetails";
 import CategoryJumpMenu from "./components/CategoryJumpMenu";
 import CartFab from "./components/CartFab";
 import Toast from "./components/Toast";
@@ -174,6 +175,7 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
   return (
     <div className={styles.page}>
       <main className={styles.main} id="main-content">
+        <VendorDetails vendor={vendor} />
         {categories.map((category) => (
           <CategorySection
             key={category.id}

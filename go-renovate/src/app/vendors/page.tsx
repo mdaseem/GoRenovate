@@ -1,5 +1,4 @@
 import React from "react";
-import axios, { AxiosResponse } from "axios";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import Dashboard from "../component/Molecules/Dashboard/Dashboard";
@@ -25,30 +24,25 @@ async function getProducts() {
   const session = await getServerSession(authOptions);
   const token = session?.backendToken;
 
-  return axios
-    .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    })
-    .then(
-      (
-        response: AxiosResponse<
-          Response,
-          {
-            data: {
-              _id: number;
-              description: string;
-              actualPrice: number;
-              discountPrice: number;
-              rating: number;
-              imageUrl: string[];
-            } | null;
-          }
-        >,
-      ) => response.data,
-    )
-    .catch((error) => {
-      console.error("Error fetching products:", error);
-    });
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`,
+      {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        ...(token
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 60 } }),
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(`Vendors request failed with status ${res.status}`);
+    }
+
+    return (await res.json()) as Response;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
 }
 
 export default async function Home() {
