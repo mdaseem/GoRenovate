@@ -16,7 +16,8 @@ export const useStopScrollOnOverlay = () => {
       store.isUserListOpen ||
       store.isOpenProductPage ||
       store.isOpenProductPageFromSearch ||
-      store.isMobileSearchOpen
+      store.isMobileSearchOpen ||
+      store.isOpenFilters
     ) {
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
@@ -39,5 +40,6 @@ export const useStopScrollOnOverlay = () => {
     store.isOpenProductPage,
     store.isOpenProductPageFromSearch,
     store.isMobileSearchOpen,
+    store.isOpenFilters,
   ]);
 };

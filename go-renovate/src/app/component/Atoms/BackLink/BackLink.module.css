@@ -22,9 +22,11 @@
     border-color 0.2s ease;
 }
 
-.backLink:hover {
-  border-color: #c4fd5b;
-  background: #eefbd8;
+@media (hover: hover) {
+  .backLink:hover {
+    border-color: #c4fd5b;
+    background: #eefbd8;
+  }
 }
 
 .backLink:focus-visible {
@@ -69,9 +71,11 @@
   box-shadow: none;
 }
 
-.backLinkInline:hover {
-  background: #f3f4f6;
-  border-color: transparent;
+@media (hover: hover) {
+  .backLinkInline:hover {
+    background: #f3f4f6;
+    border-color: transparent;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -32,20 +32,39 @@
 .filters-mobile-trigger {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     align-self: flex-start;
     min-height: 44px;
-    padding: 0 16px;
+    padding: 0 18px;
     background: #fff;
-    border: 1px solid rgb(206, 202, 202);
+    border: 1.5px solid #ece9e3;
     border-radius: 100px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
     font-weight: 600;
     font-size: 0.9rem;
+    color: #1a1f2e;
     cursor: pointer;
+    transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.05s ease;
+    /* Docks just below the site header instead of a guessed pixel value —
+     * Header.tsx measures its own real height via ResizeObserver and
+     * publishes it as this custom property (same pattern VendorPage's
+     * sticky category headings and BackLink already use). */
+    position: sticky;
+    top: calc(var(--site-header-height, 90px) + 10px);
+    z-index: 20;
 }
 
-.filters-mobile-trigger:hover {
-    border-color: #278b2e;
+.filters-mobile-trigger svg {
+    flex-shrink: 0;
+}
+
+.filters-mobile-trigger:active {
+    transform: scale(0.96);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .filters-mobile-trigger:focus-visible {
@@ -53,18 +72,57 @@
     outline-offset: 2px;
 }
 
+.filters-mobile-trigger-active {
+    border-color: #278b2e;
+    background: #eef7ea;
+    color: #1f6b25;
+}
+
+@media (hover: hover) {
+    .filters-mobile-trigger:hover {
+        border-color: #278b2e;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .filters-mobile-trigger-active:hover {
+        border-color: #1f6b25;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filters-mobile-trigger {
+        transition: none;
+    }
+
+    .filters-mobile-badge {
+        animation: none;
+    }
+}
+
 .filters-mobile-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
     border-radius: 100px;
     background: #278b2e;
     color: #fff;
     font-size: 0.72rem;
     font-weight: 700;
+    animation: filtersBadgePop 0.18s ease;
+}
+
+@keyframes filtersBadgePop {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 }

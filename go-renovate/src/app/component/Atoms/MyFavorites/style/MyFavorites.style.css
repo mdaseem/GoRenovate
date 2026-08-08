@@ -1,9 +1,8 @@
 .fav {
   fill: red;
-  transform: translateY(-0px) scale(1.2);
+  transform: scale(1.2);
 }
 .fav-icon {
-  margin-top: 4px;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 .fav-container {
@@ -12,15 +11,35 @@
   flex-shrink: 0;
 }
 .fav-click {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   background-color: #fff;
   border: 1px solid #fff;
   border-radius: 100%;
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.fav-click:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
 }
 
-@media (min-width: 700px) {
+@media (hover: hover) {
   .fav-icon:hover {
     fill: red;
-    transform: translateY(-0px) scale(1.2);
+    transform: scale(1.2);
+  }
+  .fav-click:hover {
+    background-color: #f3f4f6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fav-icon {
+    transition: none;
   }
 }

@@ -175,7 +175,7 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
   return (
     <div className={styles.page}>
       <main className={styles.main} id="main-content">
-        <VendorDetails vendor={vendor} />
+        {/* <VendorDetails vendor={vendor} /> */}
         {categories.map((category) => (
           <CategorySection
             key={category.id}

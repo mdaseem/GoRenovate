@@ -8,8 +8,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   border-radius: 50%;
   border: none;
@@ -22,8 +22,10 @@
     opacity 0.15s ease;
 }
 
-.navButton:hover:not(:disabled) {
-  background: #ece9e3;
+@media (hover: hover) {
+  .navButton:hover:not(:disabled) {
+    background: #ece9e3;
+  }
 }
 
 .navButton:disabled {

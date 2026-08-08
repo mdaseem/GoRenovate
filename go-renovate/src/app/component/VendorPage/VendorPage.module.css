@@ -55,8 +55,10 @@
   transition: border-color 0.2s ease;
 }
 
-.categoryToggle:hover {
-  border-bottom-color: #1a1f2e;
+@media (hover: hover) {
+  .categoryToggle:hover {
+    border-bottom-color: #1a1f2e;
+  }
 }
 
 .categoryToggle:focus-visible {
@@ -131,8 +133,10 @@
   z-index: 55;
 }
 
-.categoryMenuFab:hover {
-  background: #2a3245;
+@media (hover: hover) {
+  .categoryMenuFab:hover {
+    background: #2a3245;
+  }
 }
 
 .categoryMenuFab:focus-visible {
@@ -192,8 +196,10 @@
   transition: background 0.15s ease;
 }
 
-.categoryMenuItem:hover {
-  background: #f3f4f6;
+@media (hover: hover) {
+  .categoryMenuItem:hover {
+    background: #f3f4f6;
+  }
 }
 
 .categoryMenuItem:focus-visible {
@@ -283,11 +289,13 @@
   }
 }
 
-.cartFab:hover {
-  background: green;
-  color: #fff;
-  transform: translateX(-50%) translateY(-2px);
-  box-shadow: 0 12px 40px rgba(200, 118, 42, 0.35);
+@media (hover: hover) {
+  .cartFab:hover {
+    background: green;
+    color: #fff;
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 12px 40px rgba(200, 118, 42, 0.35);
+  }
 }
 
 .cartFab:active {
