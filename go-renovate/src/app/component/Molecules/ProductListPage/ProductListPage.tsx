@@ -22,7 +22,7 @@ import { useVendorFilters } from "../Filters/hooks/useVendorFilters";
 import { buildFilterQueryString } from "../Filters/filterConfig";
 import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";
 
-const FILTER_FETCH_DEBOUNCE_MS = 400;
+const FILTER_FETCH_DEBOUNCE_MS = 0;
 
 function ProductListPage(props: {
   products: Vendor[] | undefined;
