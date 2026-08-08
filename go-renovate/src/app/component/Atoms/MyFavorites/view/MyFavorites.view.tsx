@@ -2,18 +2,10 @@ import React from "react";
 import "../style/MyFavorites.style.css";
 import { useDispatch } from "react-redux";
 import { setFavsData, unsetFavState } from "@/app/store/features/favroites";
-
-type productType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+import { Vendor } from "../../../VendorPage/vendor";
 
 type propType = {
-  prodData: null | productType;
+  prodData: Vendor | null;
   isFav: boolean;
 };
 

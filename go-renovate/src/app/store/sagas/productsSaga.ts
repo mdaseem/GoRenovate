@@ -9,20 +9,30 @@ import {
 } from "../features/productSlice";
 import axios from "axios";
 import { signOut } from "next-auth/react";
+import { Vendor } from "../../component/VendorPage/vendor";
 
-function getProductCall(token?: string) {
+function getProductCall(token?: string, filters?: string) {
+  const query = filters ? `?${filters}` : "";
   return axios
-    .get<Response>(`${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    })
+    .get<Vendor[]>(
+      `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors${query}`,
+      {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      },
+    )
     .then((response) => response.data);
 }
 
 function* handleRequest(action: ReturnType<typeof getProducts>): SagaIterator {
   try {
-    const res: Response = yield call(getProductCall, action.payload.token);
+    const filters: string | undefined = action.payload.filters;
+    const res: Vendor[] = yield call(
+      getProductCall,
+      action.payload.token,
+      filters,
+    );
 
-    yield put(setProducts({ data: res }));
+    yield put(setProducts({ data: res, isUnfiltered: !filters }));
     yield put(setLoading({ data: false }));
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {

@@ -5,29 +5,20 @@ import MyFavorites from "../MyFavorites/view/MyFavorites.view";
 import { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-
-type vendorType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+import { Vendor } from "../../VendorPage/vendor";
 
 type propType = {
   isForSearch?: boolean;
-  vendor: vendorType;
+  vendor: Vendor | null;
   setIsOpen: (payload: boolean) => void;
-  setProduct: React.Dispatch<React.SetStateAction<vendorType>>;
+  setProduct: React.Dispatch<React.SetStateAction<Vendor | null>>;
 };
 
 function VendorCard(props: propType) {
   const { vendor } = props;
-  const imageUrl = vendor?.imageUrl?.[0] || "";
   const favList = useSelector((state: RootState) => state.favoriteList);
   const isFav = favList?.filter(
-    (favVendor: vendorType) => favVendor?.id === vendor?.id,
+    (favVendor: Vendor | null) => favVendor?.id === vendor?.id,
   );
 
   const FullStar = () => (
@@ -61,23 +52,13 @@ function VendorCard(props: propType) {
         aria-hidden="true"
         tabIndex={-1}
       >
-        {imageUrl ? (
-          <Image
-            className="vendor-card-img"
-            src={imageUrl}
-            alt=""
-            width={160}
-            height={160}
-          />
-        ) : (
-          <Image
-            className="vendor-card-img"
-            src="/house.jpg"
-            alt="this is placeholder image"
-            width={160}
-            height={160}
-          />
-        )}
+        <Image
+          className="vendor-card-img"
+          src="/house.jpg"
+          alt=""
+          width={160}
+          height={160}
+        />
       </Link>
 
       <div className="vendor-card-details">

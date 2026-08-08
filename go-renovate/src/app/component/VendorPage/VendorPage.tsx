@@ -182,6 +182,7 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
             category={category}
             isActive={activeCategoryId === category.id}
             isOpen={openCategoryIds.has(category.id)}
+            backHref="/vendors"
             registerRef={registerSectionRef(category.id)}
             onToggle={toggleCategory}
             getQuantity={getQuantity}

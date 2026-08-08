@@ -1,78 +1,144 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./ProductListPage.style.css";
-import Overlay from "../../HOC/Overlay/Overlay";
 import Filters from "../Filters/view/Filters.view";
-import ProductView from "../../Atoms/ProductView/ProductView";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts, setProducts } from "@/app/store/features/productSlice";
+import {
+  getProducts,
+  setProducts,
+  setCatalogSnapshot,
+} from "@/app/store/features/productSlice";
 import { useSession } from "next-auth/react";
 import { RootState } from "@/app/store/store";
+import { useSearchParams } from "next/navigation";
 import ProductList from "../ProductList/ProductList";
 import { Loader1 } from "../Loader/Loader";
-import { setOpenStateProductPage } from "@/app/store/features/overLaySlice";
-import VendorPage from "../../VendorPage/VendorPage";
+import {
+  setOpenStateProductPage,
+  setOpenStateFilters,
+} from "@/app/store/features/overLaySlice";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
+import { Vendor } from "../../VendorPage/vendor";
+import { useVendorFilters } from "../Filters/hooks/useVendorFilters";
+import { buildFilterQueryString } from "../Filters/filterConfig";
+import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";
 
-type productType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+const FILTER_FETCH_DEBOUNCE_MS = 400;
 
-function ProductListPage(props: { products: void | Response }) {
-  const [product, setProduct] = React.useState<productType>(null);
+function ProductListPage(props: {
+  products: Vendor[] | undefined;
+  catalogVendors?: Vendor[];
+}) {
+  const [product, setProduct] = React.useState<Vendor | null>(null);
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const store = useSelector((state: RootState) => state.overlay);
+  const searchParams = useSearchParams();
 
   const productLists = useSelector((state: RootState) => state.productsList);
-  const productListsData =
-    props.products != undefined
-      ? { data: props.products, isloading: false, error: null }
-      : {
-          data: productLists?.prodList?.data,
-          isloading: productLists?.isloading,
-          error: productLists?.error ?? null,
-        };
+  const { activeCount } = useVendorFilters();
+
+  const rawFilterQuery = buildFilterQueryString(searchParams);
+  const filterQuery = useDebouncedValue(rawFilterQuery, FILTER_FETCH_DEBOUNCE_MS);
+
+  // Redux only gets populated inside an effect, which never runs during SSR
+  // or the first client paint — so until that's happened at least once,
+  // render directly from the SSR-fetched props (already correctly matching
+  // the current URL) instead of an empty Redux state. Once hydrated, always
+  // trust Redux — including when it legitimately holds zero results, which
+  // a "fall back whenever Redux looks empty" check would get wrong.
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   const retryFetchProducts = () => {
-    dispatch(getProducts({ token: session?.backendToken }));
+    dispatch(getProducts({ token: session?.backendToken, filters: filterQuery || undefined }));
   };
 
   useEffect(() => {
-    if (props.products) {
-      dispatch(setProducts({ data: props.products }));
-    } else {
-      dispatch(getProducts({ token: session?.backendToken }));
+    if (!hasHydrated) {
+      setHasHydrated(true);
+      if (props.products) {
+        dispatch(
+          setProducts({ data: props.products, isUnfiltered: !rawFilterQuery }),
+        );
+        if (props.catalogVendors) {
+          dispatch(setCatalogSnapshot(props.catalogVendors));
+        }
+        // SSR already fetched data matching the current URL — nothing to
+        // refetch until the filters actually change.
+        return;
+      }
     }
-  }, [session]);
+    dispatch(
+      getProducts({
+        token: session?.backendToken,
+        filters: filterQuery || undefined,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterQuery, session]);
 
-  const hasProducts = (productListsData?.data?.length ?? 0) > 0;
+  const displayedVendors: Vendor[] = hasHydrated
+    ? (productLists?.prodList?.data ?? [])
+    : (props.products ?? []);
+  const catalogSnapshot: Vendor[] = hasHydrated
+    ? (productLists?.catalogSnapshot ?? [])
+    : (props.catalogVendors ?? (rawFilterQuery ? [] : props.products) ?? []);
+  const hasCatalog = catalogSnapshot.length > 0;
+  const hasFilteredResults = displayedVendors.length > 0;
+  const isRefreshing = Boolean(productLists?.isloading) && hasCatalog;
 
   return (
     <div className="product-page-container">
-      <div className="product-page-filters">{<Filters />}</div>
+      <div className="product-page-filters">
+        <Filters
+          vendors={catalogSnapshot}
+          resultCount={displayedVendors.length}
+          isRefreshing={isRefreshing}
+        />
+      </div>
       <div className="product-page-list">
-        {productListsData?.isloading && !props.products ? (
+        {hasCatalog && (
+          <button
+            type="button"
+            className="filters-mobile-trigger"
+            onClick={() => dispatch(setOpenStateFilters(true))}
+            aria-haspopup="dialog"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M4 6H20M7 12H17M10 18H14"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            Filters
+            {activeCount > 0 && (
+              <span className="filters-mobile-badge">{activeCount}</span>
+            )}
+          </button>
+        )}
+        {productLists?.isloading && !hasCatalog ? (
           <Loader1 />
-        ) : productListsData?.error && !hasProducts ? (
+        ) : productLists?.error && !hasFilteredResults ? (
           <ErrorState
             title="Couldn't load products"
-            message={productListsData.error}
+            message={productLists.error}
             actionLabel="Retry"
             onAction={retryFetchProducts}
           />
-        ) : !hasProducts ? (
+        ) : !hasCatalog ? (
           <ErrorState
             title="No products found"
             message="Check back soon — new services are added regularly."
           />
+        ) : !hasFilteredResults ? (
+          <ErrorState
+            title="No vendors match your filters"
+            message="Try clearing a filter or choosing a different combination."
+          />
         ) : (
           <ProductList
-            productLists={productListsData}
+            productLists={{ data: displayedVendors }}
             setIsOpen={(payload) => {
               dispatch(setOpenStateProductPage(payload));
             }}

@@ -2,11 +2,13 @@ import React from "react";
 import styles from "../VendorPage.module.css";
 import { ServiceCategory, ServiceOption } from "../vendor";
 import ServiceCard from "../../Atoms/ServiceCard/ServiceCard";
+import BackLink from "../../Atoms/BackLink/BackLink";
 
 interface CategorySectionProps {
   category: ServiceCategory;
   isActive: boolean;
   isOpen: boolean;
+  backHref: string;
   registerRef: (el: HTMLElement | null) => void;
   onToggle: (categoryId: string) => void;
   getQuantity: (serviceId: string) => number;
@@ -20,6 +22,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
   category,
   isActive,
   isOpen,
+  backHref,
   registerRef,
   onToggle,
   getQuantity,
@@ -37,48 +40,51 @@ const CategorySection: React.FC<CategorySectionProps> = ({
       ref={registerRef}
       className={styles.categorySection}
     >
-      <h2
+      <div
         className={`${styles.categoryHeading} ${
           isActive ? styles.categoryHeadingActive : ""
         }`}
       >
-        <button
-          type="button"
-          id={toggleId}
-          className={styles.categoryToggle}
-          aria-expanded={isOpen}
-          aria-controls={panelId}
-          onClick={() => onToggle(category.id)}
-        >
-          <span className={styles.categoryIcon} aria-hidden="true">
-            {category.icon}
-          </span>
-          <span className={styles.categoryTitle}>
-            {category.label}
-            <span className={styles.serviceCount}>
-              · {category.services.length} services
-            </span>
-          </span>
-          <svg
-            className={`${styles.chevron} ${
-              isOpen ? styles.chevronOpen : ""
-            }`}
-            aria-hidden="true"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
+        <BackLink href={backHref} label="All vendors" variant="inline" />
+        <h2 className={styles.categoryHeadingText}>
+          <button
+            type="button"
+            id={toggleId}
+            className={styles.categoryToggle}
+            aria-expanded={isOpen}
+            aria-controls={panelId}
+            onClick={() => onToggle(category.id)}
           >
-            <path
-              d="M6 9L12 15L18 9"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </h2>
+            <span className={styles.categoryIcon} aria-hidden="true">
+              {category.icon}
+            </span>
+            <span className={styles.categoryTitle}>
+              {category.label}
+              <span className={styles.serviceCount}>
+                · {category.services.length} services
+              </span>
+            </span>
+            <svg
+              className={`${styles.chevron} ${
+                isOpen ? styles.chevronOpen : ""
+              }`}
+              aria-hidden="true"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M6 9L12 15L18 9"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </h2>
+      </div>
 
       <ul
         id={panelId}

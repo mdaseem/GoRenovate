@@ -10,6 +10,7 @@ import {
   setOpenStateLogin,
   setOpenStateUserList,
   setOpenStateAIChat,
+  setOpenStateFilters,
 } from "@/app/store/features/overLaySlice";
 import Chat from "../../Atoms/Chat/Chat";
 import dynamic from "next/dynamic";
@@ -34,6 +35,11 @@ const AIChat = dynamic(() => import("@/app/component/Atoms/AIChat/AIChat"), {
 
 const UserList = dynamic(
   () => import("@/app/component/Atoms/UserList/UserList"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
+const MobileFiltersOverlay = dynamic(
+  () => import("@/app/component/Molecules/Filters/view/MobileFiltersOverlay"),
   { loading: () => <Loader1 />, ssr: false },
 );
 
@@ -68,6 +74,9 @@ function RenderFromOverlay() {
   );
   const isOpenAIChat = useAppSelector(
     (state: RootState) => state.overlay.isOpenAIChat,
+  );
+  const isOpenFilters = useAppSelector(
+    (state: RootState) => state.overlay.isOpenFilters,
   );
 
   useEffect(() => {
@@ -116,6 +125,14 @@ function RenderFromOverlay() {
       mountOnlyWhenOpen: true,
       errorTitle: "Assistant is unavailable",
       content: <AIChat />,
+    },
+    {
+      key: "filters",
+      isOpen: isOpenFilters,
+      setIsOpen: (payload) => dispatch(setOpenStateFilters(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "Filters are unavailable",
+      content: <MobileFiltersOverlay />,
     },
   ];
 

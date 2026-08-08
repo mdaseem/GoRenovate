@@ -6,15 +6,9 @@ import { RootState } from "@/app/store/store";
 import VendorCard from "../../Atoms/VendorCard/VendorCard";
 import ProductPage from "../../HOC/Overlay/Overlay";
 import ProductView from "../../Atoms/ProductView/ProductView";
+import { Vendor } from "../../VendorPage/vendor";
 
-type productType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+type productType = Vendor | null;
 
 type PropsType = {
   isOpen: boolean;
