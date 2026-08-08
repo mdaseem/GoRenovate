@@ -1,26 +1,16 @@
 "use client";
 import React from "react";
-import { ImageCarousel } from "../../Molecules/ImageCarousel/ImageCarousel";
-type productType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+import { Vendor } from "../../VendorPage/vendor";
 
 type PropsType = {
-  product: productType;
+  product: Vendor | null;
 };
 
 function ProductView(props: PropsType) {
   return (
     <div className="product-container-in-overlay">
       <div className="product-detail-page-content">
-        {props.product?.imageUrl && (
-          <ImageCarousel imageUrl={props.product?.imageUrl || []} />
-        )}
+        {props.product?.name && <h2>{props.product.name}</h2>}
       </div>
     </div>
   );

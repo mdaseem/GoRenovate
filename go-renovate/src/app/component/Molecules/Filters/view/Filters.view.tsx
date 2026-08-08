@@ -1,120 +1,100 @@
-import React, { useState } from "react";
+"use client";
+
+import React from "react";
 import "../style/Filters.style.css";
 import DropDownFilter from "./DropDownFilter";
+import { FILTER_DEFINITIONS } from "../filterConfig";
+import { Vendor } from "../../../VendorPage/vendor";
+import { useVendorFilters } from "../hooks/useVendorFilters";
 
-type FilterType = {
-  filterName: string;
-  filterValue: string[];
-};
+interface FiltersProps {
+  vendors: Vendor[];
+  resultCount: number;
+  isRefreshing?: boolean;
+  onApply?: () => void;
+}
 
-export type FilterValueType = {
-  filterValues: [
-    {
-      categoryName: string;
-      categoryData: [{categoryValue: string, checked: boolean}];
-    }
-  ];
-};
+function Filters({ vendors, resultCount, isRefreshing, onApply }: FiltersProps) {
+  const {
+    activeFilters,
+    activeCount,
+    toggleCheckboxOption,
+    setRadioValue,
+    setToggleValue,
+    clearAll,
+  } = useVendorFilters();
 
-type filtersType = FilterType[];
-
-function Filters() {
-  const [filterValues, setFilterValue] = useState<FilterValueType>({
-    filterValues: [
-      {
-        categoryName: "Availability",
-        categoryData: [
-          { categoryValue: "in stock", checked: false },
-        ]
-      },
-    ]
-  });
-  
-  const [isDropDownOn, setIsDropDownOn] = useState(false);
-  const filterData: filtersType = [
-    {
-      filterName: "Availability",
-      filterValue: ["in stock", "coming soon", "out of stock"],
-    },
-    {
-      filterName: "genere",
-      filterValue: ["anime", "biography", "poetics"],
-    },
-    {
-      filterName: "prices",
-      filterValue: ["<1000", "<2000", "<3000"],
-    },
-    {
-      filterName: "Rating",
-      filterValue: ["2", "3", "4", "5"],
-    },
-  ];
-
-  const a = [0, 0, 0, 0, 0, 0, 0, 0];
-  const subA = [
-    [1, 2, 3],
-    [3, 5, 6],
-  ];
-  const temp = a;
-  for (let j = 0; j < subA.length; j++) {
-    const index = subA[j][0];
-    const addValue = subA[j][1];
-    const endIndex = subA[j][2];
-    for (let i = 0; i < a.length; i++) {
-      if (i === index) {
-        temp[i] = temp[i] + addValue;
-      } else if (i > index && i <= endIndex) {
-        temp[i] = temp[i] + addValue;
-      } else {
-        temp[i] = temp[i];
-      }
-    }
-  }
-
-  // console.log("called----------", temp);
-
-  // const a = [0, 0, 0, 0, 0, 0, 0, 0];
-  // const subA = [
-  //   [1, 3, 4],
-  //   [3, 5, 6],
-  // ];
-  // let temp = a;
-  // let index = 0
-  //   let addValue = 0
-  //   let endIndex = 0;
-  // for (let j = 0; j < subA.length; j++) {
-
-  //  index = subA[j][0];
-  //    addValue = subA[j][1];
-  //    endIndex = subA[j][2];
-  //   if (j <= a.length)
-  //   {
-  //      index = subA[j][0];
-  //    addValue = subA[j][1];
-  //    endIndex = subA[j][2];
-  //   }
-  // }
-  //   for (let i = 0; i < a.length; i++) {
-  //     if (i === index) {
-  //       temp[i] = temp[i] + addValue;
-  //     } else if (i > index && i <= endIndex) {
-  //       temp[i] = temp[i] + addValue;
-  //     } else {
-  //       temp[i] = temp[i];
-  //     }
-
-  // }
-  // console.log("called----------", temp);
+  const groupFilters = FILTER_DEFINITIONS.filter(
+    (definition) => definition.type !== "toggle",
+  );
+  const toggleFilters = FILTER_DEFINITIONS.filter(
+    (definition) => definition.type === "toggle",
+  );
 
   return (
     <div className="filters-container">
       <div className="container-item">
-        {/* <h3>Filters</h3> */}
-        <div className="filter-name-drop-down-container main-comtainer-filter">
-          {filterData.map((filtersData: FilterType, index: number) => {
-            return <DropDownFilter key={index} filtersData={filtersData} filterValues={filterValues} setFilterValue={setFilterValue} />;
-          })}
+        <div className="filters-header">
+          <h2 className="filters-title">Filters</h2>
+          {activeCount > 0 && (
+            <button
+              type="button"
+              className="filters-clear"
+              onClick={clearAll}
+            >
+              Clear all
+            </button>
+          )}
         </div>
+
+        <p className="filters-result-count" role="status" aria-live="polite">
+          {isRefreshing
+            ? "Updating…"
+            : `${resultCount} vendor${resultCount === 1 ? "" : "s"} found`}
+        </p>
+
+        <div className="filter-name-drop-down-container main-comtainer-filter">
+          {groupFilters.map((definition) => (
+            <DropDownFilter
+              key={definition.id}
+              definition={definition}
+              vendors={vendors}
+              activeFilters={activeFilters}
+              onToggleCheckboxOption={toggleCheckboxOption}
+              onSetRadioValue={setRadioValue}
+            />
+          ))}
+        </div>
+
+        {toggleFilters.map((definition) => {
+          if (definition.type !== "toggle") return null;
+          const checked = Boolean(activeFilters[definition.id]);
+          const inputId = `filter-toggle-input-${definition.id}`;
+
+          return (
+            <label
+              key={definition.id}
+              className="filter-toggle-row"
+              htmlFor={inputId}
+            >
+              <input
+                id={inputId}
+                type="checkbox"
+                checked={checked}
+                onChange={(event) =>
+                  setToggleValue(definition.id, event.target.checked)
+                }
+              />
+              <span>{definition.label}</span>
+            </label>
+          );
+        })}
+
+        {onApply && (
+          <button type="button" className="filters-apply" onClick={onApply}>
+            Show {resultCount} result{resultCount === 1 ? "" : "s"}
+          </button>
+        )}
       </div>
     </div>
   );

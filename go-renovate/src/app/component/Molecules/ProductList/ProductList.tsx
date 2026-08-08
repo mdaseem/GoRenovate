@@ -1,23 +1,15 @@
 import React from "react";
 import VendorCard from "../../Atoms/VendorCard/VendorCard";
-
-type productType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+import { Vendor } from "../../VendorPage/vendor";
 
 type propType = {
-  productLists: { data: productType[] };
-  setProduct: React.Dispatch<React.SetStateAction<productType>>;
+  productLists: { data: (Vendor | null)[] };
+  setProduct: React.Dispatch<React.SetStateAction<Vendor | null>>;
   setIsOpen: (payload: boolean) => void;
 };
 
 function ProductList(props: propType) {
-  const productList = props.productLists?.data?.map((product: productType) => {
+  const productList = props.productLists?.data?.map((product: Vendor | null) => {
     return (
       <VendorCard
         key={product?.id}

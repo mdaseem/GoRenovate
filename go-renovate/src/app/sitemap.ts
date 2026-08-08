@@ -3,12 +3,17 @@ import axios from "axios";
 
 const SITE_URL = "https://gorenovate.in";
 
-async function getVendorIds(): Promise<string[]> {
+type VendorSitemapEntry = {
+  id: string;
+  categories: Array<{ id: string }>;
+};
+
+async function getVendors(): Promise<VendorSitemapEntry[]> {
   try {
-    const response = await axios.get<Array<{ id: string }>>(
+    const response = await axios.get<VendorSitemapEntry[]>(
       `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`,
     );
-    return response.data.map((vendor) => vendor.id);
+    return response.data;
   } catch (error) {
     console.error("Failed to build vendor sitemap entries:", error);
     return [];
@@ -17,7 +22,10 @@ async function getVendorIds(): Promise<string[]> {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
-  const vendorIds = await getVendorIds();
+  const vendors = await getVendors();
+  const categoryIds = Array.from(
+    new Set(vendors.flatMap((vendor) => vendor.categories.map((c) => c.id))),
+  );
 
   return [
     {
@@ -32,8 +40,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 0.9,
     },
-    ...vendorIds.map((id) => ({
-      url: `${SITE_URL}/vendors/${id}`,
+    ...categoryIds.map((id) => ({
+      url: `${SITE_URL}/vendors/category/${id}`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+    ...vendors.map((vendor) => ({
+      url: `${SITE_URL}/vendors/${vendor.id}`,
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.7,

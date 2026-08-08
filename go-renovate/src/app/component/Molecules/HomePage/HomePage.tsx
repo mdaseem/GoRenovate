@@ -26,6 +26,7 @@ const categories = [
     description: "Complete transformation from concept to completion",
     icon: "🏠",
     tag: "Most Popular",
+    categoryId: null,
   },
   {
     id: 2,
@@ -33,6 +34,7 @@ const categories = [
     description: "Modern kitchens built for how you live",
     icon: "🍳",
     tag: null,
+    categoryId: "kitchen",
   },
   {
     id: 3,
@@ -40,6 +42,7 @@ const categories = [
     description: "Spa-inspired retreats tailored to you",
     icon: "🚿",
     tag: null,
+    categoryId: "bathroom",
   },
   {
     id: 4,
@@ -47,6 +50,7 @@ const categories = [
     description: "Spaces designed to bring people together",
     icon: "🛋️",
     tag: null,
+    categoryId: null,
   },
   {
     id: 5,
@@ -54,6 +58,7 @@ const categories = [
     description: "Restful sanctuaries crafted with care",
     icon: "🛏️",
     tag: null,
+    categoryId: null,
   },
   {
     id: 6,
@@ -61,6 +66,7 @@ const categories = [
     description: "Colour stories that define your identity",
     icon: "🎨",
     tag: null,
+    categoryId: "painting",
   },
   {
     id: 7,
@@ -68,6 +74,7 @@ const categories = [
     description: "Premium surfaces that ground every room",
     icon: "🪵",
     tag: null,
+    categoryId: "flooring",
   },
   {
     id: 8,
@@ -75,6 +82,7 @@ const categories = [
     description: "Fast, reliable fixes you can count on",
     icon: "🔧",
     tag: "Quick Turnaround",
+    categoryId: null,
   },
   {
     id: 9,
@@ -82,6 +90,7 @@ const categories = [
     description: "Intelligent living through seamless tech",
     icon: "💡",
     tag: "New",
+    categoryId: "smart-home",
   },
   {
     id: 10,
@@ -89,6 +98,7 @@ const categories = [
     description: "Outdoor extensions of your personal style",
     icon: "🌿",
     tag: null,
+    categoryId: "outdoor",
   },
   {
     id: 11,
@@ -96,6 +106,7 @@ const categories = [
     description: "Open-air living elevated to its fullest",
     icon: "☀️",
     tag: null,
+    categoryId: "outdoor",
   },
 ];
 
@@ -209,8 +220,11 @@ export default function HomePage() {
           <div className={styles.categoryGrid}>
             {categories.map((cat) => (
               <Link
-                // href={`#${cat.title.toLowerCase().replace(/\s+/g, "-")}`}
-                href={"/vendors"}
+                href={
+                  cat.categoryId
+                    ? `/vendors/category/${cat.categoryId}`
+                    : "/vendors"
+                }
                 key={cat.id}
                 className={styles.categoryCard}
               >
@@ -327,9 +341,9 @@ export default function HomePage() {
             <div className={styles.footerCol}>
               <h3>Services</h3>
               <Link href="/vendors">Full Renovation</Link>
-              <Link href="/vendors">Kitchen</Link>
-              <Link href="/vendors">Bathroom</Link>
-              <Link href="/vendors">Smart Home</Link>
+              <Link href="/vendors/category/kitchen">Kitchen</Link>
+              <Link href="/vendors/category/bathroom">Bathroom</Link>
+              <Link href="/vendors/category/smart-home">Smart Home</Link>
             </div>
             <div className={styles.footerCol}>
               <h3>Company</h3>

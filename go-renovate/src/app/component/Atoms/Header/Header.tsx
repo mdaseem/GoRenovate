@@ -58,10 +58,8 @@ export default function Header() {
     <header className="header" ref={headerRef}>
       <h1 className="header-title">
         <Image
-          //  loading="lazy"
-          priority={true}
-          src="/MyLogo.gif"
-          alt="logo"
+          src="/my_logo.png"
+          alt="Go Renovate"
           className="logo-image"
           width={180}
           height={80}

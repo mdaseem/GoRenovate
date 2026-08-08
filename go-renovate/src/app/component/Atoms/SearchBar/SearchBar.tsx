@@ -9,15 +9,9 @@ import {
 } from "@/app/store/features/overLaySlice";
 import Overlay from "../../HOC/Overlay/Overlay";
 import ProductView from "../ProductView/ProductView";
+import { Vendor } from "../../VendorPage/vendor";
 
-type productType = {
-  id: number;
-  name: string;
-  actualPrice: number;
-  discountPrice: number;
-  rating: number;
-  imageUrl: string[];
-} | null;
+type productType = Vendor | null;
 
 const SearchIcon = () => (
   <svg
