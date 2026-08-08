@@ -12,17 +12,20 @@
   position: relative;
 }
 
-.vendor-card-img-link {
+.vendor-card-avatar {
   flex-shrink: 0;
-  line-height: 0;
-}
-
-.vendor-card-img {
-  border: 1px solid rgb(206, 202, 202);
-  border-radius: 10px;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100px;
   height: 100px;
+  border-radius: 20px;
+}
+
+.vendor-card-avatar-glyph {
+  font-size: 2.5rem;
+  line-height: 1;
+  font-weight: 700;
 }
 
 .vendor-card-details {
@@ -30,8 +33,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 26px;
+  gap: 6px;
 }
 
 .vendor-card-top {
@@ -42,10 +44,18 @@
 }
 
 .vendor-card-name {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 6px;
   font-weight: 600;
   font-size: 1rem;
   color: #1a1f2e;
   margin: 0;
+}
+
+.vendor-card-name-text {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -54,11 +64,56 @@
   -webkit-box-orient: vertical;
 }
 
-.vendor-card-rating {
+.vendor-card-verified {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.vendor-card-rating-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+
+.vendor-card-stars {
   display: flex;
   align-items: center;
   gap: 2px;
+}
+
+.vendor-card-rating-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.vendor-card-tagline {
   margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vendor-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.vendor-card-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.vendor-card-meta-item svg {
+  flex-shrink: 0;
 }
 
 .vendor-card-action {
@@ -70,6 +125,7 @@
   align-items: center;
   justify-content: center;
   padding: 10px 22px;
+  min-height: 44px;
   background-color: #c4fd5b;
   border: 1px solid #fff;
   border-radius: 10px;
@@ -82,28 +138,51 @@
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.vendor-card-view-btn:hover {
-  box-shadow: 3px 3px 5px 3px #c7f2cd;
-  background-color: green;
-  color: #fff;
+/* Stretches the card's one real link to cover the whole row, so the
+ * entire card is clickable/tappable — not just the small "View" pill —
+ * without adding a second link into the tab order. `inset: 0` resolves
+ * against .vendor-card (the nearest positioned ancestor), not this
+ * button's own box, which is why .vendor-card-view-btn itself must stay
+ * un-positioned (position: static). */
+.vendor-card-view-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
-.vendor-card-view-btn:focus-visible,
-.vendor-card-img-link:focus-visible {
+/* Sits above the stretched link overlay (z-index: 1) so the heart toggle
+ * keeps working as its own click target instead of triggering navigation. */
+.vendor-card .fav-container {
+  position: relative;
+  z-index: 2;
+}
+
+@media (hover: hover) {
+  .vendor-card-view-btn:hover {
+    box-shadow: 3px 3px 5px 3px #c7f2cd;
+    background-color: green;
+    color: #fff;
+  }
+}
+
+.vendor-card-view-btn:focus-visible {
   outline: 2px solid #278b2e;
   outline-offset: 2px;
 }
 
 @media (min-width: 700px) {
   .vendor-card {
-    transform-style: preserve-3d;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
+}
+
+@media (min-width: 700px) and (hover: hover) {
   .vendor-card:hover {
-    transform: rotateY(15deg) rotateX(8deg) translateZ(10px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-    z-index: 2;
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
+    border-color: #d8e8d2;
   }
 }
 
@@ -112,15 +191,35 @@
     gap: 10px;
     padding: 10px;
   }
-  .vendor-card-img {
+  .vendor-card:active {
+    background: #f8f6f1;
+  }
+  .vendor-card-avatar {
     width: 76px;
     height: 76px;
+    border-radius: 16px;
+  }
+  .vendor-card-avatar-glyph {
+    font-size: 2rem;
   }
   .vendor-card-name {
     font-size: 0.9rem;
   }
+  .vendor-card-tagline {
+    display: none;
+  }
   .vendor-card-view-btn {
     padding: 8px 14px;
     font-size: 0.85rem;
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vendor-card {
+    transition: none;
+  }
+  .vendor-card:hover {
+    transform: none;
   }
 }

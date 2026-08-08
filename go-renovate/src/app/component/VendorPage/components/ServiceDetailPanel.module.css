@@ -62,9 +62,11 @@
     transform 0.15s ease;
 }
 
-.navArrow:hover {
-  background: #1a1f2e;
-  transform: translateY(-50%) scale(1.05);
+@media (hover: hover) {
+  .navArrow:hover {
+    background: #1a1f2e;
+    transform: translateY(-50%) scale(1.05);
+  }
 }
 
 .navArrow:active {

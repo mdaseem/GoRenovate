@@ -15,7 +15,11 @@ interface ServiceDetailProps {
   onDecrement: (serviceId: string) => void;
 }
 
-const PLACEHOLDER_GALLERY = ["/house.jpg", "/house.jpg", "/house.jpg", "/house.jpg"];
+// A single placeholder, not several — the carousel already hides its
+// nav arrows/dots/counter once `images.length <= 1`, so repeating the
+// same file 4x bought nothing but a fake "gallery" of identical photos
+// (misleading) plus 3 extra <Image> mounts for no visual difference.
+const PLACEHOLDER_GALLERY = ["/house.jpg"];
 
 interface ServiceImageCarouselProps {
   images: string[];
