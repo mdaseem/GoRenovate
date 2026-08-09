@@ -12,6 +12,10 @@ interface FiltersProps {
   resultCount: number;
   isRefreshing?: boolean;
   onApply?: () => void;
+  // Lets a page lock a filter to a value fixed elsewhere (e.g. the category
+  // page pins `category` to its route segment) without duplicating this
+  // component just to drop one dropdown.
+  hiddenFilterIds?: string[];
 }
 
 function Filters({
@@ -19,6 +23,7 @@ function Filters({
   resultCount,
   isRefreshing,
   onApply,
+  hiddenFilterIds,
 }: FiltersProps) {
   const {
     activeFilters,
@@ -29,10 +34,13 @@ function Filters({
     clearAll,
   } = useVendorFilters();
 
-  const groupFilters = FILTER_DEFINITIONS.filter(
+  const visibleDefinitions = FILTER_DEFINITIONS.filter(
+    (definition) => !hiddenFilterIds?.includes(definition.id),
+  );
+  const groupFilters = visibleDefinitions.filter(
     (definition) => definition.type !== "toggle",
   );
-  const toggleFilters = FILTER_DEFINITIONS.filter(
+  const toggleFilters = visibleDefinitions.filter(
     (definition) => definition.type === "toggle",
   );
 

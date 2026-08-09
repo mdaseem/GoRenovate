@@ -130,6 +130,16 @@ export function buildFilterQueryString(
   return params.toString();
 }
 
+export function buildCategoryScopedFilterQuery(
+  searchParams: URLSearchParams | { get(key: string): string | null },
+  categoryId: string,
+): { fullQuery: string; extraQuery: string } {
+  const extraQuery = buildFilterQueryString(searchParams);
+  const params = new URLSearchParams(extraQuery);
+  params.set("category", categoryId);
+  return { fullQuery: params.toString(), extraQuery };
+}
+
 export function countActiveFilters(activeFilters: ActiveFilters): number {
   return FILTER_DEFINITIONS.reduce((count, definition) => {
     const value = activeFilters[definition.id];
