@@ -17,6 +17,7 @@ import {
   setOpenStateFilters,
 } from "@/app/store/features/overLaySlice";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
+import BackLink from "../../Atoms/BackLink/BackLink";
 import { Vendor } from "../../VendorPage/vendor";
 import { useVendorFilters } from "../Filters/hooks/useVendorFilters";
 import { buildFilterQueryString } from "../Filters/filterConfig";
@@ -96,32 +97,7 @@ function ProductListPage(props: {
         />
       </div>
       <div className="product-page-list">
-        {hasCatalog && (
-          <button
-            type="button"
-            className={`filters-mobile-trigger${activeCount > 0 ? " filters-mobile-trigger-active" : ""}`}
-            onClick={() => dispatch(setOpenStateFilters(true))}
-            aria-haspopup="dialog"
-            aria-label={
-              activeCount > 0 ? `Filters, ${activeCount} applied` : "Filters"
-            }
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="8" cy="6" r="2.5" fill="currentColor" />
-              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="16" cy="12" r="2.5" fill="currentColor" />
-              <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="11" cy="18" r="2.5" fill="currentColor" />
-            </svg>
-            Filters
-            {activeCount > 0 && (
-              <span className="filters-mobile-badge" aria-hidden="true">
-                {activeCount}
-              </span>
-            )}
-          </button>
-        )}
+        <BackLink />
         {productLists?.isloading && !hasCatalog ? (
           <Loader1 />
         ) : productLists?.error && !hasFilteredResults ? (
@@ -151,6 +127,32 @@ function ProductListPage(props: {
           />
         )}
       </div>
+      {hasCatalog && (
+        <button
+          type="button"
+          className={`filters-mobile-trigger${activeCount > 0 ? " filters-mobile-trigger-active" : ""}`}
+          onClick={() => dispatch(setOpenStateFilters(true))}
+          aria-haspopup="dialog"
+          aria-label={
+            activeCount > 0 ? `Filters, ${activeCount} applied` : "Filters"
+          }
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="8" cy="6" r="2.5" fill="currentColor" />
+            <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="16" cy="12" r="2.5" fill="currentColor" />
+            <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="11" cy="18" r="2.5" fill="currentColor" />
+          </svg>
+          Filters
+          {activeCount > 0 && (
+            <span className="filters-mobile-badge" aria-hidden="true">
+              {activeCount}
+            </span>
+          )}
+        </button>
+      )}
     </div>
   );
 }

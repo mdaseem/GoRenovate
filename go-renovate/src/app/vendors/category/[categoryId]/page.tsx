@@ -9,15 +9,19 @@ import { Vendor } from "@/app/component/VendorPage/vendor";
 import CategoryVendorList, {
   CategorySummary,
 } from "@/app/component/Molecules/CategoryVendorList/CategoryVendorList";
+import { buildCategoryScopedFilterQuery } from "@/app/component/Molecules/Filters/filterConfig";
 
 const SITE_URL = "https://gorenovate.in";
 
 const getVendors = cache(async function getVendors(
   token?: string,
+  queryString?: string,
 ): Promise<Vendor[]> {
   try {
     const response = await axios.get<Vendor[]>(
-      `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors`,
+      `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/vendors${
+        queryString ? `?${queryString}` : ""
+      }`,
       {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       },
@@ -53,27 +57,28 @@ function buildCategorySummaries(vendors: Vendor[]): CategorySummary[] {
   );
 }
 
-async function getCategoryPageData(categoryId: string) {
-  const session = await getServerSession(authOptions);
-  const vendors = await getVendors(session?.backendToken);
-  const categories = buildCategorySummaries(vendors);
-  const category = categories.find((c) => c.id === categoryId);
-  const matchingVendors = vendors.filter((vendor) =>
-    vendor.categories.some((c) => c.id === categoryId),
-  );
-
-  return { category, categories, matchingVendors };
+// Every category catalog is derived from one unfiltered fetch (deduped via
+// React's cache() across generateMetadata + the page component within the
+// same request) — cheap because we already need the full vendor set to
+// build the "browse other categories" list and each category's label/icon.
+async function getCategoryMeta(token?: string) {
+  const allVendors = await getVendors(token);
+  const categories = buildCategorySummaries(allVendors);
+  return { allVendors, categories };
 }
 
 type PageProps = {
   params: Promise<{ categoryId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: Omit<PageProps, "searchParams">): Promise<Metadata> {
   const { categoryId } = await params;
-  const { category, matchingVendors } = await getCategoryPageData(categoryId);
+  const session = await getServerSession(authOptions);
+  const { categories } = await getCategoryMeta(session?.backendToken);
+  const category = categories.find((c) => c.id === categoryId);
 
   if (!category) {
     return {
@@ -83,7 +88,7 @@ export async function generateMetadata({
     };
   }
 
-  const vendorCount = matchingVendors.length;
+  const vendorCount = category.vendorCount;
   const title = `${category.label} Contractors & Vendors | Go Renovate`;
   const description = `Compare ${vendorCount} verified ${category.label.toLowerCase()} vendor${
     vendorCount === 1 ? "" : "s"
@@ -92,6 +97,9 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // Canonical stays filter-agnostic (rating/verified/location query params
+    // narrow the same page rather than describing a distinct resource) so
+    // filtered URL variants aren't indexed as separate, near-duplicate pages.
     alternates: {
       canonical: `/vendors/category/${categoryId}`,
     },
@@ -104,14 +112,39 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPage({ params }: PageProps) {
+export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { categoryId } = await params;
-  const { category, categories, matchingVendors } =
-    await getCategoryPageData(categoryId);
+  const query = await searchParams;
+  const session = await getServerSession(authOptions);
+  const token = session?.backendToken;
+
+  const { allVendors, categories } = await getCategoryMeta(token);
+  const category = categories.find((c) => c.id === categoryId);
 
   if (!category) {
     notFound();
   }
+
+  const urlSearchParams = new URLSearchParams();
+  Object.entries(query).forEach(([key, value]) => {
+    if (typeof value === "string") urlSearchParams.set(key, value);
+  });
+  const { fullQuery, extraQuery } = buildCategoryScopedFilterQuery(
+    urlSearchParams,
+    categoryId,
+  );
+
+  const categoryScopedVendors = allVendors.filter((vendor) =>
+    vendor.categories.some((c) => c.id === categoryId),
+  );
+
+  // Only hit the backend a second time when rating/verified/location narrow
+  // the category further — otherwise the category slice already fetched
+  // above (part of the free `allVendors` request) is both the result set
+  // and the catalog used to build filter option lists.
+  const matchingVendors = extraQuery
+    ? await getVendors(token, fullQuery)
+    : categoryScopedVendors;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -136,8 +169,10 @@ export default async function CategoryPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <CategoryVendorList
+        categoryId={categoryId}
         category={category}
         vendors={matchingVendors}
+        catalogVendors={categoryScopedVendors}
         otherCategories={categories.filter((c) => c.id !== categoryId)}
       />
     </div>

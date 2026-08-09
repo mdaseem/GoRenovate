@@ -26,13 +26,20 @@ function getProductCall(token?: string, filters?: string) {
 function* handleRequest(action: ReturnType<typeof getProducts>): SagaIterator {
   try {
     const filters: string | undefined = action.payload.filters;
+    // Callers that always send a non-empty `filters` string (e.g. the
+    // category page, which pins `category=<id>` on every request) can't
+    // rely on "no filters" to mean "this is the catalog" — they pass
+    // `isUnfiltered` explicitly instead. Callers that never narrow beyond
+    // plain query params (e.g. /vendors) keep the old inferred behavior.
+    const isUnfiltered: boolean =
+      action.payload.isUnfiltered ?? !filters;
     const res: Vendor[] = yield call(
       getProductCall,
       action.payload.token,
       filters,
     );
 
-    yield put(setProducts({ data: res, isUnfiltered: !filters }));
+    yield put(setProducts({ data: res, isUnfiltered }));
     yield put(setLoading({ data: false }));
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {

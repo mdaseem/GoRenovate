@@ -17,6 +17,7 @@
   border-radius: 100px;
   padding: 0 1rem;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
@@ -41,18 +42,6 @@
     padding: 0;
     justify-content: center;
     gap: 0;
-  }
-
-  .backLink:not(.backLinkInline) .label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
   }
 }
 

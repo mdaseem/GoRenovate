@@ -1,31 +1,45 @@
-import React from "react";
-import Link from "next/link";
+"use client";
+
+import React, { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./BackLink.module.css";
 
 interface BackLinkProps {
-  href: string;
-  label: string;
   variant?: "standalone" | "inline";
   className?: string;
 }
 
 const BackLink: React.FC<BackLinkProps> = ({
-  href,
-  label,
   variant = "standalone",
   className,
 }) => {
+  const router = useRouter();
   const isInline = variant === "inline";
 
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  }, [router]);
+
   return (
-    <Link
-      href={href}
+    <button
+      type="button"
+      onClick={handleBack}
       className={`${styles.backLink} ${
         isInline ? styles.backLinkInline : ""
       } ${className ?? ""}`}
-      aria-label={label}
+      aria-label="Go back"
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
         <path
           d="M15 6L9 12L15 18"
           stroke="currentColor"
@@ -34,8 +48,7 @@ const BackLink: React.FC<BackLinkProps> = ({
           strokeLinejoin="round"
         />
       </svg>
-      {!isInline && <span className={styles.label}>{label}</span>}
-    </Link>
+    </button>
   );
 };
 

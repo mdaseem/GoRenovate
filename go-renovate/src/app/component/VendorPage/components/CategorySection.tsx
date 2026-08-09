@@ -8,7 +8,6 @@ interface CategorySectionProps {
   category: ServiceCategory;
   isActive: boolean;
   isOpen: boolean;
-  backHref: string;
   registerRef: (el: HTMLElement | null) => void;
   onToggle: (categoryId: string) => void;
   getQuantity: (serviceId: string) => number;
@@ -22,7 +21,6 @@ const CategorySection: React.FC<CategorySectionProps> = ({
   category,
   isActive,
   isOpen,
-  backHref,
   registerRef,
   onToggle,
   getQuantity,
@@ -45,7 +43,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           isActive ? styles.categoryHeadingActive : ""
         }`}
       >
-        <BackLink href={backHref} label="All vendors" variant="inline" />
+        <BackLink variant="inline" />
         <h2 className={styles.categoryHeadingText}>
           <button
             type="button"
