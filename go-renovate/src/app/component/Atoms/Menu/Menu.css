@@ -59,6 +59,7 @@
   font-weight: 500;
   color: #1a1f2e;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
   transition: background 0.15s ease;
 }

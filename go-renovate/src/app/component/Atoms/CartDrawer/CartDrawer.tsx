@@ -192,7 +192,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
               onClick={onRequestQuote}
               type="button"
             >
-              Request a Quote →
+              Checkout →
             </button>
             <button
               className={styles.clearButton}

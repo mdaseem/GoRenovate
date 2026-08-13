@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import styles from "./VendorPage.module.css";
 import { ServiceOption, Vendor } from "./vendor";
 import { useCart } from "../CustomHooks/useCart";
@@ -22,20 +23,23 @@ import CartFab from "./components/CartFab";
 import Toast from "./components/Toast";
 import ServiceDetailPanel from "./components/ServiceDetailPanel";
 import ServiceNavHeader from "./components/ServiceNavHeader";
+import CheckoutForm from "./components/CheckoutForm";
 
 type propType = {
   vendor?: Vendor;
 };
 
 const VendorPage: React.FC<propType> = ({ vendor }) => {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const categories = vendor?.categories ?? [];
 
   const [openCategoryIds, setOpenCategoryIds] = useState<Set<string>>(
     () => new Set(categories[0]?.id ? [categories[0].id] : []),
   );
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const serviceNav = useServiceNavigation(categories);
 
   const {
@@ -133,12 +137,26 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
 
   const handleRequestQuote = useCallback(() => {
     if (!session?.backendToken) {
+      if (sessionStatus === "authenticated") {
+        showToast("Hit a snag loading your account — please sign in again.");
+      }
       dispatch(setOpenStateLogin(true));
       return;
     }
     setIsCartOpen(false);
-    showToast("We'll contact you within 2 hours with a detailed quote!");
-  }, [session?.backendToken, dispatch, showToast]);
+    setIsCheckoutOpen(true);
+  }, [session?.backendToken, sessionStatus, dispatch, showToast]);
+
+  const handleOrderPlaced = useCallback(
+    (orderId: string) => {
+      clearCart();
+      setIsCheckoutOpen(false);
+      setIsCartOpen(false);
+      showToast("Order placed! Redirecting to your order...");
+      router.push(`/orders/${orderId}`);
+    },
+    [clearCart, showToast, router],
+  );
 
   const closeServiceDetail = serviceNav.close;
   const handleDetailOpenChange = useCallback<
@@ -260,6 +278,22 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
             onNext={serviceNav.goNext}
           />
         )}
+      </Overlay>
+
+      <Overlay
+        isOpen={isCheckoutOpen}
+        setIsOpen={setIsCheckoutOpen}
+        isDisable={false}
+        shouldReturnNull={!isCheckoutOpen}
+      >
+        <CheckoutForm
+          vendorId={vendor.id}
+          vendorName={vendor.name}
+          items={items}
+          totalPrice={totalPrice}
+          onClose={() => setIsCheckoutOpen(false)}
+          onPlaced={handleOrderPlaced}
+        />
       </Overlay>
     </div>
   );

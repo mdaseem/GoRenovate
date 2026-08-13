@@ -6,6 +6,7 @@ import productsState from "./features/productSlice";
 import users from "./features/userSlice";
 import favs from "./features/favroites";
 import aiChat from "./features/aiChatSlice";
+import orderState from "./features/orderSlice";
 import rootSaga from "./sagas/rootSaga";
 
 const rootReducer = combineReducers({
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   productsList: productsState,
   user: users,
   aiChat,
+  orderState,
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {

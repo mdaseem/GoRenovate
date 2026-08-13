@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import Overlay from "../../HOC/Overlay/Overlay";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -79,10 +79,14 @@ function RenderFromOverlay() {
     (state: RootState) => state.overlay.isOpenFilters,
   );
 
+  const wasAuthenticatedRef = useRef(status === "authenticated");
   useEffect(() => {
-    if (isOpenLogin && status === "authenticated") {
+    const justAuthenticated =
+      status === "authenticated" && !wasAuthenticatedRef.current;
+    if (isOpenLogin && justAuthenticated) {
       dispatch(setOpenStateLogin(false));
     }
+    wasAuthenticatedRef.current = status === "authenticated";
   }, [isOpenLogin, status, dispatch]);
 
   const surfaces: OverlaySurface[] = [
