@@ -22,6 +22,7 @@ export interface ServiceOption {
   estimatedDays: number;
   popular?: boolean;
   imageUrl?: string;
+  images?: string[];
   includes: string[];
 }
 

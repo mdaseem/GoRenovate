@@ -15,11 +15,13 @@ interface ServiceDetailProps {
   onDecrement: (serviceId: string) => void;
 }
 
-// A single placeholder, not several — the carousel already hides its
-// nav arrows/dots/counter once `images.length <= 1`, so repeating the
-// same file 4x bought nothing but a fake "gallery" of identical photos
-// (misleading) plus 3 extra <Image> mounts for no visual difference.
-const PLACEHOLDER_GALLERY = ["/house.jpg"];
+const FALLBACK_GALLERY = ["/house.jpg", "/house.jpg"];
+
+function resolveGallery(service: ServiceOption): string[] {
+  if (service.images && service.images.length > 0) return service.images;
+  if (service.imageUrl) return [service.imageUrl];
+  return FALLBACK_GALLERY;
+}
 
 interface ServiceImageCarouselProps {
   images: string[];
@@ -134,7 +136,11 @@ const ServiceImageCarousel: React.FC<ServiceImageCarouselProps> = ({
             {index + 1} / {images.length}
           </div>
 
-          <div className={styles.carouselDots} role="tablist" aria-label="Choose photo">
+          <div
+            className={styles.carouselDots}
+            role="tablist"
+            aria-label="Choose photo"
+          >
             {images.map((_, i) => (
               <button
                 key={i}
@@ -163,7 +169,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({
   onIncrement,
   onDecrement,
 }) => {
-  const images = service.imageUrl ? [service.imageUrl] : PLACEHOLDER_GALLERY;
+  const images = resolveGallery(service);
   const material = MATERIAL_COLORS[service.materialTag];
   const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
 
