@@ -1,0 +1,93 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  gap: 0.85rem;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+/* Connecting line between markers, drawn behind them. */
+.step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 18px;
+  bottom: -0.1rem;
+  width: 2px;
+  background: #ece9e3;
+}
+
+.marker {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 4px;
+  background: #ece9e3;
+  border: 2px solid #ece9e3;
+  z-index: 1;
+}
+
+.markerDone {
+  background: #278b2e;
+  border-color: #278b2e;
+}
+
+.markerCurrent {
+  box-shadow: 0 0 0 4px rgba(39, 139, 46, 0.18);
+}
+
+.markerUpcoming {
+  background: #fff;
+}
+
+.markerTerminal {
+  background: #c0392b;
+  border-color: #c0392b;
+  box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.15);
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stepLabel {
+  font-family: "Inter", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.stepLabelUpcoming {
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+.stepLabelTerminal {
+  color: #c0392b;
+}
+
+.stepTime {
+  font-family: "Inter", sans-serif;
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+.stepNote {
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  color: #6b7280;
+}

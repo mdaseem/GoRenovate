@@ -2,6 +2,7 @@
 import React from "react";
 import "./Menu.css";
 import Image from "next/image";
+import Link from "next/link";
 import MyIcon from "../../../../../public/user_profile.svg";
 import {
   setOpenMobileMenu,
@@ -103,6 +104,17 @@ const Menu: React.FC = () => {
           >
             Wishlist
           </button>
+        )}
+
+        {session && (
+          <Link
+            href="/orders"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            My Orders
+          </Link>
         )}
 
         {session && !store.isOpenAIChat && (
