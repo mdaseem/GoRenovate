@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   description:
     "Go get your home interior renovated with Go Renovate. Browse verified renovation vendors, compare services, and request a free quote.",
   icons: {
-    icon: "/my_logo.png",
+    icon: "/apple-touch-icon.png",
   },
   openGraph: {
     siteName: "Go Renovate",

@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import "./Header.css";
 import MyIcon from "../../../../../public/user_profile.svg";
 import Image from "next/image";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
@@ -57,13 +58,15 @@ export default function Header() {
   return (
     <header className="header" ref={headerRef}>
       <h1 className="header-title">
-        <Image
-          src="/my_logo.png"
-          alt="Go Renovate"
-          className="logo-image"
-          width={180}
-          height={80}
-        />
+        <Link href="/" className="logo-link" aria-label="Go Renovate home">
+          <Image
+            src="/final_my_logo.jpg"
+            alt="Go Renovate"
+            className="logo-image"
+            width={180}
+            height={80}
+          />
+        </Link>
       </h1>
       <div className="search-bar">{session && <SearchBar />}</div>
       <nav className="header-nav">

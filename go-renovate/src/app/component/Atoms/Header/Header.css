@@ -116,6 +116,16 @@
   flex: 13;
   min-width: 0;
 }
+.logo-link {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  border-radius: 4px;
+}
+.logo-link:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
 .logo-image {
   max-width: 100%;
   height: auto;
