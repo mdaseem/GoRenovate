@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import Image from "next/image";
 import styles from "./ServiceCard.module.css";
 import { ServiceOption } from "../../VendorPage/vendor";
 import { MATERIAL_COLORS, UNIT_LABELS } from "../../VendorPage/VendorData";
@@ -13,6 +14,12 @@ interface ServiceCardProps {
   onViewMore: (service: ServiceOption, categoryLabel: string) => void;
 }
 
+// Same fallback ServiceDetail uses when a service has no photo of its own,
+// so the card and the detail overlay never disagree on what image to show.
+const FALLBACK_IMAGE = "/house.jpg";
+
+const MAX_VISIBLE_INCLUDES = 3;
+
 const ServiceCard: React.FC<ServiceCardProps> = ({
   service,
   categoryLabel,
@@ -24,6 +31,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   const material = MATERIAL_COLORS[service.materialTag];
   const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
+  const visibleIncludes = service.includes.slice(0, MAX_VISIBLE_INCLUDES);
+  const hiddenIncludesCount = service.includes.length - visibleIncludes.length;
 
   const handleAdd = useCallback(() => {
     onAdd(service, categoryLabel);
@@ -49,11 +58,21 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <article className={styles.card} aria-label={`Service: ${service.name}`}>
-      {service.popular && (
-        <div className={styles.popularRibbon} aria-label="Popular service">
-          Popular
-        </div>
-      )}
+      <div className={styles.media}>
+        <Image
+          src={service.imageUrl || FALLBACK_IMAGE}
+          alt=""
+          fill
+          sizes="(max-width: 480px) 80px, 112px"
+          className={styles.mediaImage}
+          loading="lazy"
+        />
+        {service.popular && (
+          <span className={styles.popularBadge} aria-label="Popular service">
+            Popular
+          </span>
+        )}
+      </div>
 
       <div className={styles.cardBody}>
         <div className={styles.cardTop}>
@@ -101,11 +120,16 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         </button>
 
         <ul className={styles.includesList} aria-label="What's included">
-          {service.includes.map((item) => (
+          {visibleIncludes.map((item) => (
             <li key={item} className={styles.includeChip}>
               ✓ {item}
             </li>
           ))}
+          {hiddenIncludesCount > 0 && (
+            <li className={styles.includeChipMore} aria-hidden="true">
+              +{hiddenIncludesCount} more
+            </li>
+          )}
         </ul>
 
         <div className={styles.cardFooter}>
@@ -174,4 +198,4 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   );
 };
 
-export default ServiceCard;
+export default React.memo(ServiceCard);
