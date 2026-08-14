@@ -9,6 +9,10 @@
   padding: 2rem 1.5rem 6rem;
 }
 
+.backLink {
+  margin-bottom: 1.25rem;
+}
+
 .categorySection {
   margin-bottom: 3rem;
 }
@@ -412,6 +416,12 @@
   .serviceCount {
     display: block;
     margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 1.5rem 1rem 5rem;
   }
 }
 

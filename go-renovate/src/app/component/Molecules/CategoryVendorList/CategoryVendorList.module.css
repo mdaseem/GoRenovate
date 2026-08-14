@@ -431,6 +431,37 @@
   }
 }
 
+@media (max-width: 350px) {
+  .header {
+    gap: 0.6rem;
+  }
+
+  .headerIcon {
+    font-size: 1.7rem;
+  }
+
+  .heading {
+    font-size: 1.15rem;
+  }
+
+  .subheading {
+    font-size: 0.8rem;
+  }
+
+  .vendorCard {
+    padding: 1rem;
+  }
+
+  .vendorGrid {
+    gap: 1rem;
+  }
+
+  .categoryChip {
+    padding: 0 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .vendorCard,
   .viewLink,
