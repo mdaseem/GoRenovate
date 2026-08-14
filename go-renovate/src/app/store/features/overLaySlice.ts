@@ -8,7 +8,6 @@ const initialState: any = {
   isUserListOpen: false,
   isMobileMenuOpen: false,
   isOpenProductPage: false,
-  isOpenProductPageFromSearch: false,
   isMobileSearchOpen: false,
   isOpenAIChat: false,
   isOpenFilters: false,
@@ -42,10 +41,6 @@ export const overlaySlice = createSlice({
       store.isOpenProductPage = payload;
       return store;
     },
-    setOpenStateProductPageFromSearch: (store, { payload }) => {
-      store.isOpenProductPageFromSearch = payload;
-      return store;
-    },
     setOpenMobileSearch: (store, { payload }) => {
       store.isMobileSearchOpen = payload;
       return store;
@@ -68,7 +63,6 @@ export const {
   setOpenStateUserList,
   setOpenMobileMenu,
   setOpenStateProductPage,
-  setOpenStateProductPageFromSearch,
   setOpenMobileSearch,
   setOpenStateAIChat,
   setOpenStateFilters,

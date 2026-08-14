@@ -1,17 +1,24 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import "./SearchBar.css";
-import { RootState } from "@/app/store/store";
-import { useDispatch, useSelector } from "react-redux";
-import VendorCard from "../VendorCard/VendorCard";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
-  setOpenStateProductPageFromSearch,
   setOpenMobileSearch,
 } from "@/app/store/features/overLaySlice";
+import {
+  getRecentSearches,
+  addRecentSearchRequest,
+  removeRecentSearchRequest,
+  clearRecentSearchesRequest,
+} from "@/app/store/features/searchSlice";
 import Overlay from "../../HOC/Overlay/Overlay";
-import ProductView from "../ProductView/ProductView";
 import { Vendor } from "../../VendorPage/vendor";
+import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";
+import { useSearchSuggestions } from "../../CustomHooks/useSearchSuggestions";
 
-type productType = Vendor | null;
+const SUGGESTION_DEBOUNCE_MS = 250;
 
 const SearchIcon = () => (
   <svg
@@ -32,31 +39,108 @@ const SearchIcon = () => (
   </svg>
 );
 
+const ClockIcon = () => (
+  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+    <path
+      d="M12 7v5l3.5 2"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none">
+    <path
+      d="M5 12h14M13 6l6 6-6 6"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// Highlights the portion of `text` that matches `query`, without
+// dangerouslySetInnerHTML — split into plain text nodes and wrap the
+// matching slice in a <mark>.
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) return <>{text}</>;
+
+  const index = text.toLowerCase().indexOf(trimmedQuery.toLowerCase());
+  if (index === -1) return <>{text}</>;
+
+  return (
+    <>
+      {text.slice(0, index)}
+      <mark className="search-match-highlight">
+        {text.slice(index, index + trimmedQuery.length)}
+      </mark>
+      {text.slice(index + trimmedQuery.length)}
+    </>
+  );
+}
+
+type Row =
+  | { kind: "recent"; term: string }
+  | { kind: "suggestion"; vendor: Vendor }
+  | { kind: "seeAll"; term: string };
+
+function rowHref(row: Row): string | null {
+  return row.kind === "suggestion" ? `/vendors/${row.vendor.id}` : null;
+}
+
 function SearchBar() {
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [product, setProduct] = React.useState<productType>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const productsList = useSelector((state: RootState) => state.productsList);
-  
-  const overlay = useSelector((state: RootState) => state.overlay.overlay);
-  const isMobileSearchOpen = useSelector(
-    (state: RootState) => state.overlay.isMobileSearchOpen,
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  const { data: session } = useSession();
+  const token = session?.backendToken;
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const recentSearches = useAppSelector((state) => state.search.recentSearches);
+  const recentSearchesError = useAppSelector((state) => state.search.error);
+  const isMobileSearchOpen = useAppSelector(
+    (state) => state.overlay.isMobileSearchOpen,
   );
-  const [filteredProducts, setFilteredProducts] = React.useState<productType[]>(
-    [],
-  );
+
+  const debouncedTerm = useDebouncedValue(searchTerm, SUGGESTION_DEBOUNCE_MS);
+  const {
+    suggestions,
+    isLoading: suggestionsLoading,
+    error: suggestionsError,
+  } = useSearchSuggestions(debouncedTerm, token);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
 
-  const dispatch = useDispatch();
   useEffect(() => {
-    const filtered = productsList?.prodList?.data?.filter(
-      (product: productType) =>
-        product?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+    if (!token) return;
+    dispatch(getRecentSearches({ token }));
+  }, [token, dispatch]);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [searchTerm, isOpen, isMobileSearchOpen]);
+
+  const isTyping = searchTerm.trim().length > 0;
+
+  const rows: Row[] = useMemo(() => {
+    if (!isTyping) {
+      return recentSearches.map((term) => ({ kind: "recent", term }) as Row);
+    }
+    const suggestionRows: Row[] = suggestions.map(
+      (vendor) => ({ kind: "suggestion", vendor }) as Row,
     );
-    setFilteredProducts(filtered);
-  }, [searchTerm, productsList?.prodList?.data]);
+    return [...suggestionRows, { kind: "seeAll", term: searchTerm.trim() }];
+  }, [isTyping, recentSearches, suggestions, searchTerm]);
 
   // Close on outside click / Escape instead of onBlur, so clicking inside
   // the results panel (e.g. a result's link) doesn't tear the panel down
@@ -84,71 +168,215 @@ function SearchBar() {
     };
   }, [isOpen]);
 
-  const renderResults = (idPrefix: string, onSelectResult: () => void) =>
-    !searchTerm.length ? (
-      <div className="search-results-container">
-        <div className="previous-searched-container">
-          <h4>Previously Searched</h4>
-          <div>
-            <p>Living Room</p>
-          </div>
-          <div>
-            <p>Living Room</p>
-          </div>
-          <div>
-            <p>Living Room</p>
-          </div>
-          <div>
-            <p>Living Room</p>
-          </div>
-        </div>
-        <div className="suggestion-searched-container">
-          <h4>Suggestions</h4>
-          <div>
-            <p>Living Room</p>
-          </div>
-          <div>
-            <p>Living Room</p>
-          </div>
-          <div>
-            <p>Living Room</p>
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div className="search-results-container-results">
-        <h4 id={`${idPrefix}-heading`}>Results</h4>
-        {filteredProducts?.length > 0 ? (
-          <ul
-            id={`${idPrefix}-listbox`}
-            className="search-results"
-            role="list"
-            aria-labelledby={`${idPrefix}-heading`}
-          >
-            {filteredProducts?.map((product: productType) => (
-              <li
-                key={product?.id}
-                className="search-result-item"
-                onClick={onSelectResult}
+  const submitSearch = (term: string, blurTarget?: HTMLInputElement | null) => {
+    const trimmed = term.trim();
+    if (!trimmed) return;
+    if (token) dispatch(addRecentSearchRequest({ term: trimmed, token }));
+    setIsOpen(false);
+    dispatch(setOpenMobileSearch(false));
+    blurTarget?.blur();
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+  };
+
+  const selectRow = (row: Row, blurTarget?: HTMLInputElement | null) => {
+    if (row.kind === "recent" || row.kind === "seeAll") {
+      submitSearch(row.term, blurTarget);
+      return;
+    }
+    setIsOpen(false);
+    dispatch(setOpenMobileSearch(false));
+    blurTarget?.blur();
+    router.push(`/vendors/${row.vendor.id}`);
+  };
+
+  const handleInputKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((current) => Math.min(current + 1, rows.length - 1));
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((current) => Math.max(current - 1, -1));
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      const target = event.currentTarget;
+      if (activeIndex >= 0 && rows[activeIndex]) {
+        selectRow(rows[activeIndex], target);
+      } else {
+        submitSearch(searchTerm, target);
+      }
+    }
+  };
+
+  const renderPanel = (idPrefix: string, onSelect: () => void) => {
+    const listboxId = `${idPrefix}-listbox`;
+
+    if (!isTyping) {
+      return (
+        <div className="search-results-container">
+          <div className="previous-searched-container">
+            <div className="search-panel-heading-row">
+              <h4>Previously Searched</h4>
+              {recentSearches.length > 0 && (
+                <button
+                  type="button"
+                  className="search-clear-recent-btn"
+                  onClick={() => token && dispatch(clearRecentSearchesRequest({ token }))}
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+            {recentSearches.length === 0 ? (
+              <p
+                className={recentSearchesError ? "search-error-hint" : "search-empty-hint"}
+                role={recentSearchesError ? "alert" : undefined}
               >
-                <VendorCard
-                  setIsOpen={(payload) => {
-                    dispatch(setOpenStateProductPageFromSearch(payload));
-                  }}
-                  isForSearch={true}
-                  vendor={product}
-                  setProduct={setProduct}
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="search-no-results" role="status" aria-live="polite">
-            No results found.
+                {recentSearchesError
+                  ? "Couldn't load your recent searches."
+                  : "Your recent searches will show up here."}
+              </p>
+            ) : (
+              <ul
+                id={listboxId}
+                className="search-results"
+                role="listbox"
+                aria-label="Recent searches"
+              >
+                {rows.map((row, index) => {
+                  if (row.kind !== "recent") return null;
+                  const optionId = `${idPrefix}-option-${index}`;
+                  return (
+                    <li
+                      key={optionId}
+                      id={optionId}
+                      role="option"
+                      aria-selected={activeIndex === index}
+                      className={`search-recent-row${
+                        activeIndex === index ? " search-row-active" : ""
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        className="search-recent-term"
+                        onClick={() => {
+                          selectRow(row);
+                          onSelect();
+                        }}
+                      >
+                        <ClockIcon />
+                        <span>{row.term}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="search-recent-remove"
+                        aria-label={`Remove "${row.term}" from recent searches`}
+                        onClick={() =>
+                          token &&
+                          dispatch(
+                            removeRecentSearchRequest({ term: row.term, token }),
+                          )
+                        }
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="search-results-container-results">
+        <h4 id={`${idPrefix}-heading`}>Suggestions</h4>
+        {suggestionsLoading && (
+          <p className="search-loading-hint" role="status" aria-live="polite">
+            Searching…
           </p>
         )}
+        {!suggestionsLoading && suggestionsError && (
+          <p className="search-error-hint" role="alert">
+            {suggestionsError} You can still press Enter to search everything.
+          </p>
+        )}
+        <ul
+          id={listboxId}
+          className="search-results"
+          role="listbox"
+          aria-labelledby={`${idPrefix}-heading`}
+        >
+          {rows.map((row, index) => {
+            const optionId = `${idPrefix}-option-${index}`;
+            const isActive = activeIndex === index;
+            const href = rowHref(row);
+
+            if (row.kind === "suggestion") {
+              return (
+                <li
+                  key={optionId}
+                  id={optionId}
+                  role="option"
+                  aria-selected={isActive}
+                  className={`search-result-item${isActive ? " search-row-active" : ""}`}
+                >
+                  <Link
+                    href={href as string}
+                    className="search-suggestion-row"
+                    onClick={() => {
+                      setIsOpen(false);
+                      dispatch(setOpenMobileSearch(false));
+                      onSelect();
+                    }}
+                  >
+                    <span className="search-suggestion-name">
+                      <HighlightMatch text={row.vendor.name} query={searchTerm} />
+                    </span>
+                    {row.vendor.categories?.[0]?.label && (
+                      <span className="search-suggestion-meta">
+                        {row.vendor.categories[0].label}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              );
+            }
+
+            return (
+              <li
+                key={optionId}
+                id={optionId}
+                role="option"
+                aria-selected={isActive}
+                className={`search-see-all-item${isActive ? " search-row-active" : ""}`}
+              >
+                <button
+                  type="button"
+                  className="search-see-all-btn"
+                  onClick={() => {
+                    selectRow(row);
+                    onSelect();
+                  }}
+                >
+                  <span>See all results for &ldquo;{row.term}&rdquo;</span>
+                  <ArrowIcon />
+                </button>
+              </li>
+            );
+          })}
+          {!suggestionsLoading && !suggestionsError && suggestions.length === 0 && (
+            <li className="search-no-results" role="status" aria-live="polite">
+              No vendors match yet — press Enter to search everything.
+            </li>
+          )}
+        </ul>
       </div>
     );
+  };
 
   return (
     <>
@@ -165,19 +393,6 @@ function SearchBar() {
         ref={containerRef}
         className={`search-bar-container ${isOpen ? "expanded" : ""}`}
       >
-        <Overlay
-          isDisable={false}
-          isOpen={overlay?.isOpenProductPageFromSearch}
-          setIsOpen={(payload) =>
-            dispatch(setOpenStateProductPageFromSearch(payload))
-          }
-          shouldReturnNull={
-            product && overlay?.isOpenProductPageFromSearch ? false : true
-          }
-        >
-          <ProductView product={product} />
-        </Overlay>
-
         <div className="search-input-wrapper">
           <SearchIcon />
           <input
@@ -188,10 +403,15 @@ function SearchBar() {
             aria-label="Search vendors"
             aria-expanded={isOpen}
             aria-controls="search-results-listbox"
+            aria-autocomplete="list"
+            aria-activedescendant={
+              isOpen && activeIndex >= 0 ? `search-results-option-${activeIndex}` : undefined
+            }
             autoComplete="off"
             onFocus={() => setIsOpen(true)}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleInputKeyDown}
             placeholder="Search vendors..."
           />
           {searchTerm.length > 0 && (
@@ -209,9 +429,9 @@ function SearchBar() {
           )}
         </div>
 
-        {isOpen && renderResults("search-results", () => setIsOpen(false))}
+        {isOpen && renderPanel("search-results", () => setIsOpen(false))}
       </div>
-      
+
       <Overlay
         isDisable={false}
         isOpen={isMobileSearchOpen}
@@ -225,11 +445,21 @@ function SearchBar() {
               ref={mobileInputRef}
               className="search-input"
               type="search"
+              role="combobox"
               aria-label="Search vendors"
+              aria-expanded={isMobileSearchOpen}
+              aria-controls="mobile-search-results-listbox"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                activeIndex >= 0
+                  ? `mobile-search-results-option-${activeIndex}`
+                  : undefined
+              }
               autoComplete="off"
               autoFocus
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleInputKeyDown}
               placeholder="Search vendors..."
             />
             {searchTerm.length > 0 && (
@@ -246,9 +476,7 @@ function SearchBar() {
               </button>
             )}
           </div>
-          {renderResults("mobile-search-results", () =>
-            dispatch(setOpenMobileSearch(false)),
-          )}
+          {renderPanel("mobile-search-results", () => {})}
         </div>
       </Overlay>
     </>
