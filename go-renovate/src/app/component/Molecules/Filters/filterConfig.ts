@@ -130,6 +130,23 @@ export function buildFilterQueryString(
   return params.toString();
 }
 
+// Search query-param name used in the URL (?q=) — kept distinct from the
+// backend's `search` param name since it isn't one of the sidebar
+// FILTER_DEFINITIONS and has its own reader/writer (the search page + bar).
+export const SEARCH_PARAM = "q";
+
+// Same as buildFilterQueryString but also forwards ?q= as the backend's
+// `search` param, so the /search page (and ProductListPage while on it) can
+// combine free-text search with the regular sidebar filters in one request.
+export function buildVendorsQueryString(
+  searchParams: URLSearchParams | { get(key: string): string | null },
+): string {
+  const params = new URLSearchParams(buildFilterQueryString(searchParams));
+  const query = searchParams.get(SEARCH_PARAM);
+  if (query) params.set("search", query);
+  return params.toString();
+}
+
 export function buildCategoryScopedFilterQuery(
   searchParams: URLSearchParams | { get(key: string): string | null },
   categoryId: string,

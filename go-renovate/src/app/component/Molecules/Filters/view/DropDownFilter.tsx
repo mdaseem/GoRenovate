@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useId, useState } from "react";
+import React, { useState } from "react";
 import "../style/Filters.style.css";
 import { ActiveFilters, FilterDefinition } from "../filterConfig";
 import { Vendor } from "../../../VendorPage/vendor";
@@ -21,7 +21,6 @@ function DropDownFilter({
   onSetRadioValue,
 }: DropDownFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const reactId = useId();
 
   if (definition.type === "toggle") return null;
 
@@ -32,8 +31,8 @@ function DropDownFilter({
 
   if (options.length === 0) return null;
 
-  const toggleId = `filter-toggle-${reactId}`;
-  const panelId = `filter-panel-${reactId}`;
+  const toggleId = `filter-toggle-${definition.id}`;
+  const panelId = `filter-panel-${definition.id}`;
 
   const selectedValues =
     definition.type === "checkbox-group"
