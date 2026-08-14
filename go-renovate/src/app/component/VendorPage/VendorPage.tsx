@@ -11,6 +11,7 @@ import Overlay from "../HOC/Overlay/Overlay";
 import { useAppDispatch } from "@/app/store/hooks";
 import { setOpenStateLogin } from "@/app/store/features/overLaySlice";
 import ErrorState from "../Atoms/ErrorState/ErrorState";
+import BackLink from "../Atoms/BackLink/BackLink";
 import { useHeaderHeight } from "./hooks/useHeaderHeight";
 import { useToast } from "./hooks/useToast";
 import { useCategoryScrollSpy } from "./hooks/useCategoryScrollSpy";
@@ -193,6 +194,7 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
   return (
     <div className={styles.page}>
       <main className={styles.main} id="main-content">
+        <BackLink className={styles.backLink} />
         <VendorDetails
           vendor={vendor}
           activeCategoryId={activeCategoryId}
