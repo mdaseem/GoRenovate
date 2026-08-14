@@ -1,16 +1,100 @@
-.product-page-container-wishlist {
+.wishlist-page {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   position: relative;
-  max-width: 900px;
+  max-width: 1100px;
+  min-height: 100%;
   margin: 0 auto;
-  padding: 0 50px;
+  padding: 24px 50px 48px;
+}
+
+.wishlist-page-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.wishlist-page-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.wishlist-page-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.wishlist-page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wishlist-page-grid-item {
+  animation: wishlistItemIn 0.28s ease both;
+}
+
+@keyframes wishlistItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-page-grid-item {
+    animation: none;
+  }
 }
 
 @media (max-width: 700px) {
-  .product-page-container-wishlist {
+  .wishlist-page {
+    gap: 12px;
+    padding: 16px 12px 32px;
+  }
+
+  .wishlist-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wishlist-page-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Extra-narrow phones (down to ~320px) — reclaim side padding and shrink
+ * the header a bit further so it doesn't crowd the sticky overlay bar
+ * above it. */
+@media (max-width: 380px) {
+  .wishlist-page {
     gap: 10px;
-    padding: 0 6px;
+    padding: 12px 8px 24px;
+  }
+
+  .wishlist-page-header {
+    flex-wrap: wrap;
+  }
+
+  .wishlist-page-title {
+    font-size: 1.15rem;
+  }
+
+  .wishlist-page-count {
+    font-size: 0.8rem;
+  }
+
+  .wishlist-page-grid {
+    gap: 0.6rem;
   }
 }

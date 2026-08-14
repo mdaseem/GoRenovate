@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -12,6 +12,7 @@ import styles from "./CategoryVendorList.module.css";
 import "@/app/component/Molecules/ProductListPage/ProductListPage.style.css";
 import { Vendor } from "@/app/component/VendorPage/vendor";
 import BackLink from "@/app/component/Atoms/BackLink/BackLink";
+import MyFavorites from "@/app/component/Atoms/MyFavorites/view/MyFavorites.view";
 import Filters from "@/app/component/Molecules/Filters/view/Filters.view";
 import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
 import { Loader1 } from "@/app/component/Molecules/Loader/Loader";
@@ -111,6 +112,11 @@ const CategoryVendorList: React.FC<CategoryVendorListProps> = ({
   const searchParams = useSearchParams();
 
   const productLists = useAppSelector((state) => state.productsList);
+  const favoriteItems = useAppSelector((state) => state.favoriteList.items);
+  const favoriteIds = useMemo(
+    () => new Set(favoriteItems.map((item) => item.id)),
+    [favoriteItems],
+  );
   const { activeCount } = useVendorFilters();
 
   const { fullQuery, extraQuery } = buildCategoryScopedFilterQuery(
@@ -223,13 +229,19 @@ const CategoryVendorList: React.FC<CategoryVendorListProps> = ({
                   return (
                     <li key={vendor.id} className={styles.vendorCard}>
                       <div className={styles.vendorTop}>
-                        <h2 className={styles.vendorName}>{vendor.name}</h2>
-                        {vendor.verified && (
-                          <span className={styles.verifiedBadge}>
-                            <VerifiedIcon />
-                            Verified
-                          </span>
-                        )}
+                        <div className={styles.vendorTopInfo}>
+                          <h2 className={styles.vendorName}>{vendor.name}</h2>
+                          {vendor.verified && (
+                            <span className={styles.verifiedBadge}>
+                              <VerifiedIcon />
+                              Verified
+                            </span>
+                          )}
+                        </div>
+                        <MyFavorites
+                          prodData={vendor}
+                          isFav={favoriteIds.has(vendor.id)}
+                        />
                       </div>
 
                       {vendor.tagline && (

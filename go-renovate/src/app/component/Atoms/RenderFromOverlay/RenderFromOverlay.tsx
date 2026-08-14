@@ -12,6 +12,7 @@ import {
   setOpenStateAIChat,
   setOpenStateFilters,
 } from "@/app/store/features/overLaySlice";
+import { getFavorites, clearFavorites } from "@/app/store/features/favroites";
 import Chat from "../../Atoms/Chat/Chat";
 import dynamic from "next/dynamic";
 import Loader, { Loader1 } from "../../Molecules/Loader/Loader";
@@ -55,7 +56,7 @@ type OverlaySurface = {
 
 function RenderFromOverlay() {
   const dispatch = useAppDispatch();
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   useStopScrollOnOverlay();
   const [selectedUser, setSelectedUser] = React.useState<{
     id: string;
@@ -78,6 +79,7 @@ function RenderFromOverlay() {
   const isOpenFilters = useAppSelector(
     (state: RootState) => state.overlay.isOpenFilters,
   );
+  const favorites = useAppSelector((state: RootState) => state.favoriteList);
 
   const wasAuthenticatedRef = useRef(status === "authenticated");
   useEffect(() => {
@@ -88,6 +90,19 @@ function RenderFromOverlay() {
     }
     wasAuthenticatedRef.current = status === "authenticated";
   }, [isOpenLogin, status, dispatch]);
+
+  useEffect(() => {
+    if (
+      status === "authenticated" &&
+      session?.backendToken &&
+      !favorites.hasLoaded &&
+      !favorites.isLoading
+    ) {
+      dispatch(getFavorites({ token: session.backendToken }));
+    } else if (status === "unauthenticated" && favorites.hasLoaded) {
+      dispatch(clearFavorites());
+    }
+  }, [status, session?.backendToken, favorites.hasLoaded, favorites.isLoading, dispatch]);
 
   const surfaces: OverlaySurface[] = [
     {
