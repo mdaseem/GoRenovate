@@ -11,6 +11,8 @@ type propType = {
   onAction?: () => void;
   href?: string;
   variant?: "page" | "inline";
+  icon?: string;
+  role?: "alert" | "status";
 };
 
 function ErrorState({
@@ -20,11 +22,13 @@ function ErrorState({
   onAction,
   href,
   variant = "inline",
+  icon = "⚠",
+  role = "alert",
 }: propType) {
   return (
-    <div className={`error-state error-state-${variant}`} role="alert">
+    <div className={`error-state error-state-${variant}`} role={role}>
       <p className="error-state-icon" aria-hidden="true">
-        ⚠
+        {icon}
       </p>
       <h3 className="error-state-title">{title}</h3>
       <p className="error-state-message">{message}</p>

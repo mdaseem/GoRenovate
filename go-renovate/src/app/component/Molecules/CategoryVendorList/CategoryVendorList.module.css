@@ -213,6 +213,18 @@
   gap: 0.75rem;
 }
 
+.vendorTopInfo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.vendorTop :global(.fav-container) {
+  flex-shrink: 0;
+}
+
 .vendorName {
   font-size: 1.05rem;
   font-weight: 700;

@@ -5,6 +5,8 @@ import { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { Vendor } from "../../VendorPage/vendor";
+import { getAvatarStyle, getInitials } from "../../VendorPage/vendorAvatar";
+import { LocationIcon, ClockIcon } from "../../VendorPage/vendorIcons";
 
 type propType = {
   isForSearch?: boolean;
@@ -12,37 +14,6 @@ type propType = {
   setIsOpen: (payload: boolean) => void;
   setProduct: React.Dispatch<React.SetStateAction<Vendor | null>>;
 };
-
-const AVATAR_PALETTE = [
-  { bg: "#eef7ea", fg: "#1f6b25" },
-  { bg: "#fdf1df", fg: "#8a5a12" },
-  { bg: "#eef2fc", fg: "#33499e" },
-  { bg: "#fdeef0", fg: "#a13a53" },
-  { bg: "#f1f0fb", fg: "#5a4aa6" },
-  { bg: "#e9f7f5", fg: "#187266" },
-];
-
-function hashString(value: string): number {
-  let hash = 0;
-  for (let i = 0; i < value.length; i++) {
-    hash = (hash << 5) - hash + value.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash);
-}
-
-function getAvatarStyle(key: string) {
-  return AVATAR_PALETTE[hashString(key) % AVATAR_PALETTE.length];
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 const FullStar = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -66,36 +37,11 @@ const VerifiedIcon = () => (
   </svg>
 );
 
-const LocationIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path
-      d="M12 22s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
-    <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="2" />
-  </svg>
-);
-
-const ClockIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-    <path
-      d="M12 7v5l3.5 2"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
 function VendorCard(props: propType) {
   const { vendor, isForSearch } = props;
-  const favList = useSelector((state: RootState) => state.favoriteList);
-  const isFav = favList?.filter(
-    (favVendor: Vendor | null) => favVendor?.id === vendor?.id,
+  const favItems = useSelector((state: RootState) => state.favoriteList.items);
+  const isFav = favItems.some(
+    (favVendor: Vendor) => favVendor.id === vendor?.id,
   );
 
   const rateStar = () => {
@@ -130,10 +76,7 @@ function VendorCard(props: propType) {
             )}
           </p>
           {!isForSearch && (
-            <MyFavorites
-              prodData={vendor}
-              isFav={isFav.length ? true : false}
-            />
+            <MyFavorites prodData={vendor} isFav={isFav} />
           )}
         </div>
 
