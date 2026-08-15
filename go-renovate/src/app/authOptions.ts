@@ -155,6 +155,7 @@ export const authOptions: NextAuthOptions = {
                 Persist backend JWT
               */
               token.backendToken = data.token;
+              token.id = data?.user?.id;
             }
           } catch (err) {
             console.error("Google backend auth failed:", err);
