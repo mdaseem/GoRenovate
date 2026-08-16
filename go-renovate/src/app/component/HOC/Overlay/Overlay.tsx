@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Overlay.style.css";
 import Image from "next/image";
+import { useCloseOnBackButton } from "../../CustomHooks/useCloseOnBackButton";
 
 type PropsType = {
   children?: React.ReactNode;
@@ -61,6 +62,11 @@ function MenuOverlay({
 
 function Overlay(props: PropsType) {
   const [hasEntered, setHasEntered] = useState(false);
+
+  useCloseOnBackButton(
+    props.isOpen && !props.isDisable && props.variant !== "menu",
+    () => props.setIsOpen(false),
+  );
 
   useEffect(() => {
     if (!props.isOpen) {

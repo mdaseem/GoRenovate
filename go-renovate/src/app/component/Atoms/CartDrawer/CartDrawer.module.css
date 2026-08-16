@@ -89,6 +89,41 @@
   outline-offset: 2px;
 }
 
+.availabilityStatus {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.availabilitySpinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-top-color: #c8762a;
+  animation: availabilitySpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes availabilitySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .availabilitySpinner {
+    animation-duration: 1.6s;
+  }
+}
+
 .cartItems {
   flex: 1;
   overflow-y: auto;
@@ -106,6 +141,58 @@
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
+}
+
+.cartItemUnavailable {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.unavailableRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.unavailableBadge {
+  font-family: "Inter", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #b91c1c;
+  background: #fee2e2;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #b91c1c;
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.removeButton:hover {
+  color: #7f1d1d;
+}
+
+.removeButton:focus-visible {
+  outline: 2px solid #b91c1c;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.priceChangedNote {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #c8762a;
+  margin-top: 0.4rem;
 }
 
 .cartItemInfo {
@@ -246,6 +333,14 @@
   color: #1a1f2e;
 }
 
+.checkoutBlockedNote {
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #b91c1c;
+  margin: 0 0 0.6rem;
+}
+
 .requestQuoteButton {
   width: 100%;
   background: #c4fd5b;
@@ -274,6 +369,16 @@
 .requestQuoteButton:focus-visible {
   outline: 2px solid #1a1f2e;
   outline-offset: 3px;
+}
+
+.requestQuoteButton:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.requestQuoteButton:disabled:hover {
+  background: #e5e7eb;
 }
 
 .clearButton {
