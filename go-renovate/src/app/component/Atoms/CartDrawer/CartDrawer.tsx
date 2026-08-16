@@ -1,7 +1,9 @@
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import styles from "./CartDrawer.module.css";
 import { CartItem } from "../../VendorPage/vendor";
 import { UNIT_LABELS } from "../../VendorPage/VendorData";
+import { AvailabilityEntry } from "../../CustomHooks/useCartAvailability";
+import { useCloseOnBackButton } from "../../CustomHooks/useCloseOnBackButton";
 
 interface CartDrawerProps {
   items: CartItem[];
@@ -10,9 +12,19 @@ interface CartDrawerProps {
   onClose: () => void;
   onIncrement: (serviceId: string) => void;
   onDecrement: (serviceId: string) => void;
+  onRemove: (serviceId: string) => void;
   onClear: () => void;
   onRequestQuote: () => void;
+  availability: Record<string, AvailabilityEntry>;
+  isCheckingAvailability: boolean;
+  availabilityCheckError: string | null;
 }
+
+const currencyFormatter = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
 
 const CartDrawer: React.FC<CartDrawerProps> = ({
   items,
@@ -21,10 +33,16 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
   onClose,
   onIncrement,
   onDecrement,
+  onRemove,
   onClear,
   onRequestQuote,
+  availability,
+  isCheckingAvailability,
+  availabilityCheckError,
 }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  useCloseOnBackButton(isOpen, onClose);
 
   // Trap focus inside drawer when open
   useEffect(() => {
@@ -62,15 +80,16 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
     [onClose],
   );
 
+  const hasUnavailableItems = useMemo(
+    () => items.some((item) => availability[item.service.id]?.isAvailable === false),
+    [items, availability],
+  );
+
   if (!isOpen) return null;
 
-  const formattedTotal = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(totalPrice);
-
+  const formattedTotal = currencyFormatter.format(totalPrice);
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+  const checkoutDisabled = hasUnavailableItems;
 
   return (
     <div
@@ -100,6 +119,22 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
           </button>
         </div>
 
+        {isCheckingAvailability && (
+          <div
+            className={styles.availabilityStatus}
+            role="status"
+            aria-live="polite"
+          >
+            <span className={styles.availabilitySpinner} aria-hidden="true" />
+            Checking availability…
+          </div>
+        )}
+        {!isCheckingAvailability && availabilityCheckError && (
+          <div className={styles.availabilityStatus} role="status">
+            {availabilityCheckError}
+          </div>
+        )}
+
         {items.length === 0 ? (
           <div className={styles.emptyCart} role="status" aria-live="polite">
             <span className={styles.emptyIcon} aria-hidden="true">
@@ -119,16 +154,21 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             {items.map(({ service, categoryLabel, quantity }) => {
               const unitLabel =
                 UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
-              const itemTotal = new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-                maximumFractionDigits: 0,
-              }).format(service.price * quantity);
+              const itemTotal = currencyFormatter.format(
+                service.price * quantity,
+              );
+              const entry = availability[service.id];
+              const isUnavailable = entry?.isAvailable === false;
+              const priceChanged =
+                !isUnavailable &&
+                entry?.price !== null &&
+                entry?.price !== undefined &&
+                entry.price !== service.price;
 
               return (
                 <li
                   key={service.id}
-                  className={styles.cartItem}
+                  className={`${styles.cartItem} ${isUnavailable ? styles.cartItemUnavailable : ""}`}
                   role="listitem"
                 >
                   <div className={styles.cartItemInfo}>
@@ -139,32 +179,58 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                     <div className={styles.cartItemPrice}>
                       {itemTotal} · {quantity} × {unitLabel}
                     </div>
+
+                    {isUnavailable && (
+                      <div className={styles.unavailableRow}>
+                        <span className={styles.unavailableBadge}>
+                          No longer available
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.removeButton}
+                          onClick={() => onRemove(service.id)}
+                          aria-label={`Remove ${service.name} from cart`}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+
+                    {priceChanged && entry && (
+                      <div className={styles.priceChangedNote} role="status">
+                        Price updated to{" "}
+                        {currencyFormatter.format(entry.price as number)}
+                      </div>
+                    )}
                   </div>
-                  <div
-                    className={styles.cartItemControl}
-                    role="group"
-                    aria-label={`Quantity for ${service.name}`}
-                  >
-                    <button
-                      className={styles.cartQtyBtn}
-                      onClick={() => onDecrement(service.id)}
-                      type="button"
-                      aria-label="Decrease"
+
+                  {!isUnavailable && (
+                    <div
+                      className={styles.cartItemControl}
+                      role="group"
+                      aria-label={`Quantity for ${service.name}`}
                     >
-                      −
-                    </button>
-                    <span className={styles.cartQtyVal} aria-live="polite">
-                      {quantity}
-                    </span>
-                    <button
-                      className={styles.cartQtyBtn}
-                      onClick={() => onIncrement(service.id)}
-                      type="button"
-                      aria-label="Increase"
-                    >
-                      +
-                    </button>
-                  </div>
+                      <button
+                        className={styles.cartQtyBtn}
+                        onClick={() => onDecrement(service.id)}
+                        type="button"
+                        aria-label="Decrease"
+                      >
+                        −
+                      </button>
+                      <span className={styles.cartQtyVal} aria-live="polite">
+                        {quantity}
+                      </span>
+                      <button
+                        className={styles.cartQtyBtn}
+                        onClick={() => onIncrement(service.id)}
+                        type="button"
+                        aria-label="Increase"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -187,10 +253,23 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                 {formattedTotal}
               </span>
             </div>
+            {checkoutDisabled && (
+              <p
+                id="cart-checkout-blocked-reason"
+                className={styles.checkoutBlockedNote}
+                role="alert"
+              >
+                Remove unavailable items to continue.
+              </p>
+            )}
             <button
               className={styles.requestQuoteButton}
               onClick={onRequestQuote}
               type="button"
+              disabled={checkoutDisabled}
+              aria-describedby={
+                checkoutDisabled ? "cart-checkout-blocked-reason" : undefined
+              }
             >
               Checkout →
             </button>

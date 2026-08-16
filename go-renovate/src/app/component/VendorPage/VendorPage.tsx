@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "./VendorPage.module.css";
 import { ServiceOption, Vendor } from "./vendor";
 import { useCart } from "../CustomHooks/useCart";
+import { useCartAvailability } from "../CustomHooks/useCartAvailability";
 import CartDrawer from "../Atoms/CartDrawer/CartDrawer";
 import Overlay from "../HOC/Overlay/Overlay";
 import { useAppDispatch } from "@/app/store/hooks";
@@ -48,10 +49,14 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
     totalItems,
     totalPrice,
     addItem,
+    removeItem,
     updateQuantity,
     getQuantity,
     clearCart,
   } = useCart();
+
+  const { availability, isChecking, checkError, checkAvailability } =
+    useCartAvailability();
 
   const { toast, showToast } = useToast();
   const headerHeight = useHeaderHeight();
@@ -136,7 +141,53 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
     if (isCartOpen) closeCategoryMenu();
   }, [isCartOpen, closeCategoryMenu]);
 
+  const wasCartOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (!isCartOpen) {
+      wasCartOpenRef.current = false;
+      return;
+    }
+    if (items.length === 0 || !vendor) return;
+
+    const justOpened = !wasCartOpenRef.current;
+    wasCartOpenRef.current = true;
+
+    checkAvailability(
+      vendor.id,
+      items.map((item) => item.service.id),
+      { force: justOpened },
+    );
+  }, [isCartOpen, items, vendor, checkAvailability]);
+
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") return;
+      if (!vendor || items.length === 0) return;
+      checkAvailability(
+        vendor.id,
+        items.map((item) => item.service.id),
+        { force: true },
+      );
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isCartOpen, items, vendor, checkAvailability]);
+
+  const hasUnavailableItems = items.some(
+    (item) => availability[item.service.id]?.isAvailable === false,
+  );
+
   const handleRequestQuote = useCallback(() => {
+    if (hasUnavailableItems) {
+      showToast("Remove unavailable items before checking out.");
+      return;
+    }
     if (!session?.backendToken) {
       if (sessionStatus === "authenticated") {
         showToast("Hit a snag loading your account — please sign in again.");
@@ -146,7 +197,13 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
     }
     setIsCartOpen(false);
     setIsCheckoutOpen(true);
-  }, [session?.backendToken, sessionStatus, dispatch, showToast]);
+  }, [
+    hasUnavailableItems,
+    session?.backendToken,
+    sessionStatus,
+    dispatch,
+    showToast,
+  ]);
 
   const handleOrderPlaced = useCallback(
     (orderId: string) => {
@@ -247,8 +304,12 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
         onClose={() => setIsCartOpen(false)}
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
+        onRemove={removeItem}
         onClear={clearCart}
         onRequestQuote={handleRequestQuote}
+        availability={availability}
+        isCheckingAvailability={isChecking}
+        availabilityCheckError={checkError}
       />
 
       <Overlay

@@ -24,6 +24,7 @@ export interface ServiceOption {
   imageUrl?: string;
   images?: string[];
   includes: string[];
+  isAvailable?: boolean;
 }
 
 export interface ServiceCategory {
