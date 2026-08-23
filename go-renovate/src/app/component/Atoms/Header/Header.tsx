@@ -11,6 +11,7 @@ import { setOpenMobileMenu } from "@/app/store/features/overLaySlice";
 import SearchBar from "../SearchBar/SearchBar";
 import Overlay from "../../HOC/Overlay/Overlay";
 import Menu from "../Menu/Menu";
+import SlowLoadBanner from "../SlowLoadBanner/SlowLoadBanner";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -57,54 +58,59 @@ export default function Header() {
 
   return (
     <header className="header" ref={headerRef}>
-      <h1 className="header-title">
-        <Link href="/" className="logo-link" aria-label="Go Renovate home">
-          <Image
-            src="/final_my_logo.jpg"
-            alt="Go Renovate"
-            className="logo-image"
-            width={180}
-            height={80}
-          />
-        </Link>
-      </h1>
-      <div className="search-bar">{session && <SearchBar />}</div>
-      <nav className="header-nav">
-        <ul className="header-nav-list">
-          <li className="list-item">
-            <div className="header-profile-menu-wrapper">
-              <button
-                type="button"
-                ref={profileButtonRef}
-                className="header-nav-profile"
-                aria-haspopup="menu"
-                aria-expanded={isMobileMenuOpen}
-                aria-controls="account-menu"
-                aria-label={session ? "Account menu" : "Account and login menu"}
-                onClick={() => dispatch(setOpenMobileMenu(!isMobileMenuOpen))}
-              >
-                <Image
-                  src={session?.user?.image || MyIcon}
-                  className="profile-icon"
-                  alt=""
-                  width={32}
-                  height={32}
-                />
-              </button>
-              <Overlay
-                id="account-menu"
-                isDisable={false}
-                isOpen={isMobileMenuOpen}
-                setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
-                shouldReturnNull={!isMobileMenuOpen}
-                variant="menu"
-              >
-                <Menu />
-              </Overlay>
-            </div>
-          </li>
-        </ul>
-      </nav>
+      <SlowLoadBanner />
+      <div className="header-row">
+        <h1 className="header-title">
+          <Link href="/" className="logo-link" aria-label="Go Renovate home">
+            <Image
+              src="/final_my_logo.jpg"
+              alt="Go Renovate"
+              className="logo-image"
+              width={180}
+              height={80}
+            />
+          </Link>
+        </h1>
+        <div className="search-bar">{session && <SearchBar />}</div>
+        <nav className="header-nav">
+          <ul className="header-nav-list">
+            <li className="list-item">
+              <div className="header-profile-menu-wrapper">
+                <button
+                  type="button"
+                  ref={profileButtonRef}
+                  className="header-nav-profile"
+                  aria-haspopup="menu"
+                  aria-expanded={isMobileMenuOpen}
+                  aria-controls="account-menu"
+                  aria-label={
+                    session ? "Account menu" : "Account and login menu"
+                  }
+                  onClick={() => dispatch(setOpenMobileMenu(!isMobileMenuOpen))}
+                >
+                  <Image
+                    src={session?.user?.image || MyIcon}
+                    className="profile-icon"
+                    alt=""
+                    width={32}
+                    height={32}
+                  />
+                </button>
+                <Overlay
+                  id="account-menu"
+                  isDisable={false}
+                  isOpen={isMobileMenuOpen}
+                  setIsOpen={(payload) => dispatch(setOpenMobileMenu(payload))}
+                  shouldReturnNull={!isMobileMenuOpen}
+                  variant="menu"
+                >
+                  <Menu />
+                </Overlay>
+              </div>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
   );
 }

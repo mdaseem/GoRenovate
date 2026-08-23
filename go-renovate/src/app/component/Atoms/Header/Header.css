@@ -1,13 +1,17 @@
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px;
+  flex-direction: column;
   box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   background: white;
   z-index: 2000;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
 }
 .fav-count {
   text-align: center;
