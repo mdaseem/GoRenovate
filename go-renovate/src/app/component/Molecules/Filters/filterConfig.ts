@@ -6,11 +6,11 @@ export type FilterOption = {
   icon?: string;
 };
 
-type CheckboxGroupFilter = {
+type CheckboxGroupFilter<T> = {
   id: string;
   type: "checkbox-group";
   label: string;
-  getOptions: (vendors: Vendor[]) => FilterOption[];
+  getOptions: (items: T[]) => FilterOption[];
 };
 
 type RadioFilter = {
@@ -26,7 +26,15 @@ type ToggleFilter = {
   label: string;
 };
 
-export type FilterDefinition = CheckboxGroupFilter | RadioFilter | ToggleFilter;
+// Generic so DropDownFilter (a purely presentational renderer of whatever
+// FilterDefinition[]/ActiveFilters it's handed) can be shared with other
+// domains — e.g. essentialFilterConfig.ts's FilterDefinition<Essential> —
+// without duplicating it. This file's own FILTER_DEFINITIONS stays
+// concretely typed as FilterDefinition<Vendor>[] below.
+export type FilterDefinition<T> =
+  | CheckboxGroupFilter<T>
+  | RadioFilter
+  | ToggleFilter;
 
 export type ActiveFilters = Record<string, string[] | string | boolean>;
 
@@ -68,7 +76,7 @@ function getLocationOptions(vendors: Vendor[]): FilterOption[] {
 // Add a new filter here to make it available everywhere Filters render —
 // desktop sidebar, mobile overlay, and the backend query all read this list.
 // The `id` doubles as the query-param name GET /vendors expects.
-export const FILTER_DEFINITIONS: FilterDefinition[] = [
+export const FILTER_DEFINITIONS: FilterDefinition<Vendor>[] = [
   {
     id: "category",
     type: "checkbox-group",

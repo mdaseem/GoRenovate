@@ -1,0 +1,116 @@
+.room-detail-overlay {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px 16px 100px;
+}
+
+.room-detail-overlay-hero {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 12px;
+  background: #f5f4f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.room-detail-overlay-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-detail-overlay-hero-placeholder {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.room-detail-overlay-title {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.room-detail-overlay-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.room-detail-overlay-list {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-detail-overlay-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #f5f4f1;
+  border-radius: 12px;
+}
+
+.room-detail-overlay-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.room-detail-overlay-total-value {
+  font-size: 1.2rem;
+  color: #278b2e;
+}
+
+/* Mirrors CartDrawer.module.css's .requestQuoteButton for visual
+   consistency with the vendor-page cart/checkout flow. */
+.room-detail-overlay-checkout {
+  width: 100%;
+  min-height: 48px;
+  background: #c4fd5b;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 1.5rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.room-detail-overlay-checkout:hover:not(:disabled) {
+  background: green;
+  color: #fff;
+}
+
+.room-detail-overlay-checkout:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.room-detail-overlay-checkout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.room-detail-overlay-checkout:focus-visible {
+  outline: 2px solid #1a1f2e;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-detail-overlay-checkout {
+    transition: none;
+  }
+}

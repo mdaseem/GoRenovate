@@ -11,6 +11,8 @@ const initialState: any = {
   isMobileSearchOpen: false,
   isOpenAIChat: false,
   isOpenFilters: false,
+  isOpenSlotPicker: false,
+  isOpenRoomDetail: false,
 };
 
 export const overlaySlice = createSlice({
@@ -53,6 +55,14 @@ export const overlaySlice = createSlice({
       store.isOpenFilters = payload;
       return store;
     },
+    setOpenStateSlotPicker: (store, { payload }) => {
+      store.isOpenSlotPicker = payload;
+      return store;
+    },
+    setOpenStateRoomDetail: (store, { payload }) => {
+      store.isOpenRoomDetail = payload;
+      return store;
+    },
   },
 });
 
@@ -66,5 +76,7 @@ export const {
   setOpenMobileSearch,
   setOpenStateAIChat,
   setOpenStateFilters,
+  setOpenStateSlotPicker,
+  setOpenStateRoomDetail,
 } = overlaySlice.actions;
 export default overlaySlice.reducer;

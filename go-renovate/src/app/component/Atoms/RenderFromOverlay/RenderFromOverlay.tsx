@@ -11,6 +11,8 @@ import {
   setOpenStateUserList,
   setOpenStateAIChat,
   setOpenStateFilters,
+  setOpenStateSlotPicker,
+  setOpenStateRoomDetail,
 } from "@/app/store/features/overLaySlice";
 import { getFavorites, clearFavorites } from "@/app/store/features/favroites";
 import Chat from "../../Atoms/Chat/Chat";
@@ -41,6 +43,17 @@ const UserList = dynamic(
 
 const MobileFiltersOverlay = dynamic(
   () => import("@/app/component/Molecules/Filters/view/MobileFiltersOverlay"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
+const EssentialSwapPicker = dynamic(
+  () =>
+    import("@/app/component/Atoms/EssentialSwapPicker/EssentialSwapPicker"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
+const RoomDetailOverlay = dynamic(
+  () => import("@/app/component/Atoms/RoomDetailOverlay/RoomDetailOverlay"),
   { loading: () => <Loader1 />, ssr: false },
 );
 
@@ -78,6 +91,12 @@ function RenderFromOverlay() {
   );
   const isOpenFilters = useAppSelector(
     (state: RootState) => state.overlay.isOpenFilters,
+  );
+  const isOpenSlotPicker = useAppSelector(
+    (state: RootState) => state.overlay.isOpenSlotPicker,
+  );
+  const isOpenRoomDetail = useAppSelector(
+    (state: RootState) => state.overlay.isOpenRoomDetail,
   );
   const favorites = useAppSelector((state: RootState) => state.favoriteList);
 
@@ -152,6 +171,25 @@ function RenderFromOverlay() {
       mountOnlyWhenOpen: true,
       errorTitle: "Filters are unavailable",
       content: <MobileFiltersOverlay />,
+    },
+    {
+      key: "roomDetail",
+      isOpen: isOpenRoomDetail,
+      setIsOpen: (payload) => dispatch(setOpenStateRoomDetail(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "This room is unavailable",
+      content: <RoomDetailOverlay />,
+    },
+    {
+      // Registered after "roomDetail" so it stacks visually on top when
+      // both are open (Swap is triggered from inside the room-detail
+      // overlay) — array/DOM order determines paint order here.
+      key: "slotPicker",
+      isOpen: isOpenSlotPicker,
+      setIsOpen: (payload) => dispatch(setOpenStateSlotPicker(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "This picker is unavailable",
+      content: <EssentialSwapPicker />,
     },
   ];
 

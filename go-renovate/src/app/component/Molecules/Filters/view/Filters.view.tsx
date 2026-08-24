@@ -75,7 +75,7 @@ function Filters({
               <DropDownFilter
                 key={definition.id}
                 definition={definition}
-                vendors={vendors}
+                items={vendors}
                 activeFilters={activeFilters}
                 onToggleCheckboxOption={toggleCheckboxOption}
                 onSetRadioValue={setRadioValue}

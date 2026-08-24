@@ -1,0 +1,102 @@
+.essential-slot-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.essential-slot-item-media {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background: #f5f4f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.essential-slot-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.essential-slot-item-placeholder {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.essential-slot-item-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.essential-slot-item-slot-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #278b2e;
+}
+
+.essential-slot-item-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1f2e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.essential-slot-item-meta {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.essential-slot-item-swap {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #278b2e;
+  border-radius: 8px;
+  background: #fff;
+  color: #278b2e;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.essential-slot-item-swap:hover {
+  background: #278b2e;
+  color: #fff;
+}
+
+.essential-slot-item-swap:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .essential-slot-item {
+    flex-wrap: wrap;
+  }
+
+  .essential-slot-item-swap {
+    width: 100%;
+  }
+}

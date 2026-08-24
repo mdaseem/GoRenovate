@@ -406,6 +406,11 @@
   border-color: var(--color-accent);
 }
 
+.categoryCard:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .categoryCard:hover::before {
   opacity: 1;
 }
@@ -654,6 +659,42 @@
   margin: 0 0 36px;
 }
 
+.ctaBannerActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Dark-background counterpart to .ghostButton — that one's text/border
+   colors (--color-text, --color-border) are near-black and unreadable
+   against this section's dark backdrop, so this reuses the same
+   interaction language (underline, hover-to-accent) with light-on-dark
+   colors instead. */
+.ctaBannerGhostButton {
+  display: inline-block;
+  padding: 14px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.ctaBannerGhostButton:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.ctaBannerGhostButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* ── FOOTER ──────────────────────────────────────────────── */
 .footer {
   background: var(--color-dark-surface);
@@ -665,7 +706,7 @@
   max-width: var(--max-w);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr repeat(3, 1fr);
+  grid-template-columns: 1.5fr repeat(4, 1fr);
   gap: 48px;
   padding-bottom: 48px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);

@@ -16,6 +16,21 @@
   margin: 0 0 1.5rem;
 }
 
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionHeading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0 0 1rem;
+}
+
 .list {
   display: flex;
   flex-direction: column;

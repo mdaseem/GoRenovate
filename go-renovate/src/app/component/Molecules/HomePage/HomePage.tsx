@@ -110,6 +110,33 @@ const categories = [
   },
 ];
 
+const rooms = [
+  {
+    slug: "living-room",
+    title: "Living Room",
+    description: "Sofas, coffee tables & lighting from top vendors",
+    icon: "🛋️",
+  },
+  {
+    slug: "bedroom",
+    title: "Bedroom",
+    description: "Beds, wardrobes & bedside decor, curated",
+    icon: "🛏️",
+  },
+  {
+    slug: "bathroom",
+    title: "Bathroom",
+    description: "Vanities, mirrors & fittings, ready to ship",
+    icon: "🚿",
+  },
+  {
+    slug: "kitchen",
+    title: "Kitchen",
+    description: "Dining sets, storage & lighting for the heart of your home",
+    icon: "🍳",
+  },
+];
+
 const stats = [
   { value: "2,400+", label: "Projects Completed" },
   { value: "98%", label: "Client Satisfaction" },
@@ -192,6 +219,39 @@ export default function HomePage() {
           <div className={styles.heroDivider} aria-hidden="true" />
         </section>
 
+        {/* CHOOSE YOUR PATH */}
+        <section className={styles.services}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionEyebrow}>Two Ways to Start</span>
+            <h2 className={styles.sectionTitle}>
+              What Are You <em>Here For?</em>
+            </h2>
+          </div>
+
+          <div className={styles.categoryGrid}>
+            <a href="#services" className={styles.categoryCard}>
+              <span className={styles.cardIcon} aria-hidden="true">
+                🔧
+              </span>
+              <h3 className={styles.cardTitle}>Renovate a Space</h3>
+              <p className={styles.cardDesc}>
+                Book vetted vendors for painting, flooring, kitchens & more
+              </p>
+              <span className={styles.cardArrow}>→</span>
+            </a>
+            <Link href="/roomCategory" className={styles.categoryCard}>
+              <span className={styles.cardIcon} aria-hidden="true">
+                🛋️
+              </span>
+              <h3 className={styles.cardTitle}>Shop by Room</h3>
+              <p className={styles.cardDesc}>
+                Curated furniture & décor combos from top vendors
+              </p>
+              <span className={styles.cardArrow}>→</span>
+            </Link>
+          </div>
+        </section>
+
         {/* STATS */}
         <section className={styles.statsBar} id="about">
           <div className={styles.statsInner}>
@@ -234,6 +294,37 @@ export default function HomePage() {
                 </span>
                 <h3 className={styles.cardTitle}>{cat.title}</h3>
                 <p className={styles.cardDesc}>{cat.description}</p>
+                <span className={styles.cardArrow}>→</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* SHOP BY ROOM */}
+        <section className={styles.services}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionEyebrow}>Home Essentials, Curated</span>
+            <h2 className={styles.sectionTitle}>
+              Furnish Every Room, <em>Your Way</em>
+            </h2>
+            <p className={styles.sectionSub}>
+              Mix and match furniture, décor, and essentials from vendors
+              across the city — curated by room, customizable by you.
+            </p>
+          </div>
+
+          <div className={styles.categoryGrid}>
+            {rooms.map((room) => (
+              <Link
+                href={`/roomCategory/${room.slug}`}
+                key={room.slug}
+                className={styles.categoryCard}
+              >
+                <span className={styles.cardIcon} aria-hidden="true">
+                  {room.icon}
+                </span>
+                <h3 className={styles.cardTitle}>{room.title}</h3>
+                <p className={styles.cardDesc}>{room.description}</p>
                 <span className={styles.cardArrow}>→</span>
               </Link>
             ))}
@@ -318,9 +409,14 @@ export default function HomePage() {
               Get a free, no-obligation estimate tailored to your space and
               goals. Most projects get back to you within 24 hours.
             </p>
-            <Link href="#contact" className={styles.ctaButton}>
-              Get Your Free Estimate
-            </Link>
+            <div className={styles.ctaBannerActions}>
+              <Link href="#contact" className={styles.ctaButton}>
+                Get Your Free Estimate
+              </Link>
+              <Link href="/roomCategory" className={styles.ctaBannerGhostButton}>
+                Browse Rooms →
+              </Link>
+            </div>
           </div>
         </section>
       </main>
@@ -344,6 +440,14 @@ export default function HomePage() {
               <Link href="/vendors/category/kitchen">Kitchen</Link>
               <Link href="/vendors/category/bathroom">Bathroom</Link>
               <Link href="/vendors/category/smart-home">Smart Home</Link>
+            </div>
+            <div className={styles.footerCol}>
+              <h3>Shop by Room</h3>
+              {rooms.map((room) => (
+                <Link href={`/roomCategory/${room.slug}`} key={room.slug}>
+                  {room.title}
+                </Link>
+              ))}
             </div>
             <div className={styles.footerCol}>
               <h3>Company</h3>
