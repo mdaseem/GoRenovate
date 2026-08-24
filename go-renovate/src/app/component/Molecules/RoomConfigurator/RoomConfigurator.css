@@ -1,0 +1,67 @@
+.room-configurator {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
+
+.room-configurator-status {
+  display: flex;
+  justify-content: center;
+  padding: 80px 16px;
+}
+
+.room-configurator-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.room-configurator-icon {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.room-configurator-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.room-configurator-combo-title {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.room-configurator-list {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-configurator-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: #f5f4f1;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.room-configurator-total-value {
+  font-size: 1.2rem;
+  color: #278b2e;
+}
+
+@media (max-width: 480px) {
+  .room-configurator {
+    padding: 16px 12px 80px;
+  }
+}

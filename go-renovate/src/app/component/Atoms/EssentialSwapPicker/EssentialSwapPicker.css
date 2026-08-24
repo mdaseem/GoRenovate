@@ -1,0 +1,93 @@
+.essential-swap-picker {
+  padding: 20px 16px 32px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.essential-swap-picker-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0 0 16px;
+}
+
+.essential-swap-picker-list {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.essential-swap-picker-option {
+  display: flex;
+  position: relative;
+}
+
+.essential-swap-picker-radio {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.essential-swap-picker-option-label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 14px;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.essential-swap-picker-radio:checked + .essential-swap-picker-option-label {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.essential-swap-picker-radio:focus-visible
+  + .essential-swap-picker-option-label {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.essential-swap-picker-option-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1f2e;
+}
+
+.essential-swap-picker-option-meta {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.essential-swap-picker-done {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  background: #278b2e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.essential-swap-picker-done:hover {
+  background: #1f6f24;
+}
+
+.essential-swap-picker-done:focus-visible {
+  outline: 2px solid #1a1f2e;
+  outline-offset: 2px;
+}

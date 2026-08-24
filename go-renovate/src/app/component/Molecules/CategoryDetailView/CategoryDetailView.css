@@ -1,0 +1,49 @@
+.category-detail-view-back {
+  margin: 16px 24px 0;
+}
+
+.category-detail-view-tablist {
+  display: flex;
+  gap: 8px;
+  max-width: 1100px;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.category-detail-view-tab {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid #ece9e3;
+  border-radius: 999px;
+  background: #fff;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.category-detail-view-tab[aria-selected="true"] {
+  background: #278b2e;
+  border-color: #278b2e;
+  color: #fff;
+}
+
+.category-detail-view-tab:hover:not([aria-selected="true"]) {
+  border-color: #278b2e;
+  color: #278b2e;
+}
+
+.category-detail-view-tab:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-detail-view-tab {
+    transition: none;
+  }
+}

@@ -3,30 +3,29 @@
 import React, { useState } from "react";
 import "../style/Filters.style.css";
 import { ActiveFilters, FilterDefinition } from "../filterConfig";
-import { Vendor } from "../../../VendorPage/vendor";
 
-interface DropDownFilterProps {
-  definition: FilterDefinition;
-  vendors: Vendor[];
+interface DropDownFilterProps<T> {
+  definition: FilterDefinition<T>;
+  items: T[];
   activeFilters: ActiveFilters;
   onToggleCheckboxOption: (filterId: string, value: string) => void;
   onSetRadioValue: (filterId: string, value: string) => void;
 }
 
-function DropDownFilter({
+function DropDownFilter<T>({
   definition,
-  vendors,
+  items,
   activeFilters,
   onToggleCheckboxOption,
   onSetRadioValue,
-}: DropDownFilterProps) {
+}: DropDownFilterProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (definition.type === "toggle") return null;
 
   const options =
     definition.type === "checkbox-group"
-      ? definition.getOptions(vendors)
+      ? definition.getOptions(items)
       : definition.options;
 
   if (options.length === 0) return null;

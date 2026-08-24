@@ -3,29 +3,35 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import styles from "./CheckoutForm.module.css";
-import { CartItem } from "../vendor";
-import { UNIT_LABELS } from "../VendorData";
+import styles from "../../VendorPage/components/CheckoutForm.module.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import {
-  clearLastCreatedOrder,
-  createOrder,
-} from "@/app/store/features/orderSlice";
+  clearLastCreatedEssentialOrder,
+  createEssentialOrder,
+} from "@/app/store/features/essentialOrderSlice";
 import { setOpenStateLogin } from "@/app/store/features/overLaySlice";
-import { OrderAddress, OrderItem } from "@/app/types/order";
+import { EssentialOrderAddress } from "@/app/types/essentialOrder";
 import {
   AddressField,
   AddressFieldInput,
   EMPTY_ADDRESS,
   FIELD_ORDER,
   validateField,
-} from "./AddressFields";
+} from "../../VendorPage/components/AddressFields";
 
-interface CheckoutFormProps {
+export interface RoomCheckoutItem {
+  essentialId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  imageUrl?: string;
   vendorId: string;
   vendorName: string;
-  items: CartItem[];
+}
+
+interface RoomCheckoutFormProps {
+  items: RoomCheckoutItem[];
   totalPrice: number;
   onClose: () => void;
   onPlaced: (orderId: string) => void;
@@ -43,9 +49,27 @@ function formatCurrency(value: number): string {
   return currencyFormatter.format(value);
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({
-  vendorId,
-  vendorName,
+function groupByVendor(
+  items: RoomCheckoutItem[],
+): { vendorId: string; vendorName: string; items: RoomCheckoutItem[] }[] {
+  const groups = new Map<
+    string,
+    { vendorId: string; vendorName: string; items: RoomCheckoutItem[] }
+  >();
+  items.forEach((item) => {
+    if (!groups.has(item.vendorId)) {
+      groups.set(item.vendorId, {
+        vendorId: item.vendorId,
+        vendorName: item.vendorName,
+        items: [],
+      });
+    }
+    groups.get(item.vendorId)?.items.push(item);
+  });
+  return Array.from(groups.values());
+}
+
+const RoomCheckoutForm: React.FC<RoomCheckoutFormProps> = ({
   items,
   totalPrice,
   onClose,
@@ -54,7 +78,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const { isSubmitting, error, lastCreatedOrder } = useAppSelector(
-    (state: RootState) => state.orderState,
+    (state: RootState) => state.essentialOrderState,
   );
 
   const [address, setAddress] =
@@ -65,6 +89,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
+
+  const vendorGroups = useMemo(() => groupByVendor(items), [items]);
 
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -90,7 +116,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   useEffect(() => {
     if (hasSubmitted && lastCreatedOrder) {
       onPlaced(lastCreatedOrder._id);
-      dispatch(clearLastCreatedOrder());
+      dispatch(clearLastCreatedEssentialOrder());
     }
   }, [hasSubmitted, lastCreatedOrder, onPlaced, dispatch]);
 
@@ -126,7 +152,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
       if (items.length === 0) {
         setLocalError(
-          "Your cart is empty — add a service before checking out.",
+          "Your room has no items — add something before checking out.",
         );
         return;
       }
@@ -146,20 +172,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         return;
       }
 
-      const orderItems: OrderItem[] = items.map(
-        ({ service, categoryLabel, quantity }) => ({
-          serviceId: service.id,
-          name: service.name,
-          description: service.description,
-          price: service.price,
-          unit: service.unit,
-          quantity,
-          categoryLabel,
-          imageUrl: service.imageUrl,
-        }),
-      );
-
-      const orderAddress: OrderAddress = {
+      const orderAddress: EssentialOrderAddress = {
         contactName: address.contactName.trim(),
         phone: address.phone.trim(),
         line1: address.line1.trim(),
@@ -171,26 +184,19 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
       setHasSubmitted(true);
       dispatch(
-        createOrder({
+        createEssentialOrder({
           token: session.backendToken,
           data: {
-            vendorId,
-            vendorName,
-            items: orderItems,
+            items: items.map(({ essentialId, quantity }) => ({
+              essentialId,
+              quantity,
+            })),
             address: orderAddress,
           },
         }),
       );
     },
-    [
-      address,
-      fieldErrors,
-      session?.backendToken,
-      items,
-      vendorId,
-      vendorName,
-      dispatch,
-    ],
+    [address, fieldErrors, session?.backendToken, items, dispatch],
   );
 
   const submissionError = localError || (hasSubmitted && error) || null;
@@ -199,45 +205,51 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     <div className={styles.checkout}>
       <h2 className={styles.heading}>Checkout</h2>
       <p className={styles.subheading}>
-        Confirm your details so {vendorName} can arrange pickup and delivery.
+        Your room includes items from {vendorGroups.length} vendor
+        {vendorGroups.length !== 1 ? "s" : ""} — each ships separately, but
+        it&apos;s one order and one address.
       </p>
 
       <div className={styles.summary}>
         <h3 className={styles.summaryTitle}>
           Order summary
           <span className={styles.summaryCount}>
-            {items.length} service{items.length !== 1 ? "s" : ""}
+            {items.length} item{items.length !== 1 ? "s" : ""}
           </span>
         </h3>
-        <ul className={styles.summaryList}>
-          {items.map(({ service, quantity }) => {
-            const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
-            return (
-              <li key={service.id} className={styles.summaryItem}>
-                <div className={styles.summaryItemMedia}>
-                  <Image
-                    src={service.imageUrl || FALLBACK_IMAGE}
-                    alt=""
-                    width={44}
-                    height={44}
-                    className={styles.summaryItemThumb}
-                  />
-                </div>
-                <div className={styles.summaryItemInfo}>
-                  <span className={styles.summaryItemName}>
-                    {service.name}
+        {vendorGroups.map((group) => (
+          <div key={group.vendorId} className={styles.summaryVendorGroup}>
+            <p className={styles.summaryVendorGroupTitle}>
+              From {group.vendorName}
+            </p>
+            <ul className={styles.summaryList}>
+              {group.items.map((item) => (
+                <li key={item.essentialId} className={styles.summaryItem}>
+                  <div className={styles.summaryItemMedia}>
+                    <Image
+                      src={item.imageUrl || FALLBACK_IMAGE}
+                      alt=""
+                      width={44}
+                      height={44}
+                      className={styles.summaryItemThumb}
+                    />
+                  </div>
+                  <div className={styles.summaryItemInfo}>
+                    <span className={styles.summaryItemName}>
+                      {item.name}
+                    </span>
+                    <span className={styles.summaryItemMeta}>
+                      {item.quantity} × {formatCurrency(item.price)}
+                    </span>
+                  </div>
+                  <span className={styles.summaryItemTotal}>
+                    {formatCurrency(item.price * item.quantity)}
                   </span>
-                  <span className={styles.summaryItemMeta}>
-                    {quantity} × {formatCurrency(service.price)} · {unitLabel}
-                  </span>
-                </div>
-                <span className={styles.summaryItemTotal}>
-                  {formatCurrency(service.price * quantity)}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
 
       <form
@@ -353,4 +365,4 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   );
 };
 
-export default CheckoutForm;
+export default RoomCheckoutForm;
