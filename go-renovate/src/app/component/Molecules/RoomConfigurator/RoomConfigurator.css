@@ -1,6 +1,5 @@
 .room-configurator {
   max-width: 640px;
-  margin: 0 auto;
   padding: 24px 16px 100px;
 }
 
@@ -63,5 +62,110 @@
 @media (max-width: 480px) {
   .room-configurator {
     padding: 16px 12px 80px;
+  }
+}
+
+/* Skeleton — mirrors the real header/list/total shape above so there's no
+   layout jump when the real content swaps in, instead of the previous
+   generic vendor-card-grid loader that didn't resemble this page at all. */
+.room-configurator-skeleton-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.room-configurator-skeleton-heading {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-configurator-skeleton-title {
+  width: 45%;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.room-configurator-skeleton-subtitle {
+  width: 30%;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.room-configurator-skeleton-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #ece9e3;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.room-configurator-skeleton-thumb {
+  flex-shrink: 0;
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+}
+
+.room-configurator-skeleton-lines {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-configurator-skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+}
+
+.room-configurator-skeleton-line-label {
+  width: 30%;
+  height: 8px;
+}
+
+.room-configurator-skeleton-line-name {
+  width: 65%;
+}
+
+.room-configurator-skeleton-line-meta {
+  width: 45%;
+}
+
+.room-configurator-skeleton-swap {
+  flex-shrink: 0;
+  width: 64px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.room-configurator-skeleton-total {
+  height: 56px;
+  border-radius: 12px;
+}
+
+.room-configurator-skeleton-shimmer {
+  background: linear-gradient(90deg, #f3f4f6 25%, #eceef1 37%, #f3f4f6 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-configurator-skeleton-shimmer {
+    animation: none;
   }
 }

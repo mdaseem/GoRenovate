@@ -11,8 +11,8 @@
 
 .essential-slot-item-media {
   flex-shrink: 0;
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   border-radius: 10px;
   background: #f5f4f1;
   display: flex;
@@ -64,31 +64,81 @@
   color: #6b7280;
 }
 
+/* Peek-stack "Swap" control — shows up to 2 alternate-option thumbnails
+   overlapping like a coin stack, plus a "+N" badge for the rest, so the
+   row visually signals "other choices exist" instead of a plain text
+   button that only reveals that once tapped. */
 .essential-slot-item-swap {
   flex-shrink: 0;
-  min-width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 64px;
   min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid #278b2e;
-  border-radius: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
   background: #fff;
-  color: #278b2e;
-  font-weight: 600;
-  font-size: 0.85rem;
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    color 0.15s ease;
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .essential-slot-item-swap:hover {
-  background: #278b2e;
-  color: #fff;
+  border-color: #278b2e;
+  background: #f0f9f0;
 }
 
 .essential-slot-item-swap:focus-visible {
   outline: 2px solid #278b2e;
   outline-offset: 2px;
+}
+
+.essential-slot-item-swap-stack {
+  display: flex;
+  align-items: center;
+}
+
+.essential-slot-item-swap-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #ece9e3;
+  object-fit: cover;
+  background: #f5f4f1;
+  margin-left: -9px;
+}
+
+.essential-slot-item-swap-thumb:first-child {
+  margin-left: 0;
+}
+
+.essential-slot-item-swap-thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.essential-slot-item-swap-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: #eefbd8;
+}
+
+.essential-slot-item-swap-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #278b2e;
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 480px) {
@@ -97,6 +147,13 @@
   }
 
   .essential-slot-item-swap {
+    flex-direction: row;
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .essential-slot-item-swap {
+    transition: none;
   }
 }
