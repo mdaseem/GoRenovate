@@ -11,9 +11,18 @@ interface RoomFiltersProps {
   rooms: Room[];
   resultCount: number;
   isRefreshing?: boolean;
+  // Passed only by the mobile overlay (mirrors Filters.view.tsx) — the
+  // desktop sidebar usage in RoomGrid.tsx omits it, so no footer button
+  // renders there.
+  onApply?: () => void;
 }
 
-function RoomFilters({ rooms, resultCount, isRefreshing }: RoomFiltersProps) {
+function RoomFilters({
+  rooms,
+  resultCount,
+  isRefreshing,
+  onApply,
+}: RoomFiltersProps) {
   const {
     activeFilters,
     activeCount,
@@ -61,6 +70,14 @@ function RoomFilters({ rooms, resultCount, isRefreshing }: RoomFiltersProps) {
             ))}
           </div>
         </fieldset>
+
+        {onApply && (
+          <div className="filters-footer">
+            <button type="button" className="filters-apply" onClick={onApply}>
+              Show {resultCount} result{resultCount === 1 ? "" : "s"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

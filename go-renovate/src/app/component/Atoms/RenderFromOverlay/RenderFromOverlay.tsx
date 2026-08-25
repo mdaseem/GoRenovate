@@ -11,6 +11,7 @@ import {
   setOpenStateUserList,
   setOpenStateAIChat,
   setOpenStateFilters,
+  setOpenStateRoomFilters,
   setOpenStateSlotPicker,
   setOpenStateRoomDetail,
 } from "@/app/store/features/overLaySlice";
@@ -43,6 +44,12 @@ const UserList = dynamic(
 
 const MobileFiltersOverlay = dynamic(
   () => import("@/app/component/Molecules/Filters/view/MobileFiltersOverlay"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
+const MobileRoomFiltersOverlay = dynamic(
+  () =>
+    import("@/app/component/Molecules/RoomFilters/MobileRoomFiltersOverlay"),
   { loading: () => <Loader1 />, ssr: false },
 );
 
@@ -91,6 +98,9 @@ function RenderFromOverlay() {
   );
   const isOpenFilters = useAppSelector(
     (state: RootState) => state.overlay.isOpenFilters,
+  );
+  const isOpenRoomFilters = useAppSelector(
+    (state: RootState) => state.overlay.isOpenRoomFilters,
   );
   const isOpenSlotPicker = useAppSelector(
     (state: RootState) => state.overlay.isOpenSlotPicker,
@@ -171,6 +181,14 @@ function RenderFromOverlay() {
       mountOnlyWhenOpen: true,
       errorTitle: "Filters are unavailable",
       content: <MobileFiltersOverlay />,
+    },
+    {
+      key: "roomFilters",
+      isOpen: isOpenRoomFilters,
+      setIsOpen: (payload) => dispatch(setOpenStateRoomFilters(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "Filters are unavailable",
+      content: <MobileRoomFiltersOverlay />,
     },
     {
       key: "roomDetail",

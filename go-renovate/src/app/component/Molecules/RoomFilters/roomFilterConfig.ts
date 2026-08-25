@@ -1,16 +1,9 @@
 import { FilterDefinition, FilterOption } from "../Filters/filterConfig";
-import { Room } from "../../CategoryPage/category";
+import { Room, humanizeStyleTag } from "../../CategoryPage/category";
 
 export type ActiveFilters = Record<string, string[] | string | boolean>;
 
 export const MULTI_VALUE_DELIMITER = "|";
-
-function humanizeStyleTag(tag: string): string {
-  return tag
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
 
 function getStyleOptions(rooms: Room[]): FilterOption[] {
   const options = new Map<string, FilterOption>();

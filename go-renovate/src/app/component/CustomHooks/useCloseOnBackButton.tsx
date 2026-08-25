@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 
-// Shared across every hook instance so nested/stacked overlays each get
-// their own history entry and only the topmost one reacts to a given
-// back-button press, instead of every open overlay closing at once.
+
 let targetDepth = 0;
 let pushedDepth = 0;
 let reconcileQueued = false;
+
+let pendingProgrammaticPops = 0;
 
 interface OpenEntry {
   onClose: () => void;
@@ -20,6 +20,7 @@ function reconcile() {
   }
   while (pushedDepth > targetDepth) {
     pushedDepth -= 1;
+    pendingProgrammaticPops += 1;
     window.history.back();
   }
 }
@@ -35,6 +36,13 @@ function ensurePopstateListener() {
   if (popstateAttached) return;
   popstateAttached = true;
   window.addEventListener("popstate", () => {
+    if (pendingProgrammaticPops > 0) {
+      // Echo of a history.back() we issued ourselves — the corresponding
+      // close already happened through the normal state-update path, so
+      // don't react to it again here.
+      pendingProgrammaticPops -= 1;
+      return;
+    }
     pushedDepth = Math.max(0, pushedDepth - 1);
     const top = openStack[openStack.length - 1];
     if (top) top.onClose();

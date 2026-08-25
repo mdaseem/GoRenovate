@@ -9,33 +9,16 @@ interface CategoryState {
   categories: Category[];
   isLoadingCategories: boolean;
   categoriesError: string | null;
-
   activeCategoryDetail: CategoryDetail | null;
   isLoadingCategoryDetail: boolean;
   categoryDetailError: string | null;
-
-  // slotId -> currently selected essentialId. Used by both the "Customize"
-  // configurator (defaults to the category's first Room) and the Room-detail
-  // overlay (re-initialized to whichever Room was opened from the grid) —
-  // shared rather than duplicated because the two are never shown at once.
-  // With exactly one Room per Category today (no admin curation screen yet
-  // to make more), opening the overlay can't actually clobber in-progress
-  // Customize-tab swaps in practice; revisit if that stops being true.
   selectedEssentialBySlot: Record<string, string>;
   activeSwapSlotId: string | null;
-
-  // Room grid ("Browse All" tab) — filtered list of Rooms for the active
-  // category, a separate fetch concern from activeCategoryDetail so
-  // Browse-All filters can't affect what Customize treats as "the" room.
+  activeSwapOriginalEssentialId: string | null;
   roomGridResults: Room[];
-  // Snapshot from the last *unfiltered* fetch — used only to build filter
-  // option lists so they don't shrink as filters narrow roomGridResults.
   roomGridCatalogSnapshot: Room[];
   isLoadingRoomGrid: boolean;
   roomGridError: string | null;
-
-  // Which Room's detail overlay is open — content-side state, matching how
-  // other overlay surfaces read their own domain slice.
   activeRoomId: string | null;
 }
 
@@ -50,6 +33,7 @@ const initialState: CategoryState = {
 
   selectedEssentialBySlot: {},
   activeSwapSlotId: null,
+  activeSwapOriginalEssentialId: null,
 
   roomGridResults: [],
   roomGridCatalogSnapshot: [],
@@ -128,9 +112,24 @@ export const categorySlice = createSlice({
     },
     openSwapPicker: (store, { payload }: PayloadAction<string>) => {
       store.activeSwapSlotId = payload;
+      store.activeSwapOriginalEssentialId =
+        store.selectedEssentialBySlot[payload] ?? null;
     },
+    // Used by "Done" and the overlay's own back/close button — keeps
+    // whatever's currently selected (already applied live on tap).
     closeSwapPicker: (store) => {
       store.activeSwapSlotId = null;
+      store.activeSwapOriginalEssentialId = null;
+    },
+    // Used by "Cancel" — restores whatever was selected before the picker
+    // opened, discarding any swap made during this picker session.
+    cancelSwapPicker: (store) => {
+      if (store.activeSwapSlotId && store.activeSwapOriginalEssentialId) {
+        store.selectedEssentialBySlot[store.activeSwapSlotId] =
+          store.activeSwapOriginalEssentialId;
+      }
+      store.activeSwapSlotId = null;
+      store.activeSwapOriginalEssentialId = null;
     },
     getRoomGrid: (
       store,
@@ -188,6 +187,7 @@ export const {
   selectSlotEssential,
   openSwapPicker,
   closeSwapPicker,
+  cancelSwapPicker,
   getRoomGrid,
   setRoomGrid,
   setRoomGridError,

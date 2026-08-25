@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import "./RoomConfigurator.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
@@ -10,7 +10,7 @@ import {
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
 import EssentialSlotItem from "../../Atoms/EssentialSlotItem/EssentialSlotItem";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
-import { Loader1 } from "../Loader/Loader";
+import { computeRoomTotal } from "../../CategoryPage/category";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;
@@ -19,6 +19,36 @@ function formatPrice(price: number): string {
 type Props = {
   categorySlug: string;
 };
+
+function RoomConfiguratorSkeleton() {
+  return (
+    <div className="room-configurator" aria-hidden="true">
+      <header className="room-configurator-header">
+        <span className="room-configurator-skeleton-icon room-configurator-skeleton-shimmer" />
+        <div className="room-configurator-skeleton-heading">
+          <span className="room-configurator-skeleton-title room-configurator-skeleton-shimmer" />
+          <span className="room-configurator-skeleton-subtitle room-configurator-skeleton-shimmer" />
+        </div>
+      </header>
+
+      <ul className="room-configurator-list">
+        {[1, 2, 3, 4].map((key) => (
+          <li key={key} className="room-configurator-skeleton-item">
+            <span className="room-configurator-skeleton-thumb room-configurator-skeleton-shimmer" />
+            <div className="room-configurator-skeleton-lines">
+              <span className="room-configurator-skeleton-line room-configurator-skeleton-line-label room-configurator-skeleton-shimmer" />
+              <span className="room-configurator-skeleton-line room-configurator-skeleton-line-name room-configurator-skeleton-shimmer" />
+              <span className="room-configurator-skeleton-line room-configurator-skeleton-line-meta room-configurator-skeleton-shimmer" />
+            </div>
+            <span className="room-configurator-skeleton-swap room-configurator-skeleton-shimmer" />
+          </li>
+        ))}
+      </ul>
+
+      <div className="room-configurator-skeleton-total room-configurator-skeleton-shimmer" />
+    </div>
+  );
+}
 
 // Configures the category's first (today, only) Room — unchanged behavior,
 // explicitly confirmed out of scope even once a category can have several
@@ -41,41 +71,30 @@ export default function RoomConfigurator({ categorySlug }: Props) {
   const fetchDetail = () =>
     dispatch(getCategoryDetail({ slug: categorySlug }));
 
-  useEffect(() => {
-    fetchDetail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, categorySlug]);
-
   const handleSwap = (slotId: string) => {
     dispatch(openSwapPicker(slotId));
     dispatch(setOpenStateSlotPicker(true));
   };
 
   if (isLoading || !detail || detail.category.slug !== categorySlug) {
-    return (
-      <div className="room-configurator-status">
-        {error ? (
+    if (error) {
+      return (
+        <div className="room-configurator-status">
           <ErrorState
             title="Couldn't load this category"
             message={error}
             actionLabel="Retry"
             onAction={fetchDetail}
           />
-        ) : (
-          <Loader1 />
-        )}
-      </div>
-    );
+        </div>
+      );
+    }
+    return <RoomConfiguratorSkeleton />;
   }
 
   const room = detail.rooms[0];
 
-  const total = detail.category.slots.reduce((sum, slot) => {
-    const selectedId = selectedEssentialBySlot[slot.id];
-    const options = detail.essentialsBySlot[slot.id] ?? [];
-    const selected = options.find((option) => option._id === selectedId);
-    return sum + (selected?.price ?? 0);
-  }, 0);
+  const total = computeRoomTotal(detail, selectedEssentialBySlot);
 
   return (
     <div className="room-configurator">
@@ -99,11 +118,15 @@ export default function RoomConfigurator({ categorySlug }: Props) {
             (option) => option._id === selectedId,
           );
           if (!selected) return null;
+          const alternatives = options.filter(
+            (option) => option._id !== selected._id,
+          );
           return (
             <EssentialSlotItem
               key={slot.id}
               slot={slot}
               essential={selected}
+              alternatives={alternatives}
               onSwap={() => handleSwap(slot.id)}
             />
           );

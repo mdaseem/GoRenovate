@@ -1,10 +1,11 @@
 .room-detail-overlay {
   max-width: 560px;
   margin: 0 auto;
-  padding: 16px 16px 100px;
+  padding: 16px 16px 0;
 }
 
 .room-detail-overlay-hero {
+  position: relative;
   width: 100%;
   aspect-ratio: 3 / 2;
   border-radius: 12px;
@@ -25,6 +26,55 @@
 .room-detail-overlay-hero-placeholder {
   font-size: 3rem;
   line-height: 1;
+}
+
+/* Curated hero photography doesn't exist for every Room yet — a 2x2 mosaic
+   built from the Room's own selected items reads as "still curated" rather
+   than a blank placeholder box. */
+.room-detail-overlay-hero-mosaic {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+}
+
+.room-detail-overlay-hero-mosaic-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ece9e3;
+  font-size: 1.5rem;
+}
+
+.room-detail-overlay-hero-mosaic-image {
+  object-fit: cover;
+}
+
+.room-detail-overlay-hero-tags {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: calc(100% - 24px);
+}
+
+.room-detail-overlay-hero-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgba(26, 31, 46, 0.65);
+  backdrop-filter: blur(2px);
+  border-radius: 999px;
+  padding: 4px 12px;
 }
 
 .room-detail-overlay-title {
@@ -50,30 +100,69 @@
 }
 
 .room-detail-overlay-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 18px;
+  padding: 14px 18px;
   background: #f5f4f1;
   border-radius: 12px;
+  box-shadow: 0 -8px 20px rgba(26, 31, 46, 0.08);
 }
 
 .room-detail-overlay-total-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  font-weight: 600;
-  color: #1a1f2e;
+  gap: 12px;
 }
 
-.room-detail-overlay-total-value {
-  font-size: 1.2rem;
+.room-detail-overlay-total-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.room-detail-overlay-total-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #278b2e;
 }
 
-/* Mirrors CartDrawer.module.css's .requestQuoteButton for visual
-   consistency with the vendor-page cart/checkout flow. */
+.room-detail-overlay-total-sub {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.room-detail-overlay-total-value {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a1f2e;
+  animation: roomDetailTotalPulse 0.3s ease;
+}
+
+@keyframes roomDetailTotalPulse {
+  0% {
+    transform: scale(1.1);
+    color: #278b2e;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
 .room-detail-overlay-checkout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   min-height: 48px;
   background: #c4fd5b;
@@ -88,6 +177,10 @@
   transition:
     background 0.2s ease,
     transform 0.1s ease;
+}
+
+.room-detail-overlay-checkout svg {
+  flex-shrink: 0;
 }
 
 .room-detail-overlay-checkout:hover:not(:disabled) {
@@ -112,5 +205,9 @@
 @media (prefers-reduced-motion: reduce) {
   .room-detail-overlay-checkout {
     transition: none;
+  }
+
+  .room-detail-overlay-total-value {
+    animation: none;
   }
 }

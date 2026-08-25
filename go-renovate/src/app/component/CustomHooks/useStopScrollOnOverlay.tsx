@@ -17,7 +17,11 @@ export const useStopScrollOnOverlay = () => {
       store.isOpenProductPage ||
       store.isOpenProductPageFromSearch ||
       store.isMobileSearchOpen ||
-      store.isOpenFilters
+      store.isOpenFilters ||
+      store.isOpenRoomFilters ||
+      store.isOpenSlotPicker ||
+      store.isOpenRoomDetail ||
+      store.isOpenAIChat
     ) {
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
@@ -41,5 +45,9 @@ export const useStopScrollOnOverlay = () => {
     store.isOpenProductPageFromSearch,
     store.isMobileSearchOpen,
     store.isOpenFilters,
+    store.isOpenRoomFilters,
+    store.isOpenSlotPicker,
+    store.isOpenRoomDetail,
+    store.isOpenAIChat,
   ]);
 };

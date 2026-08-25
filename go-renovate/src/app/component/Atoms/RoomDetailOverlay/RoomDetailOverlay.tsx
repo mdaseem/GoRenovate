@@ -19,6 +19,7 @@ import RoomCheckoutForm, {
 } from "../../Molecules/RoomCheckoutForm/RoomCheckoutForm";
 import { useToast } from "../../VendorPage/hooks/useToast";
 import Toast from "../../VendorPage/components/Toast";
+import { computeRoomTotal, humanizeStyleTag } from "../../CategoryPage/category";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;
@@ -56,7 +57,8 @@ export default function RoomDetailOverlay() {
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
-  const total = selectedItems.reduce((sum, item) => sum + item.price, 0);
+  const total = computeRoomTotal(detail, selectedEssentialBySlot);
+  const vendorCount = new Set(selectedItems.map((item) => item.vendorId)).size;
 
   const checkoutItems: RoomCheckoutItem[] = selectedItems.map((item) => ({
     essentialId: item._id,
@@ -87,6 +89,24 @@ export default function RoomDetailOverlay() {
             height={320}
             className="room-detail-overlay-hero-image"
           />
+        ) : selectedItems.length > 0 ? (
+          <div className="room-detail-overlay-hero-mosaic">
+            {selectedItems.slice(0, 4).map((item) => (
+              <div key={item._id} className="room-detail-overlay-hero-mosaic-tile">
+                {item.images[0] ? (
+                  <Image
+                    src={item.images[0]}
+                    alt=""
+                    fill
+                    sizes="280px"
+                    className="room-detail-overlay-hero-mosaic-image"
+                  />
+                ) : (
+                  <span aria-hidden="true">📦</span>
+                )}
+              </div>
+            ))}
+          </div>
         ) : (
           <span
             className="room-detail-overlay-hero-placeholder"
@@ -94,6 +114,15 @@ export default function RoomDetailOverlay() {
           >
             🖼️
           </span>
+        )}
+        {room.styleTags.length > 0 && (
+          <ul className="room-detail-overlay-hero-tags" aria-label="Style">
+            {room.styleTags.map((tag) => (
+              <li key={tag} className="room-detail-overlay-hero-tag">
+                {humanizeStyleTag(tag)}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
@@ -113,11 +142,15 @@ export default function RoomDetailOverlay() {
             (option) => option._id === selectedId,
           );
           if (!selected) return null;
+          const alternatives = options.filter(
+            (option) => option._id !== selected._id,
+          );
           return (
             <EssentialSlotItem
               key={slot.id}
               slot={slot}
               essential={selected}
+              alternatives={alternatives}
               onSwap={() => handleSwap(slot.id)}
             />
           );
@@ -126,8 +159,18 @@ export default function RoomDetailOverlay() {
 
       <div className="room-detail-overlay-footer">
         <div className="room-detail-overlay-total-row">
-          <span className="room-detail-overlay-total-label">Total</span>
-          <span className="room-detail-overlay-total-value">
+          <div className="room-detail-overlay-total-info">
+            <span className="room-detail-overlay-total-label">Room total</span>
+            <span className="room-detail-overlay-total-sub">
+              {selectedItems.length} item{selectedItems.length !== 1 ? "s" : ""} ·{" "}
+              {vendorCount} vendor{vendorCount !== 1 ? "s" : ""}
+            </span>
+          </div>
+          <span
+            key={total}
+            className="room-detail-overlay-total-value"
+            aria-live="polite"
+          >
             {formatPrice(total)}
           </span>
         </div>
@@ -137,6 +180,29 @@ export default function RoomDetailOverlay() {
           onClick={() => setIsCheckoutOpen(true)}
           disabled={checkoutItems.length === 0}
         >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 9V7a6 6 0 1 1 12 0v2"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <rect
+              x="4"
+              y="9"
+              width="16"
+              height="12"
+              rx="2"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
           Checkout →
         </button>
       </div>
