@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import "./RoomDetailOverlay.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -19,7 +19,8 @@ import RoomCheckoutForm, {
 } from "../../Molecules/RoomCheckoutForm/RoomCheckoutForm";
 import { useToast } from "../../VendorPage/hooks/useToast";
 import Toast from "../../VendorPage/components/Toast";
-import { computeRoomTotal, humanizeStyleTag } from "../../CategoryPage/category";
+import { humanizeStyleTag } from "../../CategoryPage/category";
+import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;
@@ -38,11 +39,47 @@ export default function RoomDetailOverlay() {
   const selectedEssentialBySlot = useAppSelector(
     (state: RootState) => state.categoryState.selectedEssentialBySlot,
   );
+  const { availability, isChecking, checkAvailability } =
+    useEssentialAvailability();
+
+  const selectedItemIds = detail
+    ? detail.category.slots
+        .map((slot) => selectedEssentialBySlot[slot.id])
+        .filter((id): id is string => Boolean(id))
+    : [];
+  const selectedItemIdsKey = selectedItemIds.join(",");
+
+  useEffect(() => {
+    if (!activeRoomId || selectedItemIds.length === 0) return;
+    checkAvailability(selectedItemIds, { force: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRoomId, selectedItemIdsKey]);
 
   if (!activeRoomId || !detail) return null;
 
   const room = detail.rooms.find((candidate) => candidate._id === activeRoomId);
-  if (!room) return null;
+  if (!room) {
+    return (
+      <div className="room-detail-overlay">
+        <div className="room-detail-overlay-hero">
+          <span className="room-detail-overlay-hero-placeholder" aria-hidden="true">
+            🚫
+          </span>
+        </div>
+        <h2 className="room-detail-overlay-title">This room is no longer available</h2>
+        <p role="alert">
+          It may have been updated or removed. Please go back and pick another room.
+        </p>
+        <button
+          type="button"
+          className="room-detail-overlay-checkout"
+          onClick={() => dispatch(setOpenStateRoomDetail(false))}
+        >
+          Back to rooms
+        </button>
+      </div>
+    );
+  }
 
   const handleSwap = (slotId: string) => {
     dispatch(openSwapPicker(slotId));
@@ -57,13 +94,18 @@ export default function RoomDetailOverlay() {
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
-  const total = computeRoomTotal(detail, selectedEssentialBySlot);
+  const livePrice = (item: { _id: string; price: number }) =>
+    availability[item._id]?.price ?? item.price;
+  const total = selectedItems.reduce((sum, item) => sum + livePrice(item), 0);
   const vendorCount = new Set(selectedItems.map((item) => item.vendorId)).size;
+  const hasUnavailableSelectedItem = selectedItems.some(
+    (item) => availability[item._id]?.isAvailable === false,
+  );
 
   const checkoutItems: RoomCheckoutItem[] = selectedItems.map((item) => ({
     essentialId: item._id,
     name: item.name,
-    price: item.price,
+    price: livePrice(item),
     quantity: 1,
     imageUrl: item.images[0],
     vendorId: item.vendorId,
@@ -75,6 +117,23 @@ export default function RoomDetailOverlay() {
     dispatch(setOpenStateRoomDetail(false));
     dispatch(closeRoomDetail());
     showToast("Order placed! You'll see it in My Orders soon.");
+  };
+
+  const handleCheckoutClick = async () => {
+    const fresh = await checkAvailability(
+      checkoutItems.map((item) => item.essentialId),
+      { force: true },
+    );
+    const hasUnavailable = fresh
+      ? checkoutItems.some(
+          (item) => fresh[item.essentialId]?.isAvailable === false,
+        )
+      : hasUnavailableSelectedItem;
+    if (hasUnavailable) {
+      showToast("Some items are no longer available. Tap Swap to choose another.");
+      return;
+    }
+    setIsCheckoutOpen(true);
   };
 
   return (
@@ -149,9 +208,10 @@ export default function RoomDetailOverlay() {
             <EssentialSlotItem
               key={slot.id}
               slot={slot}
-              essential={selected}
+              essential={{ ...selected, price: livePrice(selected) }}
               alternatives={alternatives}
               onSwap={() => handleSwap(slot.id)}
+              isUnavailable={availability[selected._id]?.isAvailable === false}
             />
           );
         })}
@@ -177,8 +237,8 @@ export default function RoomDetailOverlay() {
         <button
           type="button"
           className="room-detail-overlay-checkout"
-          onClick={() => setIsCheckoutOpen(true)}
-          disabled={checkoutItems.length === 0}
+          onClick={handleCheckoutClick}
+          disabled={checkoutItems.length === 0 || isChecking}
         >
           <svg
             width="18"
@@ -203,7 +263,7 @@ export default function RoomDetailOverlay() {
               strokeWidth="2"
             />
           </svg>
-          Checkout →
+          {isChecking ? "Checking…" : "Checkout →"}
         </button>
       </div>
 

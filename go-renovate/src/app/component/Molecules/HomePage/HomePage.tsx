@@ -144,6 +144,47 @@ const stats = [
   { value: "180+", label: "Design Specialists" },
 ];
 
+const renovateSteps = [
+  {
+    step: "01",
+    title: "Consultation",
+    desc: "We understand your vision, lifestyle, and budget in a free 30-min call.",
+  },
+  {
+    step: "02",
+    title: "Design & Quote",
+    desc: "Our designers craft a detailed plan with transparent pricing — no surprises.",
+  },
+  {
+    step: "03",
+    title: "Execution",
+    desc: "Our vetted craftsmen bring the design to life with precision and care.",
+  },
+  {
+    step: "04",
+    title: "Handover",
+    desc: "We do a final walkthrough together and ensure you love every detail.",
+  },
+];
+
+const shopByRoomSteps = [
+  {
+    step: "01",
+    title: "Browse Rooms",
+    desc: "Explore curated Kitchen, Living Room, Bedroom & Bathroom bundles from vetted vendors.",
+  },
+  {
+    step: "02",
+    title: "Customize It",
+    desc: "Swap any piece for another vendor's pick — your total updates instantly as you go.",
+  },
+  {
+    step: "03",
+    title: "One Checkout, Every Vendor",
+    desc: "Add one address and place one order, even when your Room ships from several vendors.",
+  },
+];
+
 const testimonials = [
   {
     name: "Priya Sharma",
@@ -336,38 +377,42 @@ export default function HomePage() {
           <div className={styles.sectionHeader}>
             <span className={styles.sectionEyebrow}>How It Works</span>
             <h2 className={styles.sectionTitle}>
-              Simple Process, <em>Stunning Results</em>
+              Two Paths, <em>One Platform</em>
             </h2>
+            <p className={styles.sectionSub}>
+              Whether you&apos;re renovating a space or furnishing one, here&apos;s
+              what happens after you choose your path.
+            </p>
           </div>
-          <div className={styles.processSteps}>
-            {[
-              {
-                step: "01",
-                title: "Consultation",
-                desc: "We understand your vision, lifestyle, and budget in a free 30-min call.",
-              },
-              {
-                step: "02",
-                title: "Design & Quote",
-                desc: "Our designers craft a detailed plan with transparent pricing — no surprises.",
-              },
-              {
-                step: "03",
-                title: "Execution",
-                desc: "Our vetted craftsmen bring the design to life with precision and care.",
-              },
-              {
-                step: "04",
-                title: "Handover",
-                desc: "We do a final walkthrough together and ensure you love every detail.",
-              },
-            ].map((item) => (
-              <div key={item.step} className={styles.processCard}>
-                <span className={styles.processStep}>{item.step}</span>
-                <h3 className={styles.processTitle}>{item.title}</h3>
-                <p className={styles.processDesc}>{item.desc}</p>
-              </div>
-            ))}
+
+          <div className={styles.processTrack}>
+            <h3 className={styles.processTrackTitle}>
+              <span aria-hidden="true">🔧</span> Renovate a Space
+            </h3>
+            <div className={styles.processSteps}>
+              {renovateSteps.map((item) => (
+                <div key={item.step} className={styles.processCard}>
+                  <span className={styles.processStep}>{item.step}</span>
+                  <h4 className={styles.processTitle}>{item.title}</h4>
+                  <p className={styles.processDesc}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.processTrack}>
+            <h3 className={styles.processTrackTitle}>
+              <span aria-hidden="true">🛋️</span> Shop by Room
+            </h3>
+            <div className={`${styles.processSteps} ${styles.processStepsThree}`}>
+              {shopByRoomSteps.map((item) => (
+                <div key={item.step} className={styles.processCard}>
+                  <span className={styles.processStep}>{item.step}</span>
+                  <h4 className={styles.processTitle}>{item.title}</h4>
+                  <p className={styles.processDesc}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

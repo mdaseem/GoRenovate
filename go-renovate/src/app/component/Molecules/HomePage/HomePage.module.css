@@ -475,12 +475,36 @@
   padding: var(--section-pad) 24px;
 }
 
-.processSteps {
+.processTrack {
   max-width: var(--max-w);
-  margin: 0 auto;
+  margin: 0 auto 56px;
+}
+
+.processTrack:last-child {
+  margin-bottom: 0;
+}
+
+.processTrackTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  margin: 0 0 28px;
+}
+
+.processSteps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2px;
+}
+
+.processStepsThree {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .processCard {

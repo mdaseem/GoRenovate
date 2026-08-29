@@ -6,11 +6,16 @@ let pushedDepth = 0;
 let reconcileQueued = false;
 
 let pendingProgrammaticPops = 0;
+let skipNextPop = false;
 
 interface OpenEntry {
   onClose: () => void;
 }
 const openStack: OpenEntry[] = [];
+
+export function skipHistoryPopOnNextClose() {
+  skipNextPop = true;
+}
 
 function reconcile() {
   reconcileQueued = false;
@@ -20,8 +25,17 @@ function reconcile() {
   }
   while (pushedDepth > targetDepth) {
     pushedDepth -= 1;
-    pendingProgrammaticPops += 1;
-    window.history.back();
+    if (skipNextPop) {
+      skipNextPop = false;
+      continue;
+    }
+    const isOwnEntryOnTop =
+      (window.history.state as { overlayDepth?: number } | null)
+        ?.overlayDepth === pushedDepth + 1;
+    if (isOwnEntryOnTop) {
+      pendingProgrammaticPops += 1;
+      window.history.back();
+    }
   }
 }
 

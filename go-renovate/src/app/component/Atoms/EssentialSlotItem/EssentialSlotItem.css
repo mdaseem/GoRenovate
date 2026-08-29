@@ -64,6 +64,31 @@
   color: #6b7280;
 }
 
+.essential-slot-item-unavailable {
+  border-color: #f3c9c0;
+  background: #fdf6f4;
+}
+
+.essential-slot-item-unavailable .essential-slot-item-media {
+  opacity: 0.5;
+}
+
+.essential-slot-item-unavailable-notice {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #b3261e;
+}
+
+.essential-slot-item-swap-urgent {
+  border-color: #b3261e;
+}
+
+.essential-slot-item-swap-urgent:hover {
+  border-color: #b3261e;
+  background: #fdf0ee;
+}
+
 /* Peek-stack "Swap" control — shows up to 2 alternate-option thumbnails
    overlapping like a coin stack, plus a "+N" badge for the rest, so the
    row visually signals "other choices exist" instead of a plain text

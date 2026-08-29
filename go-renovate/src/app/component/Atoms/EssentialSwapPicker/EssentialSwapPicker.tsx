@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import "./EssentialSwapPicker.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -11,6 +11,7 @@ import {
 } from "@/app/store/features/categorySlice";
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
 import { computeRoomTotal } from "../../CategoryPage/category";
+import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;
@@ -33,14 +34,34 @@ export default function EssentialSwapPicker() {
   const selectedEssentialBySlot = useAppSelector(
     (state: RootState) => state.categoryState.selectedEssentialBySlot,
   );
+  const { availability, checkAvailability } = useEssentialAvailability();
+
+  // Computed before the early return below since hooks can't follow it.
+  const options =
+    activeSlotId && detail ? detail.essentialsBySlot[activeSlotId] ?? [] : [];
+  const optionIdsKey = options.map((option) => option._id).join(",");
+
+  useEffect(() => {
+    if (!activeSlotId || options.length === 0) return;
+    checkAvailability(options.map((option) => option._id), { force: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSlotId, optionIdsKey]);
 
   if (!activeSlotId || !detail) return null;
 
   const slot = detail.category.slots.find((item) => item.id === activeSlotId);
-  const options = detail.essentialsBySlot[activeSlotId] ?? [];
   const currentId = selectedEssentialBySlot[activeSlotId];
   const currentEssential = options.find((option) => option._id === currentId);
-  const roomTotal = computeRoomTotal(detail, selectedEssentialBySlot);
+  const currentLivePrice = currentEssential
+    ? availability[currentEssential._id]?.price ?? currentEssential.price
+    : 0;
+  // computeRoomTotal only has cached prices; swap in the live price for just
+  // the slot being edited here (the only one this picker just re-checked).
+  const roomTotal = currentEssential
+    ? computeRoomTotal(detail, selectedEssentialBySlot) -
+      currentEssential.price +
+      currentLivePrice
+    : computeRoomTotal(detail, selectedEssentialBySlot);
 
   const handleDone = () => {
     dispatch(setOpenStateSlotPicker(false));
@@ -64,9 +85,9 @@ export default function EssentialSwapPicker() {
           const inputId = `swap-option-${essential._id}`;
           const isSelected = essential._id === currentId;
           const image = essential.images[0];
-          const delta = currentEssential
-            ? essential.price - currentEssential.price
-            : 0;
+          const isUnavailable = availability[essential._id]?.isAvailable === false;
+          const livePrice = availability[essential._id]?.price ?? essential.price;
+          const delta = currentEssential ? livePrice - currentLivePrice : 0;
 
           return (
             <li key={essential._id} className="essential-swap-picker-option">
@@ -76,6 +97,7 @@ export default function EssentialSwapPicker() {
                 name="essential-swap-option"
                 className="essential-swap-picker-radio"
                 checked={isSelected}
+                disabled={isUnavailable}
                 onChange={() =>
                   dispatch(
                     selectSlotEssential({
@@ -89,7 +111,7 @@ export default function EssentialSwapPicker() {
                 htmlFor={inputId}
                 className={`essential-swap-picker-card${
                   isSelected ? " essential-swap-picker-card-selected" : ""
-                }`}
+                }${isUnavailable ? " essential-swap-picker-card-unavailable" : ""}`}
               >
                 <span className="essential-swap-picker-card-media">
                   {image ? (
@@ -116,20 +138,26 @@ export default function EssentialSwapPicker() {
                   {essential.name}
                 </span>
                 <span className="essential-swap-picker-option-meta">
-                  {formatPrice(essential.price)} · {essential.vendorName}
+                  {formatPrice(livePrice)} · {essential.vendorName}
                 </span>
                 <span
                   className={`essential-swap-picker-delta${
-                    isSelected
-                      ? " essential-swap-picker-delta-current"
-                      : delta > 0
-                        ? " essential-swap-picker-delta-up"
-                        : delta < 0
-                          ? " essential-swap-picker-delta-down"
-                          : ""
+                    isUnavailable
+                      ? " essential-swap-picker-delta-unavailable"
+                      : isSelected
+                        ? " essential-swap-picker-delta-current"
+                        : delta > 0
+                          ? " essential-swap-picker-delta-up"
+                          : delta < 0
+                            ? " essential-swap-picker-delta-down"
+                            : ""
                   }`}
                 >
-                  {isSelected ? "Current pick" : formatDelta(delta)}
+                  {isUnavailable
+                    ? "Unavailable"
+                    : isSelected
+                      ? "Current pick"
+                      : formatDelta(delta)}
                 </span>
               </label>
             </li>
