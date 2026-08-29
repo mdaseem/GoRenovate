@@ -14,6 +14,7 @@ import {
   clearRecentSearchesRequest,
 } from "@/app/store/features/searchSlice";
 import Overlay from "../../HOC/Overlay/Overlay";
+import { skipHistoryPopOnNextClose } from "../../CustomHooks/useCloseOnBackButton";
 import { Vendor } from "../../VendorPage/vendor";
 import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";
 import { useSearchSuggestions } from "../../CustomHooks/useSearchSuggestions";
@@ -173,6 +174,7 @@ function SearchBar() {
     if (!trimmed) return;
     if (token) dispatch(addRecentSearchRequest({ term: trimmed, token }));
     setIsOpen(false);
+    if (isMobileSearchOpen) skipHistoryPopOnNextClose();
     dispatch(setOpenMobileSearch(false));
     blurTarget?.blur();
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
@@ -184,6 +186,7 @@ function SearchBar() {
       return;
     }
     setIsOpen(false);
+    if (isMobileSearchOpen) skipHistoryPopOnNextClose();
     dispatch(setOpenMobileSearch(false));
     blurTarget?.blur();
     router.push(`/vendors/${row.vendor.id}`);
@@ -329,6 +332,7 @@ function SearchBar() {
                     className="search-suggestion-row"
                     onClick={() => {
                       setIsOpen(false);
+                      if (isMobileSearchOpen) skipHistoryPopOnNextClose();
                       dispatch(setOpenMobileSearch(false));
                       onSelect();
                     }}

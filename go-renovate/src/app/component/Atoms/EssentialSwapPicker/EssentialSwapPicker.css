@@ -90,6 +90,15 @@
   outline-offset: 2px;
 }
 
+.essential-swap-picker-card-unavailable,
+.essential-swap-picker-card-unavailable:hover {
+  cursor: not-allowed;
+  opacity: 0.55;
+  border-color: #ece9e3;
+  background: #fff;
+  box-shadow: none;
+}
+
 .essential-swap-picker-card-media {
   position: relative;
   width: 100%;
@@ -164,6 +173,11 @@
 .essential-swap-picker-delta-up {
   background: #fdeef0;
   color: #a13a53;
+}
+
+.essential-swap-picker-delta-unavailable {
+  background: #fdeef0;
+  color: #b3261e;
 }
 
 .essential-swap-picker-footer {
