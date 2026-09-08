@@ -137,6 +137,55 @@ const rooms = [
   },
 ];
 
+const paths = [
+  {
+    id: "renovate",
+    variant: "renovate",
+    badge: "Book a Vendor",
+    icon: "🔧",
+    title: "Renovate a Space",
+    description:
+      "Hire vetted vendors directly for your project — pick services, compare transparent pricing, and book painting, flooring, kitchens & more.",
+    bullets: [
+      "Compare verified vendors side-by-side",
+      "Transparent, itemized pricing",
+      "Free, no-obligation quotes in 24 hours",
+    ],
+    chips: [
+      { label: "Kitchen", icon: "🍳", href: "/vendors/category/kitchen" },
+      { label: "Bathroom", icon: "🚿", href: "/vendors/category/bathroom" },
+      { label: "Painting", icon: "🎨", href: "/vendors/category/painting" },
+      { label: "Flooring", icon: "🪵", href: "/vendors/category/flooring" },
+    ],
+    proof: "2,400+ projects completed · 98% client satisfaction",
+    ctaLabel: "Browse Vendors",
+    ctaHref: "/vendors",
+  },
+  {
+    id: "rooms",
+    variant: "rooms",
+    badge: "New",
+    icon: "🛋️",
+    title: "Shop by Room",
+    description:
+      "Buy curated furniture & décor bundles for your space — mix pieces from top vendors in one cart, one checkout.",
+    bullets: [
+      "Curated bundles, ready to buy today",
+      "Swap any piece for another vendor's pick",
+      "One checkout, even across vendors",
+    ],
+    chips: [
+      { label: "Living Room", icon: "🛋️", href: "/roomCategory/living-room" },
+      { label: "Bedroom", icon: "🛏️", href: "/roomCategory/bedroom" },
+      { label: "Bathroom", icon: "🚿", href: "/roomCategory/bathroom" },
+      { label: "Kitchen", icon: "🍳", href: "/roomCategory/kitchen" },
+    ],
+    proof: "4 curated rooms · Ships from multiple vendors, one order",
+    ctaLabel: "Browse Rooms",
+    ctaHref: "/roomCategory",
+  },
+] as const;
+
 const stats = [
   { value: "2,400+", label: "Projects Completed" },
   { value: "98%", label: "Client Satisfaction" },
@@ -147,23 +196,23 @@ const stats = [
 const renovateSteps = [
   {
     step: "01",
-    title: "Consultation",
-    desc: "We understand your vision, lifestyle, and budget in a free 30-min call.",
+    title: "Browse & Compare",
+    desc: "Explore verified vendors by category and compare their services, pricing & reviews side-by-side.",
   },
   {
     step: "02",
-    title: "Design & Quote",
-    desc: "Our designers craft a detailed plan with transparent pricing — no surprises.",
+    title: "Add Services to Cart",
+    desc: "Pick exactly what you need — one service or several — with prices itemized upfront, no hidden costs.",
   },
   {
     step: "03",
-    title: "Execution",
-    desc: "Our vetted craftsmen bring the design to life with precision and care.",
+    title: "Checkout Instantly",
+    desc: "Add your address and place the order in a few taps, even across multiple services.",
   },
   {
     step: "04",
-    title: "Handover",
-    desc: "We do a final walkthrough together and ensure you love every detail.",
+    title: "Vendor Gets to Work",
+    desc: "Your vendor confirms the booking and completes the job, with order tracking the whole way through.",
   },
 ];
 
@@ -261,35 +310,61 @@ export default function HomePage() {
         </section>
 
         {/* CHOOSE YOUR PATH */}
-        <section className={styles.services}>
+        <section className={styles.pathSection}>
           <div className={styles.sectionHeader}>
-            <span className={styles.sectionEyebrow}>Two Ways to Start</span>
+            <span className={styles.sectionEyebrow}>Two Ways to Shop</span>
             <h2 className={styles.sectionTitle}>
-              What Are You <em>Here For?</em>
+              How Would You Like to <em>Start?</em>
             </h2>
+            <p className={styles.sectionSub}>
+              Hiring a vendor for a full project, or furnishing a room with
+              pieces you can buy today — pick your path below.
+            </p>
           </div>
 
-          <div className={styles.categoryGrid}>
-            <a href="#services" className={styles.categoryCard}>
-              <span className={styles.cardIcon} aria-hidden="true">
-                🔧
-              </span>
-              <h3 className={styles.cardTitle}>Renovate a Space</h3>
-              <p className={styles.cardDesc}>
-                Book vetted vendors for painting, flooring, kitchens & more
-              </p>
-              <span className={styles.cardArrow}>→</span>
-            </a>
-            <Link href="/roomCategory" className={styles.categoryCard}>
-              <span className={styles.cardIcon} aria-hidden="true">
-                🛋️
-              </span>
-              <h3 className={styles.cardTitle}>Shop by Room</h3>
-              <p className={styles.cardDesc}>
-                Curated furniture & décor combos from top vendors
-              </p>
-              <span className={styles.cardArrow}>→</span>
-            </Link>
+          <div className={styles.pathGrid}>
+            {paths.map((path) => (
+              <article
+                key={path.id}
+                className={`${styles.pathCard} ${styles[`pathCard--${path.variant}`]}`}
+              >
+                <span className={styles.pathBadge}>{path.badge}</span>
+                <span className={styles.pathIcon} aria-hidden="true">
+                  {path.icon}
+                </span>
+                <h3 className={styles.pathTitle}>{path.title}</h3>
+                <p className={styles.pathDesc}>{path.description}</p>
+
+                <ul className={styles.pathBullets}>
+                  {path.bullets.map((bullet) => (
+                    <li key={bullet} className={styles.pathBulletItem}>
+                      <span aria-hidden="true">✓</span>
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className={styles.pathChips}>
+                  {path.chips.map((chip) => (
+                    <Link
+                      key={chip.label}
+                      href={chip.href}
+                      className={styles.pathChip}
+                    >
+                      <span aria-hidden="true">{chip.icon}</span>
+                      {chip.label}
+                    </Link>
+                  ))}
+                </div>
+
+                <div className={styles.pathFooter}>
+                  <Link href={path.ctaHref} className={styles.pathCta}>
+                    {path.ctaLabel} →
+                  </Link>
+                  <p className={styles.pathProof}>{path.proof}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 

@@ -469,6 +469,186 @@
   position: relative;
 }
 
+/* ── CHOOSE YOUR PATH ────────────────────────────────────── */
+.pathSection {
+  padding: var(--section-pad) 24px;
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.pathGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.pathCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 40px 36px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.pathCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
+}
+
+.pathCard--rooms {
+  background: linear-gradient(
+    165deg,
+    var(--color-surface-alt) 0%,
+    var(--color-surface) 45%
+  );
+}
+
+.pathBadge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: var(--color-accent);
+  color: #0d1a0d;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+
+.pathIcon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.pathTitle {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.pathDesc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.pathBullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.pathBulletItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.pathBulletItem span {
+  color: var(--color-accent-dark);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.pathChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pathChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  min-height: 40px;
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 100px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.pathChip:hover {
+  background: var(--color-accent);
+  color: #0d1a0d;
+}
+
+.pathChip:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 2px;
+}
+
+.pathFooter {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pathCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 26px;
+  background: var(--color-accent);
+  color: #0d1a0d;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  width: fit-content;
+  transition:
+    background 0.2s,
+    transform 0.15s,
+    box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(7, 226, 7, 0.25);
+}
+
+.pathCta:hover {
+  background: var(--color-accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(7, 226, 7, 0.3);
+}
+
+.pathCta:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 2px;
+}
+
+.pathProof {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
 /* ── PROCESS ─────────────────────────────────────────────── */
 .process {
   background: var(--color-surface-alt);
@@ -833,6 +1013,10 @@
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
+  .pathGrid {
+    grid-template-columns: 1fr;
+  }
+
   .processSteps {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -880,6 +1064,10 @@
   .categoryGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
+  }
+
+  .pathCard {
+    padding: 28px 24px;
   }
 
   .processSteps {
