@@ -10,7 +10,7 @@ import {
   cancelSwapPicker,
 } from "@/app/store/features/categorySlice";
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
-import { computeRoomTotal } from "../../CategoryPage/category";
+import { computeRoomTotal } from "@/app/types/category";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
 
 function formatPrice(price: number): string {

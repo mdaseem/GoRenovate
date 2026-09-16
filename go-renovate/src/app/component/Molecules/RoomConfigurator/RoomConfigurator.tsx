@@ -10,7 +10,7 @@ import {
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
 import EssentialSlotItem from "../../Atoms/EssentialSlotItem/EssentialSlotItem";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
-import { computeRoomTotal } from "../../CategoryPage/category";
+import { computeRoomTotal } from "@/app/types/category";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;

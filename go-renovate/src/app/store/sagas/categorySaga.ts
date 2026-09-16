@@ -16,7 +16,7 @@ import {
   Category,
   CategoryDetail,
   Room,
-} from "../../component/CategoryPage/category";
+} from "@/app/types/category";
 
 // GET /essentials/categories* is public — no auth token needed, matching
 // how vendorDetailRoutes.ts (/vendors) is mounted with no requireAuth.

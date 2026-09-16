@@ -19,7 +19,7 @@ import RoomCheckoutForm, {
 } from "../../Molecules/RoomCheckoutForm/RoomCheckoutForm";
 import { useToast } from "../../VendorPage/hooks/useToast";
 import Toast from "../../VendorPage/components/Toast";
-import { humanizeStyleTag } from "../../CategoryPage/category";
+import { humanizeStyleTag } from "@/app/types/category";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
 
 function formatPrice(price: number): string {

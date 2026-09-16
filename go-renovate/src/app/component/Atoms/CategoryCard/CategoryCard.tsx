@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import "./CategoryCard.css";
-import { Category } from "../../CategoryPage/category";
+import { Category } from "@/app/types/category";
 
 type Props = {
   category: Category;
