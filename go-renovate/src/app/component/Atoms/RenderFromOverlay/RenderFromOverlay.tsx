@@ -15,7 +15,7 @@ import {
   setOpenStateSlotPicker,
   setOpenStateRoomDetail,
 } from "@/app/store/features/overLaySlice";
-import { getFavorites, clearFavorites } from "@/app/store/features/favroites";
+import { getFavorites, clearFavorites } from "@/app/store/features/favoritesSlice";
 import Chat from "../../Atoms/Chat/Chat";
 import dynamic from "next/dynamic";
 import Loader, { Loader1 } from "../../Molecules/Loader/Loader";

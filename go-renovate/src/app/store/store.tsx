@@ -4,7 +4,7 @@ import authReducer from "./features/authSlice";
 import overLay from "./features/overLaySlice";
 import productsState from "./features/productSlice";
 import users from "./features/userSlice";
-import favs from "./features/favroites";
+import favs from "./features/favoritesSlice";
 import aiChat from "./features/aiChatSlice";
 import orderState from "./features/orderSlice";
 import search from "./features/searchSlice";

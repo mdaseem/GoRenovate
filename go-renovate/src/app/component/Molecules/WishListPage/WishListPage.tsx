@@ -8,7 +8,7 @@ import ProductView from "../../Atoms/ProductView/ProductView";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import { Loader1 } from "../Loader/Loader";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { getFavorites } from "@/app/store/features/favroites";
+import { getFavorites } from "@/app/store/features/favoritesSlice";
 import { Vendor } from "../../VendorPage/vendor";
 
 type productType = Vendor | null;

@@ -11,7 +11,7 @@ import {
   restoreFavorite,
   discardFavorite,
   setFavoritesError,
-} from "../features/favroites";
+} from "../features/favoritesSlice";
 import { Vendor } from "../../component/VendorPage/vendor";
 
 const WISHLIST_URL = `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/wishlist`;

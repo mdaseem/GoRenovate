@@ -16,7 +16,7 @@ const initialState: FavoritesState = {
 };
 
 export const favListSlice = createSlice({
-  name: "favroitesState",
+  name: "favoritesState",
   initialState,
   reducers: {
     getFavorites: (store, { payload }: { payload: { token: string } }) => {

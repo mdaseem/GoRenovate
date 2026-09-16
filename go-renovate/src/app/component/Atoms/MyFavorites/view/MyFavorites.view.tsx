@@ -2,7 +2,7 @@ import React from "react";
 import "../style/MyFavorites.style.css";
 import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/app/store/hooks";
-import { addFavorite, removeFavorite } from "@/app/store/features/favroites";
+import { addFavorite, removeFavorite } from "@/app/store/features/favoritesSlice";
 import { setOpenStateLogin } from "@/app/store/features/overLaySlice";
 import { Vendor } from "../../../VendorPage/vendor";
 
