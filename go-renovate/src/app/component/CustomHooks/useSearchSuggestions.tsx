@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Vendor } from "../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 const MIN_QUERY_LENGTH = 2;
 const SUGGESTION_LIMIT = 6;

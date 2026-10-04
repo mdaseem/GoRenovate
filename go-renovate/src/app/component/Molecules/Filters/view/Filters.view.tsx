@@ -4,7 +4,7 @@ import React from "react";
 import "../style/Filters.style.css";
 import DropDownFilter from "./DropDownFilter";
 import { FILTER_DEFINITIONS } from "../filterConfig";
-import { Vendor } from "../../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 import { useVendorFilters } from "../hooks/useVendorFilters";
 
 interface FiltersProps {

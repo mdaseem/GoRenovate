@@ -1,6 +1,6 @@
 import React from "react";
 import VendorCard from "../../Atoms/VendorCard/VendorCard";
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 type propType = {
   productLists: { data: (Vendor | null)[] };

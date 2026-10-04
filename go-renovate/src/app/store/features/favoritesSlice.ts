@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Vendor } from "@/app/component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 interface FavoritesState {
   items: Vendor[];

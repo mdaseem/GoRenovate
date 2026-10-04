@@ -9,7 +9,7 @@ import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import { Loader1 } from "../Loader/Loader";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { getFavorites } from "@/app/store/features/favoritesSlice";
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 type productType = Vendor | null;
 

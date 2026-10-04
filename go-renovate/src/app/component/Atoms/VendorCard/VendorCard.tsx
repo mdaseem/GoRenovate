@@ -4,9 +4,9 @@ import MyFavorites from "../MyFavorites/view/MyFavorites.view";
 import { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import { Vendor } from "../../VendorPage/vendor";
-import { getAvatarStyle, getInitials } from "../../VendorPage/vendorAvatar";
-import { LocationIcon, ClockIcon } from "../../VendorPage/vendorIcons";
+import { Vendor } from "@/app/types/vendor";
+import { getAvatarStyle, getInitials } from "@/app/utils/vendorAvatar";
+import { LocationIcon, ClockIcon } from "@/app/utils/vendorIcons";
 
 type propType = {
   isForSearch?: boolean;

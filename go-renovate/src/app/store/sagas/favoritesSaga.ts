@@ -12,7 +12,7 @@ import {
   discardFavorite,
   setFavoritesError,
 } from "../features/favoritesSlice";
-import { Vendor } from "../../component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 const WISHLIST_URL = `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/wishlist`;
 const REQUEST_TIMEOUT_MS = 15_000;

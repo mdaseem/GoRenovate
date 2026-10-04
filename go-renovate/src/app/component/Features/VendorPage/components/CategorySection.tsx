@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "../VendorPage.module.css";
-import { ServiceCategory, ServiceOption } from "../vendor";
-import ServiceCard from "../../Atoms/ServiceCard/ServiceCard";
-import BackLink from "../../Atoms/BackLink/BackLink";
+import { ServiceCategory, ServiceOption } from "@/app/types/vendor";
+import ServiceCard from "@/app/component/Atoms/ServiceCard/ServiceCard";
+import BackLink from "@/app/component/Atoms/BackLink/BackLink";
 
 interface CategorySectionProps {
   category: ServiceCategory;

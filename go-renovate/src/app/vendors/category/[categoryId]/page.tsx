@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/app/authOptions";
-import { Vendor } from "@/app/component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 import CategoryVendorList, {
   CategorySummary,
 } from "@/app/component/Molecules/CategoryVendorList/CategoryVendorList";

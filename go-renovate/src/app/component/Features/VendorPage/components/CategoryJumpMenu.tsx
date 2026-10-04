@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../VendorPage.module.css";
-import { ServiceCategory } from "../vendor";
+import { ServiceCategory } from "@/app/types/vendor";
 
 interface CategoryJumpMenuProps {
   categories: ServiceCategory[];

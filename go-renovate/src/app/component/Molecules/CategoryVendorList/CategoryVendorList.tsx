@@ -10,7 +10,7 @@ import styles from "./CategoryVendorList.module.css";
 // filter panel, and the mobile filter trigger are pixel-for-pixel the same
 // component behavior as /vendors, not a lookalike reimplementation.
 import "@/app/component/Molecules/ProductListPage/ProductListPage.style.css";
-import { Vendor } from "@/app/component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 import BackLink from "@/app/component/Atoms/BackLink/BackLink";
 import MyFavorites from "@/app/component/Atoms/MyFavorites/view/MyFavorites.view";
 import Filters from "@/app/component/Molecules/Filters/view/Filters.view";

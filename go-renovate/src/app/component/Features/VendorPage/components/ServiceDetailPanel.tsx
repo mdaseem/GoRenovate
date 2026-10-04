@@ -2,8 +2,8 @@
 
 import React, { useCallback, useEffect, useRef } from "react";
 import styles from "./ServiceDetailPanel.module.css";
-import ServiceDetail from "../../Molecules/ServiceDetail/ServiceDetail";
-import { ServiceOption } from "../vendor";
+import ServiceDetail from "@/app/component/Molecules/ServiceDetail/ServiceDetail";
+import { ServiceOption } from "@/app/types/vendor";
 import { NavigationDirection } from "../hooks/useServiceNavigation";
 
 interface ServiceDetailPanelProps {

@@ -7,7 +7,7 @@ import { RootState } from "@/app/store/store";
 import { useAppDispatch } from "@/app/store/hooks";
 import { setOpenStateFilters } from "@/app/store/features/overLaySlice";
 import Filters from "./Filters.view";
-import { Vendor } from "@/app/component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 function MobileFiltersOverlay() {
   const dispatch = useAppDispatch();

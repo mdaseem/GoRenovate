@@ -14,7 +14,7 @@ import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import OrderStatusBadge from "../../Atoms/OrderStatusBadge/OrderStatusBadge";
 import OrderStatusTimeline from "../../Atoms/OrderStatusTimeline/OrderStatusTimeline";
 import BackLink from "../../Atoms/BackLink/BackLink";
-import { UNIT_LABELS } from "../../VendorPage/VendorData";
+import { UNIT_LABELS } from "@/app/types/vendorConstants";
 import { OrderItem } from "@/app/types/order";
 
 interface OrderDetailPageProps {

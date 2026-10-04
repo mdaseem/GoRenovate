@@ -9,7 +9,7 @@ import {
 } from "../features/productSlice";
 import axios from "axios";
 import { signOut } from "next-auth/react";
-import { Vendor } from "../../component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 function getProductCall(token?: string, filters?: string) {
   const query = filters ? `?${filters}` : "";

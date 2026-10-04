@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import styles from "./CartDrawer.module.css";
-import { CartItem } from "../../VendorPage/vendor";
-import { UNIT_LABELS } from "../../VendorPage/VendorData";
+import { CartItem } from "@/app/types/vendor";
+import { UNIT_LABELS } from "@/app/types/vendorConstants";
 import { AvailabilityEntry } from "../../CustomHooks/useCartAvailability";
 import { useCloseOnBackButton } from "../../CustomHooks/useCloseOnBackButton";
 

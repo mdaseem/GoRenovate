@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ServiceCategory } from "../vendor";
+import { ServiceCategory } from "@/app/types/vendor";
 
 interface UseCategoryScrollSpyReturn {
   activeCategoryId: string;
