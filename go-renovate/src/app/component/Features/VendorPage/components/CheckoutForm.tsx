@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import styles from "./CheckoutForm.module.css";
-import { CartItem } from "../vendor";
-import { UNIT_LABELS } from "../VendorData";
+import { CartItem } from "@/app/types/vendor";
+import { UNIT_LABELS } from "@/app/types/vendorConstants";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import {

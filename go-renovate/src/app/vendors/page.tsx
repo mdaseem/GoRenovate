@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import Dashboard from "../component/Molecules/Dashboard/Dashboard";
 import { authOptions } from "../authOptions";
-import { Vendor } from "../component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 import { buildFilterQueryString } from "../component/Molecules/Filters/filterConfig";
 
 export const metadata: Metadata = {

@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { CartItem, ServiceOption } from '../VendorPage/vendor';
-// import type { CartItem, ServiceOption } from '../types/vendor';
+import { CartItem, ServiceOption } from '@/app/types/vendor';
 
 interface UseCartReturn {
   items: CartItem[];

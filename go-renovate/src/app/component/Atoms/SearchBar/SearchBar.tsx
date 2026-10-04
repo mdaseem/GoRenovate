@@ -15,7 +15,7 @@ import {
 } from "@/app/store/features/searchSlice";
 import Overlay from "../../HOC/Overlay/Overlay";
 import { skipHistoryPopOnNextClose } from "../../CustomHooks/useCloseOnBackButton";
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";
 import { useSearchSuggestions } from "../../CustomHooks/useSearchSuggestions";
 

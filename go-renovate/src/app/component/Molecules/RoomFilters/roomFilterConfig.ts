@@ -1,5 +1,5 @@
 import { FilterDefinition, FilterOption } from "../Filters/filterConfig";
-import { Room, humanizeStyleTag } from "../../CategoryPage/category";
+import { Room, humanizeStyleTag } from "@/app/types/category";
 
 export type ActiveFilters = Record<string, string[] | string | boolean>;
 

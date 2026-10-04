@@ -1,4 +1,4 @@
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 export type FilterOption = {
   value: string;

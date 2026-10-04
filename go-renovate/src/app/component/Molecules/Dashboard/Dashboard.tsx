@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ProductListPage from "../ProductListPage/ProductListPage";
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 type propType = {
   products: Vendor[] | undefined;

@@ -4,7 +4,7 @@ import React from "react";
 import "../Filters/style/Filters.style.css";
 import DropDownFilter from "../Filters/view/DropDownFilter";
 import { FILTER_DEFINITIONS } from "./roomFilterConfig";
-import { Room } from "../../CategoryPage/category";
+import { Room } from "@/app/types/category";
 import { useRoomFilters } from "./useRoomFilters";
 
 interface RoomFiltersProps {

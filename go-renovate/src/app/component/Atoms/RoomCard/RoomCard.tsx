@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import "./RoomCard.css";
-import { Room, humanizeStyleTag } from "../../CategoryPage/category";
+import { Room, humanizeStyleTag } from "@/app/types/category";
 
 type Props = {
   room: Room;

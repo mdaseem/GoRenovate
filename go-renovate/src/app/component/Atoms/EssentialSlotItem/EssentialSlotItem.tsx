@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import "./EssentialSlotItem.css";
-import { Essential, CategorySlot } from "../../CategoryPage/category";
+import { Essential, CategorySlot } from "@/app/types/category";
 
 type Props = {
   slot: CategorySlot;

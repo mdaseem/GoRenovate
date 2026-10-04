@@ -19,7 +19,7 @@ import {
 } from "@/app/store/features/overLaySlice";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import BackLink from "../../Atoms/BackLink/BackLink";
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 import { useVendorFilters } from "../Filters/hooks/useVendorFilters";
 import { buildVendorsQueryString, SEARCH_PARAM } from "../Filters/filterConfig";
 import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";

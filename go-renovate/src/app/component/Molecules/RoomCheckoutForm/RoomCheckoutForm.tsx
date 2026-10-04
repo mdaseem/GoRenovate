@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import styles from "../../VendorPage/components/CheckoutForm.module.css";
+import styles from "@/app/component/Features/VendorPage/components/CheckoutForm.module.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
 import {
@@ -18,7 +18,7 @@ import {
   EMPTY_ADDRESS,
   FIELD_ORDER,
   validateField,
-} from "../../VendorPage/components/AddressFields";
+} from "@/app/component/Features/VendorPage/components/AddressFields";
 
 export interface RoomCheckoutItem {
   essentialId: string;

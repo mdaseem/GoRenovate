@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { ServiceCategory, ServiceOption } from "../vendor";
+import { ServiceCategory, ServiceOption } from "@/app/types/vendor";
 
 export interface FlatService {
   service: ServiceOption;

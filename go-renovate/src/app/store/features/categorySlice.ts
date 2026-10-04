@@ -3,7 +3,7 @@ import {
   Category,
   CategoryDetail,
   Room,
-} from "../../component/CategoryPage/category";
+} from "@/app/types/category";
 
 interface CategoryState {
   categories: Category[];

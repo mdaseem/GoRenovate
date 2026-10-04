@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Vendor } from "../../VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 type PropsType = {
   product: Vendor | null;

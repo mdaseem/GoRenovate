@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "./VendorDetails.module.css";
-import { Vendor } from "../vendor";
+import { Vendor } from "@/app/types/vendor";
 import MyFavorites from "@/app/component/Atoms/MyFavorites/view/MyFavorites.view";
 import { useAppSelector } from "@/app/store/hooks";
-import { getAvatarStyle, getInitials } from "../vendorAvatar";
-import { LocationIcon, ClockIcon, CalendarIcon, TagIcon } from "../vendorIcons";
+import { getAvatarStyle, getInitials } from "@/app/utils/vendorAvatar";
+import { LocationIcon, ClockIcon, CalendarIcon, TagIcon } from "@/app/utils/vendorIcons";
 
 interface VendorDetailsProps {
   vendor: Vendor;

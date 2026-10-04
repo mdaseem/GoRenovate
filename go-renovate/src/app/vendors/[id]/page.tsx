@@ -4,9 +4,9 @@ import axios from "axios";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
-import VendorPage from "@/app/component/VendorPage/VendorPage";
+import VendorPage from "@/app/component/Features/VendorPage/VendorPage";
 import { authOptions } from "@/app/authOptions";
-import { Vendor } from "@/app/component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 const getVendor = cache(async function getVendor(
   id: string,

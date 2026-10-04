@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Vendor } from "../../component/VendorPage/vendor";
+import { Vendor } from "@/app/types/vendor";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const initialState: any = {

@@ -3,8 +3,8 @@
 import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./ServiceDetail.module.css";
-import { ServiceOption } from "../../VendorPage/vendor";
-import { MATERIAL_COLORS, UNIT_LABELS } from "../../VendorPage/VendorData";
+import { ServiceOption } from "@/app/types/vendor";
+import { MATERIAL_COLORS, UNIT_LABELS } from "@/app/types/vendorConstants";
 
 interface ServiceDetailProps {
   service: ServiceOption;
