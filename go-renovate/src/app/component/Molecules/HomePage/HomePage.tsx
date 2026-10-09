@@ -27,6 +27,7 @@ const categories = [
     icon: "🏠",
     tag: "Most Popular",
     categoryId: null,
+    layout: "feature",
   },
   {
     id: 2,
@@ -99,6 +100,7 @@ const categories = [
     icon: "🌿",
     tag: null,
     categoryId: "outdoor",
+    layout: "wide",
   },
   {
     id: 11,
@@ -107,6 +109,7 @@ const categories = [
     icon: "☀️",
     tag: null,
     categoryId: "outdoor",
+    layout: "wide",
   },
 ];
 
@@ -140,6 +143,7 @@ const rooms = [
 const paths = [
   {
     id: "renovate",
+    num: "01",
     variant: "renovate",
     badge: "Book a Vendor",
     icon: "🔧",
@@ -149,7 +153,7 @@ const paths = [
     bullets: [
       "Compare verified vendors side-by-side",
       "Transparent, itemized pricing",
-      "Free, no-obligation quotes in 24 hours",
+      "Book in a few taps and track every order",
     ],
     chips: [
       { label: "Kitchen", icon: "🍳", href: "/vendors/category/kitchen" },
@@ -157,12 +161,13 @@ const paths = [
       { label: "Painting", icon: "🎨", href: "/vendors/category/painting" },
       { label: "Flooring", icon: "🪵", href: "/vendors/category/flooring" },
     ],
-    proof: "2,400+ projects completed · 98% client satisfaction",
+    proof: "Verified vendors · Itemised pricing · Order tracking",
     ctaLabel: "Browse Vendors",
     ctaHref: "/vendors",
   },
   {
     id: "rooms",
+    num: "02",
     variant: "rooms",
     badge: "New",
     icon: "🛋️",
@@ -186,11 +191,27 @@ const paths = [
   },
 ] as const;
 
-const stats = [
-  { value: "2,400+", label: "Projects Completed" },
-  { value: "98%", label: "Client Satisfaction" },
-  { value: "12+", label: "Years of Expertise" },
-  { value: "180+", label: "Design Specialists" },
+const promises = [
+  {
+    icon: "🧾",
+    title: "Itemised pricing",
+    text: "See every service and its price before you book.",
+  },
+  {
+    icon: "⚖️",
+    title: "Compare vendors",
+    text: "Services, pricing and reviews, side by side.",
+  },
+  {
+    icon: "🛒",
+    title: "One checkout",
+    text: "Many vendors, one cart, one address, one order.",
+  },
+  {
+    icon: "📍",
+    title: "Track every order",
+    text: "Follow your booking from confirmation to completion.",
+  },
 ];
 
 const renovateSteps = [
@@ -234,27 +255,26 @@ const shopByRoomSteps = [
   },
 ];
 
-const testimonials = [
+const faqs = [
   {
-    name: "Priya Sharma",
-    location: "Bengaluru",
-    quote:
-      "They transformed our entire apartment in 6 weeks. The attention to detail was extraordinary.",
-    rating: 5,
+    q: "What's the difference between hiring a vendor and shopping by room?",
+    a: "Hiring a vendor is for services: painting, flooring, kitchens, repairs and more. You pick the services you need and book them. Shopping by room is for products: curated furniture and décor bundles you can buy and have delivered.",
   },
   {
-    name: "Rohan Mehta",
-    location: "Mumbai",
-    quote:
-      "Our kitchen renovation exceeded every expectation. Functional, beautiful, on time.",
-    rating: 5,
+    q: "Can I buy from several vendors in one order?",
+    a: "Yes. A Room can include pieces from different vendors. You add one address and place one order, and each vendor ships their part.",
   },
   {
-    name: "Ananya Iyer",
-    location: "Chennai",
-    quote:
-      "The smart home integration was seamless. Best investment we've made for our home.",
-    rating: 5,
+    q: "Can I change what's in a Room bundle?",
+    a: "Yes. Swap any piece for another vendor's pick and your total updates instantly, so you only pay for what you choose.",
+  },
+  {
+    q: "How do I track my order?",
+    a: "Once you've placed an order, you can follow its status any time from your Orders page.",
+  },
+  {
+    q: "I run a renovation or décor business. How do I list it?",
+    a: "Email us at hello@gorenovate.in with a few details about your business and we'll get you set up.",
   },
 ];
 
@@ -263,121 +283,103 @@ export default function HomePage() {
     <div className={`${styles.root} ${playfairDisplay.variable} ${dmSans.variable}`}>
       <main>
         {/* HERO */}
-        <section className={styles.hero}>
+        <section className={styles.hero} aria-labelledby="hero-heading">
           <div className={styles.heroTexture} aria-hidden="true" />
-          <div className={styles.heroContent}>
-            <p className={styles.heroPill}>✦ Premium Home Renovation</p>
-            <h1 className={styles.heroHeading}>
-              Your Home,
-              <br />
-              <em>Reimagined.</em>
-            </h1>
-            <p className={styles.heroSub}>
-              End-to-end renovation services built around your vision — from a
-              single room to a full home transformation.
-            </p>
-            <div className={styles.heroActions}>
-              <a href="#services" className={styles.ctaButton}>
-                Explore Services
-              </a>
-              <a href="#work" className={styles.ghostButton}>
-                View Our Work →
-              </a>
+          <div className={styles.heroInner}>
+            <div className={styles.heroIntro}>
+              <p className={styles.heroPill}>✦ Renovate · Furnish · Transform</p>
+              <h1 id="hero-heading" className={styles.heroHeading}>
+                Your Home, <em>Reimagined.</em>
+              </h1>
+              <p className={styles.heroSub}>
+                Hire vetted vendors for a full project, or furnish a room with
+                pieces you can buy today. Pick your path.
+              </p>
             </div>
-          </div>
-          <div className={styles.heroVisual} aria-hidden="true">
-            <div className={styles.heroCard}>
-              <div className={styles.heroCardTop}>
-                <span className={styles.heroCardDot} />
-                <span className={styles.heroCardDot} />
-                <span className={styles.heroCardDot} />
-              </div>
-              <div className={styles.heroCardLines}>
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={styles.heroCardLine}
-                    style={{ width: `${60 + Math.sin(i) * 30}%` }}
-                  />
-                ))}
-              </div>
-              <div className={styles.heroCardBadge}>
-                ✦ Trusted by 2,400+ homes
-              </div>
+
+            {/* CHOOSE YOUR PATH */}
+            <div className={styles.pathGrid}>
+              {paths.map((path) => (
+                <article
+                  key={path.id}
+                  className={`${styles.pathCard} ${styles[`pathCard--${path.variant}`]}`}
+                  aria-labelledby={`path-${path.id}`}
+                >
+                  <span className={styles.pathNumber} aria-hidden="true">
+                    {path.num}
+                  </span>
+                  <div className={styles.pathTop}>
+                    <span className={styles.pathIcon} aria-hidden="true">
+                      {path.icon}
+                    </span>
+                    <span className={styles.pathBadge}>{path.badge}</span>
+                  </div>
+                  <h2 id={`path-${path.id}`} className={styles.pathTitle}>
+                    {path.title}
+                  </h2>
+                  <p className={styles.pathDesc}>{path.description}</p>
+
+                  <ul className={styles.pathBullets}>
+                    {path.bullets.map((bullet) => (
+                      <li key={bullet} className={styles.pathBulletItem}>
+                        <span aria-hidden="true">✓</span>
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className={styles.pathChips}>
+                    {path.chips.map((chip) => (
+                      <Link
+                        key={chip.label}
+                        href={chip.href}
+                        className={styles.pathChip}
+                      >
+                        <span aria-hidden="true">{chip.icon}</span>
+                        {chip.label}
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className={styles.pathFooter}>
+                    <Link href={path.ctaHref} className={styles.pathCta}>
+                      {path.ctaLabel} <span aria-hidden="true">→</span>
+                    </Link>
+                    <p className={styles.pathProof}>{path.proof}</p>
+                  </div>
+                </article>
+              ))}
+              <span className={styles.pathOr} aria-hidden="true">
+                or
+              </span>
             </div>
+
+            <a href="#services" className={styles.heroScroll}>
+              Explore all services <span aria-hidden="true">↓</span>
+            </a>
           </div>
           <div className={styles.heroDivider} aria-hidden="true" />
         </section>
 
-        {/* CHOOSE YOUR PATH */}
-        <section className={styles.pathSection}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionEyebrow}>Two Ways to Shop</span>
-            <h2 className={styles.sectionTitle}>
-              How Would You Like to <em>Start?</em>
-            </h2>
-            <p className={styles.sectionSub}>
-              Hiring a vendor for a full project, or furnishing a room with
-              pieces you can buy today — pick your path below.
-            </p>
-          </div>
-
-          <div className={styles.pathGrid}>
-            {paths.map((path) => (
-              <article
-                key={path.id}
-                className={`${styles.pathCard} ${styles[`pathCard--${path.variant}`]}`}
-              >
-                <span className={styles.pathBadge}>{path.badge}</span>
-                <span className={styles.pathIcon} aria-hidden="true">
-                  {path.icon}
+        {/* PROMISES */}
+        <section
+          className={styles.promiseBar}
+          id="about"
+          aria-label="Why Go Renovate"
+        >
+          <ul className={styles.promiseInner}>
+            {promises.map((item) => (
+              <li key={item.title} className={styles.promiseItem}>
+                <span className={styles.promiseIcon} aria-hidden="true">
+                  {item.icon}
                 </span>
-                <h3 className={styles.pathTitle}>{path.title}</h3>
-                <p className={styles.pathDesc}>{path.description}</p>
-
-                <ul className={styles.pathBullets}>
-                  {path.bullets.map((bullet) => (
-                    <li key={bullet} className={styles.pathBulletItem}>
-                      <span aria-hidden="true">✓</span>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className={styles.pathChips}>
-                  {path.chips.map((chip) => (
-                    <Link
-                      key={chip.label}
-                      href={chip.href}
-                      className={styles.pathChip}
-                    >
-                      <span aria-hidden="true">{chip.icon}</span>
-                      {chip.label}
-                    </Link>
-                  ))}
+                <div>
+                  <strong className={styles.promiseTitle}>{item.title}</strong>
+                  <span className={styles.promiseText}>{item.text}</span>
                 </div>
-
-                <div className={styles.pathFooter}>
-                  <Link href={path.ctaHref} className={styles.pathCta}>
-                    {path.ctaLabel} →
-                  </Link>
-                  <p className={styles.pathProof}>{path.proof}</p>
-                </div>
-              </article>
+              </li>
             ))}
-          </div>
-        </section>
-
-        {/* STATS */}
-        <section className={styles.statsBar} id="about">
-          <div className={styles.statsInner}>
-            {stats.map((s) => (
-              <div key={s.label} className={styles.statItem}>
-                <span className={styles.statValue}>{s.value}</span>
-                <span className={styles.statLabel}>{s.label}</span>
-              </div>
-            ))}
-          </div>
+          </ul>
         </section>
 
         {/* SERVICES */}
@@ -393,8 +395,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className={styles.categoryGrid}>
-            {categories.map((cat) => (
+          <div className={styles.bentoGrid}>
+            {categories.map((cat, index) => (
               <Link
                 href={
                   cat.categoryId
@@ -402,18 +404,38 @@ export default function HomePage() {
                     : "/vendors"
                 }
                 key={cat.id}
-                className={styles.categoryCard}
+                className={`${styles.bentoCard} ${
+                  cat.layout ? styles[`bentoCard--${cat.layout}`] : ""
+                }`}
               >
-                {cat.tag && <span className={styles.cardTag}>{cat.tag}</span>}
-                <span className={styles.cardIcon} aria-hidden="true">
-                  {cat.icon}
+                <div className={styles.bentoTop}>
+                  <span className={styles.bentoIcon} aria-hidden="true">
+                    {cat.icon}
+                  </span>
+                  {cat.tag && (
+                    <span className={styles.bentoTag}>{cat.tag}</span>
+                  )}
+                </div>
+                <div className={styles.bentoBody}>
+                  <span className={styles.bentoIndex} aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className={styles.bentoTitle}>{cat.title}</h3>
+                  <p className={styles.bentoDesc}>{cat.description}</p>
+                </div>
+                <span className={styles.bentoArrow} aria-hidden="true">
+                  →
                 </span>
-                <h3 className={styles.cardTitle}>{cat.title}</h3>
-                <p className={styles.cardDesc}>{cat.description}</p>
-                <span className={styles.cardArrow}>→</span>
               </Link>
             ))}
           </div>
+
+          <p className={styles.servicesFoot}>
+            Not sure where to start?{" "}
+            <Link href="/vendors" className={styles.servicesFootLink}>
+              Browse all vendors →
+            </Link>
+          </p>
         </section>
 
         {/* SHOP BY ROOM */}
@@ -429,22 +451,38 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className={styles.categoryGrid}>
-            {rooms.map((room) => (
+          <div className={`${styles.bentoGrid} ${styles.roomGrid}`}>
+            {rooms.map((room, index) => (
               <Link
                 href={`/roomCategory/${room.slug}`}
                 key={room.slug}
-                className={styles.categoryCard}
+                className={`${styles.bentoCard} ${styles["bentoCard--room"]}`}
               >
-                <span className={styles.cardIcon} aria-hidden="true">
-                  {room.icon}
+                <div className={styles.bentoTop}>
+                  <span className={styles.bentoIcon} aria-hidden="true">
+                    {room.icon}
+                  </span>
+                </div>
+                <div className={styles.bentoBody}>
+                  <span className={styles.bentoIndex} aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className={styles.bentoTitle}>{room.title}</h3>
+                  <p className={styles.bentoDesc}>{room.description}</p>
+                </div>
+                <span className={styles.bentoArrow} aria-hidden="true">
+                  →
                 </span>
-                <h3 className={styles.cardTitle}>{room.title}</h3>
-                <p className={styles.cardDesc}>{room.description}</p>
-                <span className={styles.cardArrow}>→</span>
               </Link>
             ))}
           </div>
+
+          <p className={styles.servicesFoot}>
+            Want to see every bundle?{" "}
+            <Link href="/roomCategory" className={styles.servicesFootLink}>
+              Browse all rooms →
+            </Link>
+          </p>
         </section>
 
         {/* PROCESS */}
@@ -460,7 +498,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className={styles.processTrack}>
+          <div
+            className={`${styles.processTrack} ${styles["processTrack--renovate"]}`}
+          >
             <h3 className={styles.processTrackTitle}>
               <span aria-hidden="true">🔧</span> Renovate a Space
             </h3>
@@ -475,7 +515,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className={styles.processTrack}>
+          <div
+            className={`${styles.processTrack} ${styles["processTrack--rooms"]}`}
+          >
             <h3 className={styles.processTrackTitle}>
               <span aria-hidden="true">🛋️</span> Shop by Room
             </h3>
@@ -491,50 +533,85 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section className={styles.testimonials} id="testimonials">
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionEyebrow}>Client Stories</span>
+        {/* FAQ */}
+        <section className={styles.faq} id="faq">
+          <div className={styles.faqIntro}>
+            <span className={styles.sectionEyebrow}>Good to Know</span>
             <h2 className={styles.sectionTitle}>
-              Homes Weve <em>Transformed</em>
+              Questions, <em>Answered</em>
             </h2>
+            <p className={styles.faqSub}>
+              Still stuck? Write to{" "}
+              <a href="mailto:hello@gorenovate.in" className={styles.faqLink}>
+                hello@gorenovate.in
+              </a>
+              .
+            </p>
           </div>
-          <div className={styles.testimonialsGrid}>
-            {testimonials.map((t) => (
-              <div key={t.name} className={styles.testimonialCard}>
-                <div className={styles.testimonialStars}>
-                  {"★".repeat(t.rating)}
-                </div>
-                <p className={styles.testimonialQuote}>{`"${t.quote}"`}</p>
-                <div className={styles.testimonialAuthor}>
-                  <span className={styles.testimonialAvatar}>{t.name[0]}</span>
-                  <div>
-                    <strong>{t.name}</strong>
-                    <span>{t.location}</span>
-                  </div>
-                </div>
-              </div>
+          <div className={styles.faqList}>
+            {faqs.map((item) => (
+              <details key={item.q} className={styles.faqItem}>
+                <summary className={styles.faqQuestion}>{item.q}</summary>
+                <p className={styles.faqAnswer}>{item.a}</p>
+              </details>
             ))}
           </div>
         </section>
 
+        {/* FOR VENDORS */}
+        <section className={styles.vendorSection} id="vendors">
+          <div className={styles.vendorPanel}>
+            <div className={styles.vendorCopy}>
+              <span className={styles.sectionEyebrow}>For Vendors</span>
+              <h2 className={styles.vendorTitle}>
+                Run a home business? <em>Get found.</em>
+              </h2>
+              <p className={styles.vendorSub}>
+                List your services or products where homeowners are already
+                planning their next project.
+              </p>
+              <a
+                href="mailto:hello@gorenovate.in?subject=List%20my%20business"
+                className={styles.ctaButton}
+              >
+                List Your Business
+              </a>
+            </div>
+            <ul className={styles.vendorPoints}>
+              <li>
+                <span aria-hidden="true">✓</span>
+                Reach customers browsing by service and by room
+              </li>
+              <li>
+                <span aria-hidden="true">✓</span>
+                Itemised listings, so customers know exactly what they&apos;re
+                booking
+              </li>
+              <li>
+                <span aria-hidden="true">✓</span>
+                Orders and tracking handled in one place
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {/* CTA BANNER */}
-        <section className={styles.ctaBanner} id="estimate">
+        <section className={styles.ctaBanner}>
           <div className={styles.ctaBannerInner}>
             <span className={styles.ctaBannerEyebrow}>Ready to Begin?</span>
             <h2 className={styles.ctaBannerTitle}>
-              Lets Build Something <em>Beautiful</em>
+              Let&apos;s Build Something <em>Beautiful</em>
             </h2>
             <p className={styles.ctaBannerSub}>
-              Get a free, no-obligation estimate tailored to your space and
-              goals. Most projects get back to you within 24 hours.
+              Hire a vendor for your next project, or furnish a room with
+              pieces you can buy today. Pick a path and get started.
             </p>
             <div className={styles.ctaBannerActions}>
-              <Link href="#contact" className={styles.ctaButton}>
-                Get Your Free Estimate
+              <Link href="/vendors" className={styles.ctaButton}>
+                Browse Vendors
               </Link>
               <Link href="/roomCategory" className={styles.ctaBannerGhostButton}>
-                Browse Rooms →
+                Shop by Room →
               </Link>
             </div>
           </div>
@@ -550,7 +627,7 @@ export default function HomePage() {
               <span className={styles.logoText}>Gorenovate</span>
             </Link>
             <p className={styles.footerTagline}>
-              Crafting beautiful homes across India since 2012.
+              Home renovation and home essentials, from vetted vendors.
             </p>
           </div>
           <div className={styles.footerLinks}>
@@ -572,7 +649,8 @@ export default function HomePage() {
             <div className={styles.footerCol}>
               <h3>Company</h3>
               <a href="#about">About Us</a>
-              <a href="#work">Our Work</a>
+              <a href="#work">How It Works</a>
+              <a href="#faq">FAQ</a>
               {/* No destination page yet — plain (non-href) so it doesn't
                   present as a broken link to keyboard/screen-reader users. */}
               <a>Careers</a>
@@ -581,14 +659,13 @@ export default function HomePage() {
             <div className={styles.footerCol}>
               <h3>Contact</h3>
               <a href="mailto:hello@gorenovate.in">hello@gorenovate.in</a>
-              <a href="tel:+918000000000">+91 80 0000 0000</a>
               <a>Bengaluru, India</a>
             </div>
           </div>
         </div>
         <div className={styles.footerBottom}>
           <span>
-            © {new Date().getFullYear()} Gorenovate All rights reserved.
+            © {new Date().getFullYear()} Gorenovate. All rights reserved.
           </span>
           <div className={styles.footerLegal}>
             <a>Privacy Policy</a>

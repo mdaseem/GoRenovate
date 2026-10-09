@@ -21,7 +21,8 @@
   --shadow-lg: 0 12px 48px rgba(13, 26, 13, 0.13);
 
   --max-w: 1200px;
-  --section-pad: clamp(60px, 8vw, 120px);
+  --section-pad: clamp(56px, 7vw, 104px);
+  --section-header-gap: clamp(32px, 4vw, 56px);
 
   font-family: var(--font-body);
   background-color: var(--color-bg);
@@ -59,13 +60,11 @@
   letter-spacing: -0.02em;
 }
 
+/* ── HERO ────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: clamp(560px, 80vh, 820px);
-  display: flex;
-  align-items: center;
   overflow: hidden;
-  padding: 80px 24px;
+  padding: clamp(48px, 6vw, 80px) 24px clamp(56px, 7vw, 96px);
 }
 
 .heroTexture {
@@ -73,33 +72,38 @@
   inset: 0;
   background:
     radial-gradient(
-      ellipse 70% 60% at 80% 50%,
-      rgba(7, 226, 7, 0.08) 0%,
+      ellipse 60% 50% at 85% 20%,
+      rgba(7, 226, 7, 0.12) 0%,
       transparent 70%
     ),
     radial-gradient(
-      ellipse 50% 80% at 20% 80%,
-      rgba(7, 226, 7, 0.05) 0%,
+      ellipse 50% 60% at 10% 90%,
+      rgba(7, 226, 7, 0.08) 0%,
       transparent 70%
     ),
     url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%2307e207' fill-opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
 }
 
-.heroContent {
+.heroInner {
   position: relative;
   max-width: var(--max-w);
   margin: 0 auto;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: clamp(32px, 4vw, 52px);
+}
+
+.heroIntro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
 }
 
 .heroPill {
-  grid-column: 1;
-  grid-row: 1;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -111,15 +115,13 @@
   text-transform: uppercase;
   padding: 6px 14px;
   border-radius: 100px;
-  width: fit-content;
+  margin: 0;
   animation: fadeUp 0.6s ease both;
 }
 
 .heroHeading {
-  grid-column: 1;
-  grid-row: 2;
   font-family: var(--font-display);
-  font-size: clamp(48px, 6vw, 80px);
+  font-size: clamp(40px, 6vw, 76px);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -134,89 +136,37 @@
 }
 
 .heroSub {
-  grid-column: 1;
-  grid-row: 3;
-  font-size: 17px;
+  font-size: clamp(15px, 1.6vw, 18px);
   line-height: 1.7;
   color: var(--color-text-muted);
-  max-width: 440px;
+  max-width: 560px;
   margin: 0;
   animation: fadeUp 0.6s 0.2s ease both;
 }
 
-.heroActions {
-  grid-column: 1;
-  grid-row: 4;
-  display: flex;
+.heroScroll {
+  display: inline-flex;
   align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  animation: fadeUp 0.6s 0.3s ease both;
-}
-
-.heroVisual {
-  grid-column: 2;
-  grid-row: 1 / 5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.8s 0.2s ease both;
-}
-
-.heroCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  padding: 32px;
-  width: 100%;
-  max-width: 380px;
-  box-shadow: var(--shadow-lg);
-}
-
-.heroCardTop {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.heroCardDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-border);
-}
-
-.heroCardDot:first-child {
-  background: #ff6b6b;
-}
-.heroCardDot:nth-child(2) {
-  background: #ffd93d;
-}
-.heroCardDot:last-child {
-  background: #6bcb77;
-}
-
-.heroCardLines {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 28px;
-}
-
-.heroCardLine {
-  height: 10px;
-  background: var(--color-surface-alt);
-  border-radius: 100px;
-}
-
-.heroCardBadge {
-  background: var(--color-accent-light);
-  color: var(--color-accent);
-  font-size: 12px;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 10px 16px;
-  border-radius: var(--radius-md);
-  text-align: center;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-border);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.heroScroll:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+
+.heroScroll:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 4px;
 }
 
 .heroDivider {
@@ -235,7 +185,9 @@
 
 /* ── BUTTONS ─────────────────────────────────────────────── */
 .ctaButton {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
   padding: 14px 30px;
   background: var(--color-accent);
   color: #0d1a0d;
@@ -250,76 +202,70 @@
   box-shadow: 0 4px 16px rgba(7, 226, 7, 0.3);
 }
 
+.ctaButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 .ctaButton:hover {
   background: var(--color-accent-dark);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(7, 226, 7, 0.35);
 }
 
-.ghostButton {
-  display: inline-block;
-  padding: 14px 4px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-text);
-  text-decoration: none;
-  border-bottom: 2px solid var(--color-border);
-  transition:
-    color 0.2s,
-    border-color 0.2s;
-}
-
-.ghostButton:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-/* ── STATS BAR ───────────────────────────────────────────── */
-.statsBar {
+/* ── PROMISE BAR ─────────────────────────────────────────── */
+.promiseBar {
   background: var(--color-dark);
-  padding: 40px 24px;
+  padding: 32px 24px;
 }
 
-.statsInner {
+.promiseInner {
   max-width: var(--max-w);
   margin: 0 auto;
+  padding: 0;
+  list-style: none;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  gap: 24px;
 }
 
-.statItem {
+.promiseItem {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 20px;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: flex-start;
+  gap: 14px;
 }
 
-.statItem:last-child {
-  border-right: none;
+.promiseIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
 }
 
-.statValue {
+.promiseTitle {
+  display: block;
   font-family: var(--font-display);
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-weight: 700;
-  color: var(--color-accent);
-  line-height: 1;
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
 }
 
-.statLabel {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.55);
-  font-weight: 400;
-  text-align: center;
+.promiseText {
+  display: block;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ── SECTION COMMON ─────────────────────────────────────── */
 .sectionHeader {
   text-align: center;
-  margin-bottom: 56px;
+  margin-bottom: var(--section-header-gap);
 }
 
 .sectionEyebrow {
@@ -357,165 +303,149 @@
 
 /* ── SERVICES GRID ──────────────────────────────────────── */
 .services {
-  padding: var(--section-pad) 24px;
+  padding: var(--section-pad) 24px 0;
   max-width: var(--max-w);
   margin: 0 auto;
 }
 
-.categoryGrid {
+/* ── SERVICES BENTO ──────────────────────────────────────── */
+.bentoGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(210px, auto);
+  grid-auto-flow: dense;
+  gap: 16px;
 }
 
-.categoryCard {
+.bentoCard {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 28px 28px 24px;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  color: var(--color-text);
   text-decoration: none;
-  color: inherit;
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
   overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
-.categoryCard::before {
+.bentoCard::before {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: -1;
   background: linear-gradient(
-    135deg,
+    145deg,
     var(--color-accent-light),
-    transparent 60%
+    transparent 70%
   );
   opacity: 0;
   transition: opacity 0.3s ease;
-  border-radius: inherit;
 }
 
-.categoryCard:hover {
+.bentoCard:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--color-accent);
 }
 
-.categoryCard:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.categoryCard:hover::before {
+.bentoCard:hover::before {
   opacity: 1;
 }
 
-.categoryCard:hover .cardArrow {
+.bentoCard:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 3px;
+}
+
+.bentoCard--feature {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 36px;
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+  color: #fff;
+}
+
+.bentoCard--feature::before {
+  background: radial-gradient(
+    ellipse 80% 70% at 100% 100%,
+    rgba(7, 226, 7, 0.28),
+    transparent 70%
+  );
   opacity: 1;
-  transform: translate(2px, 0);
 }
 
-.cardTag {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: var(--color-accent);
-  color: #0d1a0d;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 100px;
-}
-
-.cardIcon {
-  font-size: 32px;
-  line-height: 1;
-  position: relative;
-}
-
-.cardTitle {
-  font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--color-text);
-  margin: 4px 0 0;
-  position: relative;
-}
-
-.cardDesc {
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: var(--color-text-muted);
-  margin: 0;
-  position: relative;
-}
-
-.cardArrow {
-  font-size: 18px;
-  color: var(--color-accent);
-  margin-top: auto;
-  opacity: 0;
-  transition:
-    opacity 0.2s,
-    transform 0.2s;
-  position: relative;
-}
-
-/* ── CHOOSE YOUR PATH ────────────────────────────────────── */
-.pathSection {
-  padding: var(--section-pad) 24px;
-  max-width: var(--max-w);
-  margin: 0 auto;
-}
-
-.pathGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
-}
-
-.pathCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 40px 36px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
-}
-
-.pathCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-accent);
-}
-
-.pathCard--rooms {
+.bentoCard--wide {
+  grid-column: span 2;
   background: linear-gradient(
-    165deg,
-    var(--color-surface-alt) 0%,
-    var(--color-surface) 45%
+    120deg,
+    var(--color-accent-light),
+    var(--color-surface) 75%
   );
 }
 
-.pathBadge {
-  position: absolute;
-  top: 24px;
-  right: 24px;
+.roomGrid {
+  grid-auto-rows: minmax(240px, auto);
+}
+
+.bentoCard--room {
+  background: linear-gradient(
+    160deg,
+    var(--color-accent-light),
+    var(--color-surface) 80%
+  );
+  border-color: var(--color-accent);
+}
+
+.bentoCard--room .bentoIcon {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.bentoTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bentoIcon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  font-size: 28px;
+  line-height: 1;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-md);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.bentoCard:hover .bentoIcon {
+  background: var(--color-accent);
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.bentoCard--feature .bentoIcon {
+  width: 88px;
+  height: 88px;
+  font-size: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+.bentoTag {
   background: var(--color-accent);
   color: #0d1a0d;
   font-size: 10px;
@@ -524,27 +454,305 @@
   text-transform: uppercase;
   padding: 5px 12px;
   border-radius: 100px;
+  white-space: nowrap;
+}
+
+.bentoBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 48px;
+}
+
+.bentoIndex {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--color-accent-dark);
+}
+
+.bentoCard--feature .bentoIndex {
+  color: var(--color-accent);
+}
+
+.bentoTitle {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.bentoCard--feature .bentoTitle {
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 700;
+  color: #fff;
+}
+
+.bentoDesc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.bentoCard--room .bentoTitle {
+  font-size: 22px;
+}
+
+.bentoCard--feature .bentoDesc {
+  font-size: 15.5px;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 340px;
+}
+
+.bentoArrow {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.bentoCard--feature .bentoArrow {
+  right: 28px;
+  bottom: 28px;
+  width: 52px;
+  height: 52px;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.bentoCard:hover .bentoArrow {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #0d1a0d;
+  transform: translateX(3px);
+}
+
+.servicesFoot {
+  margin: 32px 0 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.servicesFootLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.servicesFootLink:hover {
+  color: var(--color-accent-dark);
+}
+
+.servicesFootLink:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bentoCard,
+  .bentoIcon,
+  .bentoArrow {
+    transition: none;
+  }
+
+  .bentoCard:hover,
+  .bentoCard:hover .bentoIcon,
+  .bentoCard:hover .bentoArrow {
+    transform: none;
+  }
+}
+
+/* ── CHOOSE YOUR PATH (hero fork) ────────────────────────── */
+.pathGrid {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: fadeUp 0.7s 0.3s ease both;
+}
+
+/* Desktop only: the hovered / focused path grows, the other recedes. */
+@media (min-width: 1025px) {
+  .pathGrid:has(.pathCard--renovate:hover),
+  .pathGrid:has(.pathCard--renovate:focus-within) {
+    grid-template-columns: 1.22fr 1fr;
+  }
+
+  .pathGrid:has(.pathCard--rooms:hover),
+  .pathGrid:has(.pathCard--rooms:focus-within) {
+    grid-template-columns: 1fr 1.22fr;
+  }
+}
+
+.pathCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(28px, 3.5vw, 44px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.pathCard:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Path 01 — dark, confident "hire a pro" */
+.pathCard--renovate {
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+  color: #fff;
+}
+
+.pathCard--renovate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse 70% 60% at 100% 0%,
+    rgba(7, 226, 7, 0.22),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Path 02 — bright, airy "shop the room" */
+.pathCard--rooms {
+  background: linear-gradient(
+    160deg,
+    var(--color-accent-light) 0%,
+    var(--color-surface) 70%
+  );
+  border-color: var(--color-accent);
+}
+
+/* Oversized ghost numeral */
+.pathNumber {
+  position: absolute;
+  right: 24px;
+  bottom: -28px;
+  z-index: -1;
+  font-family: var(--font-display);
+  font-size: clamp(140px, 16vw, 220px);
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pathCard--renovate .pathNumber {
+  color: rgba(255, 255, 255, 0.05);
+}
+
+.pathCard--rooms .pathNumber {
+  color: rgba(7, 226, 7, 0.14);
+}
+
+.pathTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .pathIcon {
-  font-size: 40px;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  font-size: 32px;
   line-height: 1;
+  border-radius: var(--radius-lg);
+  transition: transform 0.3s ease;
+}
+
+.pathCard--renovate .pathIcon {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pathCard--rooms .pathIcon {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.pathCard:hover .pathIcon {
+  transform: rotate(-6deg) scale(1.08);
+}
+
+.pathBadge {
+  background: var(--color-accent);
+  color: #0d1a0d;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
 }
 
 .pathTitle {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: clamp(30px, 3.4vw, 44px);
   font-weight: 700;
-  letter-spacing: -0.015em;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 4px 0 0;
+}
+
+.pathCard--renovate .pathTitle {
+  color: #fff;
+}
+
+.pathCard--rooms .pathTitle {
   color: var(--color-text);
-  margin: 0;
 }
 
 .pathDesc {
-  font-size: 15px;
+  font-size: 15.5px;
   line-height: 1.7;
-  color: var(--color-text-muted);
   margin: 0;
+  max-width: 520px;
+}
+
+.pathCard--renovate .pathDesc {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.pathCard--rooms .pathDesc {
+  color: var(--color-text-muted);
 }
 
 .pathBullets {
@@ -560,17 +768,34 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 14px;
+  font-size: 14.5px;
+}
+
+.pathCard--renovate .pathBulletItem {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.pathCard--rooms .pathBulletItem {
   color: var(--color-text);
 }
 
 .pathBulletItem span {
-  color: var(--color-accent-dark);
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  font-size: 11px;
   font-weight: 700;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #0d1a0d;
   flex-shrink: 0;
 }
 
 .pathChips {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -581,106 +806,219 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 14px;
-  min-height: 40px;
-  background: var(--color-accent-light);
-  color: var(--color-accent-dark);
-  font-size: 13px;
+  padding: 9px 16px;
+  min-height: 44px;
+  font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
   border-radius: 100px;
   transition:
     background 0.2s,
-    color 0.2s;
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.pathCard--renovate .pathChip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.pathCard--rooms .pathChip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .pathChip:hover {
   background: var(--color-accent);
+  border-color: var(--color-accent);
   color: #0d1a0d;
 }
 
 .pathChip:focus-visible {
-  outline: 2px solid var(--color-accent-dark);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
 .pathFooter {
   margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid var(--color-border);
+  padding-top: 22px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pathCard--renovate .pathFooter {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pathCard--rooms .pathFooter {
+  border-top: 1px solid var(--color-border);
 }
 
 .pathCta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 26px;
+  gap: 8px;
+  min-height: 48px;
+  padding: 14px 28px;
   background: var(--color-accent);
   color: #0d1a0d;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   border-radius: var(--radius-md);
-  width: fit-content;
+  box-shadow: 0 4px 16px rgba(7, 226, 7, 0.3);
   transition:
     background 0.2s,
     transform 0.15s,
     box-shadow 0.2s;
-  box-shadow: 0 4px 16px rgba(7, 226, 7, 0.25);
 }
 
-.pathCta:hover {
+/* Stretched link: the whole card is clickable; chips sit above it. */
+.pathCta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.pathCard:hover .pathCta {
   background: var(--color-accent-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(7, 226, 7, 0.3);
+  box-shadow: 0 8px 24px rgba(7, 226, 7, 0.35);
 }
 
 .pathCta:focus-visible {
-  outline: 2px solid var(--color-accent-dark);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 .pathProof {
   font-size: 12.5px;
-  color: var(--color-text-muted);
   margin: 0;
 }
 
+.pathCard--renovate .pathProof {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pathCard--rooms .pathProof {
+  color: var(--color-text-muted);
+}
+
+/* "or" medallion where the two paths meet */
+.pathOr {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  transition: left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1025px) {
+  .pathGrid:has(.pathCard--renovate:hover) .pathOr,
+  .pathGrid:has(.pathCard--renovate:focus-within) .pathOr {
+    left: 55%;
+  }
+
+  .pathGrid:has(.pathCard--rooms:hover) .pathOr,
+  .pathGrid:has(.pathCard--rooms:focus-within) .pathOr {
+    left: 45%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pathGrid,
+  .pathOr,
+  .pathCard,
+  .pathIcon {
+    transition: none;
+  }
+
+  .pathGrid,
+  .heroPill,
+  .heroHeading,
+  .heroSub {
+    animation: none;
+  }
+
+  .pathCard:hover {
+    transform: none;
+  }
+}
+
+
 /* ── PROCESS ─────────────────────────────────────────────── */
 .process {
-  background: var(--color-surface-alt);
-  padding: var(--section-pad) 24px;
+  padding: var(--section-pad) 24px 0;
 }
 
 .processTrack {
   max-width: var(--max-w);
-  margin: 0 auto 56px;
+  margin: 0 auto 28px;
+  padding: clamp(28px, 4vw, 48px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
 }
 
 .processTrack:last-child {
   margin-bottom: 0;
 }
 
+.processTrack--renovate {
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+}
+
+.processTrack--rooms {
+  background: linear-gradient(
+    160deg,
+    var(--color-accent-light),
+    var(--color-surface) 80%
+  );
+  border-color: var(--color-accent);
+}
+
 .processTrackTitle {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 12px;
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--color-text);
-  text-align: center;
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
   margin: 0 0 28px;
+}
+
+.processTrack--renovate .processTrackTitle {
+  color: #fff;
+}
+
+.processTrack--rooms .processTrackTitle {
+  color: var(--color-text);
 }
 
 .processSteps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
+  gap: 16px;
 }
 
 .processStepsThree {
@@ -688,120 +1026,299 @@
 }
 
 .processCard {
-  background: var(--color-surface);
-  padding: 36px 30px;
-  border-radius: var(--radius-md);
   position: relative;
+  padding: 28px 24px;
+  border-radius: var(--radius-lg);
+}
+
+.processTrack--renovate .processCard {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.processTrack--rooms .processCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .processCard:not(:last-child)::after {
   content: "→";
   position: absolute;
-  right: -16px;
+  right: -17px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
-  color: var(--color-accent);
   z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  font-size: 16px;
+  color: var(--color-accent);
 }
 
 .processStep {
   display: block;
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: 44px;
+  font-style: italic;
   font-weight: 700;
-  color: var(--color-accent-light);
   line-height: 1;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+.processTrack--renovate .processStep {
+  color: var(--color-accent);
+}
+
+.processTrack--rooms .processStep {
+  color: var(--color-accent-dark);
 }
 
 .processTitle {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.processTrack--renovate .processTitle {
+  color: #fff;
+}
+
+.processTrack--rooms .processTitle {
   color: var(--color-text);
-  margin: 0 0 12px;
 }
 
 .processDesc {
   font-size: 14px;
   line-height: 1.65;
+  margin: 0;
+}
+
+.processTrack--renovate .processDesc {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.processTrack--rooms .processDesc {
+  color: var(--color-text-muted);
+}
+
+/* ── FAQ ─────────────────────────────────────────────────── */
+.faq {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: var(--section-pad) 24px 0;
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: start;
+}
+
+.faqIntro {
+  position: sticky;
+  top: calc(var(--site-header-height, 0px) + 24px);
+}
+
+.faq .sectionTitle {
+  margin-bottom: 16px;
+}
+
+.faqSub {
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--color-text-muted);
   margin: 0;
 }
 
-/* ── TESTIMONIALS ────────────────────────────────────────── */
-.testimonials {
-  padding: var(--section-pad) 24px;
-  max-width: var(--max-w);
-  margin: 0 auto;
-}
-
-.testimonialsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.testimonialCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transition: box-shadow 0.2s;
-}
-
-.testimonialCard:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.testimonialStars {
-  color: #e8a838;
-  font-size: 16px;
-  letter-spacing: 2px;
-}
-
-.testimonialQuote {
-  font-size: 15px;
-  line-height: 1.7;
+.faqLink {
   color: var(--color-text);
-  margin: 0;
-  font-style: italic;
-}
-
-.testimonialAuthor {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: auto;
-}
-
-.testimonialAvatar {
-  width: 40px;
-  height: 40px;
-  background: var(--color-accent-light);
-  color: var(--color-accent);
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-.testimonialAuthor strong {
-  display: block;
-  font-size: 14px;
   font-weight: 600;
 }
 
-.testimonialAuthor span {
-  display: block;
-  font-size: 12px;
+.faqLink:hover {
+  color: var(--color-accent-dark);
+}
+
+.faqLink:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 2px;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faqItem {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.faqItem:hover,
+.faqItem[open] {
+  border-color: var(--color-accent);
+}
+
+.faqItem[open] {
+  box-shadow: var(--shadow-md);
+}
+
+.faqQuestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  padding: 16px 24px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text);
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius-lg);
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none;
+}
+
+.faqQuestion::after {
+  content: "+";
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-text);
+  background: var(--color-accent-light);
+  border-radius: 50%;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.faqItem[open] .faqQuestion::after {
+  content: "−";
+  background: var(--color-accent);
+  transform: rotate(180deg);
+}
+
+.faqQuestion:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 2px;
+}
+
+.faqAnswer {
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--color-text-muted);
+  margin: 0;
+  padding: 0 24px 22px;
+  max-width: 62ch;
+}
+
+/* ── FOR VENDORS ─────────────────────────────────────────── */
+.vendorSection {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: var(--section-pad) 24px;
+}
+
+.vendorPanel {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+  padding: clamp(28px, 5vw, 60px);
+  background: linear-gradient(
+    150deg,
+    var(--color-accent-light),
+    var(--color-surface) 85%
+  );
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-xl);
+}
+
+.vendorCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.vendorTitle {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.6vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  margin: 0 0 14px;
+}
+
+.vendorTitle em {
+  font-style: italic;
+  color: var(--color-accent-dark);
+}
+
+.vendorSub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  max-width: 440px;
+  margin: 0 0 24px;
+}
+
+.vendorPoints {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vendorPoints li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.vendorPoints li span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0d1a0d;
+  background: var(--color-accent);
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faqItem,
+  .faqQuestion::after {
+    transition: none;
+  }
 }
 
 /* ── CTA BANNER ──────────────────────────────────────────── */
@@ -871,11 +1388,7 @@
   flex-wrap: wrap;
 }
 
-/* Dark-background counterpart to .ghostButton — that one's text/border
-   colors (--color-text, --color-border) are near-black and unreadable
-   against this section's dark backdrop, so this reuses the same
-   interaction language (underline, hover-to-accent) with light-on-dark
-   colors instead. */
+/* Light-on-dark underlined link for the dark CTA banner (hover-to-accent). */
 .ctaBannerGhostButton {
   display: inline-block;
   padding: 14px 4px;
@@ -960,6 +1473,12 @@
   transition: color 0.2s;
 }
 
+.footerCol a:focus-visible,
+.footerLegal a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .footerCol a:hover {
   color: #fff;
 }
@@ -1013,8 +1532,24 @@
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
+  .bentoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bentoCard--feature {
+    grid-row: span 1;
+  }
+
+  .bentoCard--wide {
+    grid-column: span 1;
+  }
+
   .pathGrid {
     grid-template-columns: 1fr;
+  }
+
+  .pathOr {
+    display: none;
   }
 
   .processSteps {
@@ -1024,6 +1559,19 @@
   .processCard:nth-child(2)::after,
   .processCard:last-child::after {
     display: none;
+  }
+
+  .promiseInner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .faq,
+  .vendorPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .faqIntro {
+    position: static;
   }
 
   .footerInner {
@@ -1036,50 +1584,12 @@
 }
 
 @media (max-width: 768px) {
-  .heroContent {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-
-  .heroVisual {
-    display: none;
-  }
-
-  .heroHeading,
-  .heroPill,
-  .heroSub,
-  .heroActions {
-    grid-column: 1;
-  }
-
-  .statsInner {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-  }
-
-  .statItem {
-    border-right: none;
-  }
-
-  .categoryGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-
-  .pathCard {
-    padding: 28px 24px;
-  }
-
   .processSteps {
     grid-template-columns: 1fr;
   }
 
   .processCard::after {
     display: none;
-  }
-
-  .testimonialsGrid {
-    grid-template-columns: 1fr;
   }
 
   .footerInner {
@@ -1094,12 +1604,394 @@
   }
 }
 
-@media (max-width: 480px) {
-  .categoryGrid {
+/* ── MOBILE (phones, down to 350px) ──────────────────────── */
+@media (max-width: 640px) {
+  .root {
+    overflow-x: clip;
+  }
+
+  /* Hero: compact so the first screen shows the heading AND a path. */
+  .hero {
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+
+  .heroInner {
+    gap: 28px;
+  }
+
+  .heroIntro {
+    gap: 14px;
+  }
+
+  .heroPill {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  .pathGrid {
+    gap: 16px;
+  }
+
+  .pathCard {
+    gap: 14px;
+    padding: 24px 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .pathCard:hover {
+    transform: none;
+  }
+
+  .pathNumber {
+    right: 12px;
+    bottom: -12px;
+    font-size: 120px;
+  }
+
+  .pathIcon {
+    width: 52px;
+    height: 52px;
+    font-size: 26px;
+  }
+
+  .pathBullets {
+    display: none;
+  }
+
+  /* 2×2 chip grid: big thumb-friendly targets instead of a ragged wrap. */
+  .pathChips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .pathChip {
+    justify-content: center;
+    padding: 9px 8px;
+  }
+
+  .pathFooter {
+    padding-top: 16px;
+  }
+
+  .pathCta {
+    width: 100%;
+  }
+
+  .heroScroll {
+    font-size: 13px;
+  }
+
+  /* Promise bar: 2×2 grid, icon over text. */
+  .promiseBar {
+    padding: 24px 16px;
+  }
+
+  .promiseInner {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 12px;
+  }
+
+  .promiseItem {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .promiseTitle {
+    font-size: 15px;
+  }
+
+  .promiseText {
+    font-size: 12.5px;
+  }
+
+  /* Bento: compact 2-column tiles instead of 11 tall stacked cards. */
+  .bentoGrid {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    gap: 10px;
+  }
+
+  .bentoCard {
+    gap: 14px;
+    min-height: 132px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .bentoCard:hover {
+    transform: none;
+  }
+
+  .bentoTop {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .bentoIcon {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+
+  .bentoBody {
+    padding-right: 28px;
+  }
+
+  .bentoTitle {
+    font-size: 16px;
+  }
+
+  .bentoDesc {
+    display: none;
+  }
+
+  .bentoArrow {
+    right: 10px;
+    bottom: 10px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .bentoCard--feature {
+    min-height: 220px;
+    padding: 22px 20px;
+  }
+
+  .bentoCard--feature .bentoIcon {
+    width: 64px;
+    height: 64px;
+    font-size: 32px;
+  }
+
+  .bentoCard--feature .bentoBody {
+    padding-right: 56px;
+  }
+
+  .bentoCard--feature .bentoTitle {
+    font-size: 26px;
+  }
+
+  .bentoCard--feature .bentoDesc {
+    display: block;
+    font-size: 14px;
+  }
+
+  .bentoCard--feature .bentoArrow {
+    right: 16px;
+    bottom: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  /* Rooms are only four, so their one-line pitch stays visible. */
+  .bentoCard--room {
+    min-height: 190px;
+  }
+
+  .bentoCard--room .bentoDesc {
+    display: block;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .bentoCard--room .bentoTitle {
+    font-size: 17px;
+  }
+
+  .servicesFoot {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  /* How it works: a vertical timeline instead of stacks of cards. */
+  .processTrack {
+    padding: 24px 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .processTrackTitle {
+    margin-bottom: 20px;
+  }
+
+  .processSteps,
+  .processStepsThree {
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .processCard {
+    padding: 0 0 24px 56px;
+    background: none;
+    border: 0;
+  }
+
+  .processTrack--renovate .processCard,
+  .processTrack--rooms .processCard {
+    background: none;
+    border: 0;
+  }
+
+  .processCard:last-child {
+    padding-bottom: 0;
+  }
+
+  .processCard:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 40px;
+    bottom: 4px;
+    left: 19px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--color-accent);
+    opacity: 0.45;
+  }
+
+  .processStep {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    font-size: 15px;
+    font-style: normal;
+    color: #0d1a0d;
+    background: var(--color-accent);
+    border-radius: 50%;
+  }
+
+  .processTrack--renovate .processStep,
+  .processTrack--rooms .processStep {
+    color: #0d1a0d;
+  }
+
+  .processTitle {
+    padding-top: 8px;
+    font-size: 18px;
+  }
+
+  /* FAQ */
+  .faq {
+    gap: 24px;
+  }
+
+  .faqQuestion {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .faqAnswer {
+    padding: 0 16px 18px;
+  }
+
+  /* Vendors */
+  .vendorPanel {
+    padding: 24px 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .vendorCopy .ctaButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .vendorPoints li {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  /* CTA banner: stacked full-width actions */
+  .ctaBannerActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ctaBannerActions .ctaButton {
+    justify-content: center;
+  }
+
+  .ctaBannerGhostButton {
+    text-align: center;
+    border-bottom: 0;
+    min-height: 48px;
+  }
+
+  /* Footer: keep link columns two-up rather than one long list. */
+  .footer {
+    padding-top: 48px;
   }
 
   .footerInner {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 16px;
   }
+
+  .footerCol a {
+    font-size: 13.5px;
+    overflow-wrap: anywhere;
+  }
+
+  .footerLegal {
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Narrow phones: tighter gutters so 350px has room to breathe. */
+@media (max-width: 480px) {
+  .hero,
+  .services,
+  .process,
+  .faq,
+  .vendorSection,
+  .ctaBanner,
+  .footer {
+    padding-inline: 16px;
+  }
+
+  .promiseBar {
+    padding-inline: 16px;
+  }
+
+  .heroHeading {
+    font-size: clamp(36px, 11.5vw, 44px);
+  }
+
+  .pathTitle {
+    font-size: 28px;
+  }
+
+  .sectionTitle {
+    font-size: clamp(28px, 8.5vw, 36px);
+  }
+
+  .bentoCard {
+    padding: 14px;
+  }
+
+  .bentoCard--feature {
+    padding: 20px 16px;
+  }
+}
+
+/* Keep in-page anchor targets (#services, #work, #about, ...) clear of the
+   sticky site header. */
+.promiseBar,
+.services,
+.process,
+.faq,
+.vendorSection,
+.ctaBanner,
+.footer {
+  scroll-margin-top: var(--site-header-height, 0px);
 }
