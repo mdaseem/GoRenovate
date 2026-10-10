@@ -584,10 +584,12 @@
 
 /* ── CHOOSE YOUR PATH (hero fork) ────────────────────────── */
 .pathGrid {
+  --path-pad: clamp(28px, 3.5vw, 44px);
+  container-type: inline-size;
   position: relative;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 24px;
   transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   animation: fadeUp 0.7s 0.3s ease both;
@@ -595,14 +597,22 @@
 
 /* Desktop only: the hovered / focused path grows, the other recedes. */
 @media (min-width: 1025px) {
+  .pathCard .pathTitle,
+  .pathCard .pathDesc,
+  .pathCard .pathBullets,
+  .pathCard .pathChips,
+  .pathCard .pathProof {
+    max-width: calc((100cqw - 24px) / 2.22 - 2 * var(--path-pad) - 2px);
+  }
+
   .pathGrid:has(.pathCard--renovate:hover),
   .pathGrid:has(.pathCard--renovate:focus-within) {
-    grid-template-columns: 1.22fr 1fr;
+    grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
   }
 
   .pathGrid:has(.pathCard--rooms:hover),
   .pathGrid:has(.pathCard--rooms:focus-within) {
-    grid-template-columns: 1fr 1.22fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.22fr);
   }
 }
 
@@ -611,7 +621,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: clamp(28px, 3.5vw, 44px);
+  padding: var(--path-pad);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -1545,7 +1555,7 @@
   }
 
   .pathGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .pathOr {

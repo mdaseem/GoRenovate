@@ -149,7 +149,7 @@ const paths = [
     icon: "🔧",
     title: "Renovate a Space",
     description:
-      "Hire vetted vendors directly for your project — pick services, compare transparent pricing, and book painting, flooring, kitchens & more.",
+      "Hire vetted vendors directly for your project — pick services, compare transparent pricing & more.",
     bullets: [
       "Compare verified vendors side-by-side",
       "Transparent, itemized pricing",

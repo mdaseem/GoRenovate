@@ -1,0 +1,88 @@
+.control {
+  margin: 0 0 14px;
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #278b2e;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 16px so iOS Safari doesn't zoom the page on focus. */
+.input {
+  box-sizing: border-box;
+  width: 96px;
+  min-height: 44px;
+  padding: 0 10px;
+  font-size: 16px;
+  color: #1a1f2e;
+  background: #fff;
+  border: 1px solid #d9d4c9;
+  border-radius: 10px;
+}
+
+.input:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.input[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+
+.unit {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.hint,
+.error {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+}
+
+.hint {
+  color: #6b7280;
+}
+
+.error {
+  color: #b3261e;
+}
+
+.reset {
+  min-height: 44px;
+  padding: 0 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #278b2e;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.reset:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}

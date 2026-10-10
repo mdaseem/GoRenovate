@@ -99,115 +99,43 @@
   gap: 12px;
 }
 
-.room-detail-overlay-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
+/* Style tags under the room preview (the photo hero overlays them instead). */
+.room-detail-overlay-scene-tags {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 18px;
-  background: #f5f4f1;
-  border-radius: 12px;
-  box-shadow: 0 -8px 20px rgba(26, 31, 46, 0.08);
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -6px 0 16px;
+  padding: 0;
+  list-style: none;
 }
 
-.room-detail-overlay-total-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.room-detail-overlay-total-info {
+/* "Customize this room": a secondary action under the preview. */
+.room-detail-overlay-customize {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 2px;
-  min-width: 0;
+  margin: 0 0 16px;
 }
 
-.room-detail-overlay-total-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #278b2e;
-}
-
-.room-detail-overlay-total-sub {
-  font-size: 0.78rem;
-  color: #6b7280;
-}
-
-.room-detail-overlay-total-value {
-  flex-shrink: 0;
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #1a1f2e;
-  animation: roomDetailTotalPulse 0.3s ease;
-}
-
-@keyframes roomDetailTotalPulse {
-  0% {
-    transform: scale(1.1);
-    color: #278b2e;
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-
-.room-detail-overlay-checkout {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  min-height: 48px;
-  background: #c4fd5b;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  padding: 0.9rem 1.5rem;
+.room-detail-overlay-customize-button {
+  min-height: 44px;
+  padding: 0 4px;
   font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  color: #278b2e;
+  text-decoration: underline;
+  background: none;
+  border: none;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.1s ease;
 }
 
-.room-detail-overlay-checkout svg {
-  flex-shrink: 0;
-}
-
-.room-detail-overlay-checkout:hover:not(:disabled) {
-  background: green;
-  color: #fff;
-}
-
-.room-detail-overlay-checkout:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.room-detail-overlay-checkout:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.room-detail-overlay-checkout:focus-visible {
-  outline: 2px solid #1a1f2e;
+.room-detail-overlay-customize-button:focus-visible {
+  outline: 2px solid #278b2e;
   outline-offset: 2px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .room-detail-overlay-checkout {
-    transition: none;
-  }
-
-  .room-detail-overlay-total-value {
-    animation: none;
-  }
+.room-detail-overlay-customize-note {
+  font-size: 0.75rem;
+  color: #6b7280;
 }

@@ -1,0 +1,338 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+/* Thumbnail variant: sits flush inside a card. */
+.wrapperCompact {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.wrapperCompact .scene {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+/* 16:10 stage; every child is positioned in percentages of this box. */
+.scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #eceff1;
+  box-shadow: 0 2px 10px rgba(26, 31, 46, 0.12);
+  isolation: isolate;
+  touch-action: pan-y;
+  /* Lets items position themselves with cqw/cqh (percent of THIS box) via
+     transform, so moving them never triggers layout. */
+  container-type: size;
+}
+
+/* --x / --y are the piece's anchor as a percent of the scene. Floor pieces
+   are anchored by their bottom edge, hung pieces (ceiling/wall) by the top. */
+.item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  animation: itemDrop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.35s ease;
+  filter: drop-shadow(0 2px 3px rgba(26, 31, 46, 0.16));
+}
+
+/* Soft contact shadow so standing pieces sit ON the floor (not rugs). */
+.shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -3%;
+  width: 92%;
+  height: max(6px, 7%);
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(26, 31, 46, 0.32) 0%,
+    rgba(26, 31, 46, 0) 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* A product with real dimensions fills its real-size box; contain keeps the
+   artwork's own proportions (never stretched) and the object-position stands
+   floor pieces on the floor / hangs the rest from the top. */
+.cutoutFit {
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 0%;
+}
+
+.cutoutFloor {
+  object-position: 50% 100%;
+}
+
+.flipped {
+  transform: scaleX(-1);
+}
+
+.itemSelected {
+  outline: 2px dashed #278b2e;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.itemFloor {
+  transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqh - 100%));
+}
+
+.itemHung {
+  transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqh));
+}
+
+.itemInteractive {
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Thin pieces (a ceiling panel, a rug) would be impossible to grab by
+   finger — extend the hit area beyond the artwork. */
+.itemInteractive::before {
+  content: "";
+  position: absolute;
+  inset: -20px -8px;
+}
+
+.itemInteractive:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* While dragging, follow the pointer exactly (no easing) and lift. */
+.itemDragging {
+  cursor: grabbing;
+  transition: none;
+  filter: drop-shadow(0 12px 10px rgba(26, 31, 46, 0.3));
+}
+
+.itemUnavailable .cutout,
+.itemUnavailable .placeholder {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.cutout {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px;
+  font-size: 1.4rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px dashed #b9c4b4;
+  border-radius: 10px;
+}
+
+.placeholderName {
+  max-width: 100%;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  color: #1a1f2e;
+}
+
+.badge {
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #fff;
+  background: #b3261e;
+  border-radius: 999px;
+}
+
+/* Adjust-the-selected-piece bar under the scene. */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 6px 8px 6px 12px;
+  background: #f5f4f1;
+  border-radius: 12px;
+}
+
+.toolbarInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.toolbarSize {
+  font-size: 0.74rem;
+  color: #6b7280;
+}
+
+.toolbarName {
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toolbarButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.toolButton {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.toolButton:hover:not(:disabled) {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.toolButton[aria-pressed="true"] {
+  color: #fff;
+  background: #278b2e;
+  border-color: #278b2e;
+}
+
+.toolButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toolButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Show scale / Tidy up sit together on the right of the caption. */
+.captionActions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.scaleFigure {
+  position: absolute;
+  z-index: 45;
+  color: rgba(26, 31, 46, 0.5);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.scaleLabel {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #fff;
+  background: rgba(26, 31, 46, 0.7);
+  border-radius: 999px;
+}
+
+.tidy[aria-pressed="true"] {
+  color: #fff;
+  background: #278b2e;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.tidy {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tidy:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+/* opacity + scale only (the position is carried by transform). */
+@keyframes itemDrop {
+  0% {
+    opacity: 0;
+    scale: 0.88;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .caption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    animation: none;
+    transition: none;
+  }
+}

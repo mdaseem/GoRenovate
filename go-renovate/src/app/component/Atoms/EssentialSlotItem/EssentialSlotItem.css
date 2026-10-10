@@ -182,3 +182,81 @@
     transition: none;
   }
 }
+
+.essential-slot-item-low-stock {
+  color: #b45309;
+  font-weight: 600;
+}
+
+/* Customize tab: small "empty this slot" control. */
+.essential-slot-item-remove {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
+  background: #fff;
+  color: #6b7280;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.essential-slot-item-remove:hover {
+  border-color: #b3261e;
+  color: #b3261e;
+  background: #fdf0ee;
+}
+
+.essential-slot-item-remove:focus-visible {
+  outline: 2px solid #b3261e;
+  outline-offset: 2px;
+}
+
+/* Customize: quantity stepper (two copies of the same piece). */
+.essential-slot-item-qty {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.essential-slot-item-qty-button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  color: #1a1f2e;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.essential-slot-item-qty-button:hover:not(:disabled) {
+  background: #eefbd8;
+}
+
+.essential-slot-item-qty-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.essential-slot-item-qty-button:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: -2px;
+}
+
+.essential-slot-item-qty-value {
+  min-width: 22px;
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}

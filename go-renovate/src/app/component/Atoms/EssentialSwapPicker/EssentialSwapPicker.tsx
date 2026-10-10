@@ -154,7 +154,9 @@ export default function EssentialSwapPicker() {
                   }`}
                 >
                   {isUnavailable
-                    ? "Unavailable"
+                    ? availability[essential._id]?.stock === 0
+                      ? "Out of stock"
+                      : "Unavailable"
                     : isSelected
                       ? "Current pick"
                       : formatDelta(delta)}

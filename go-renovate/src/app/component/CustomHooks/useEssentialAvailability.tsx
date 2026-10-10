@@ -3,9 +3,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface AvailabilityEntry {
   isAvailable: boolean;
   price: number | null;
+  // Units left for tracked on-platform items; null = not tracked.
+  stock: number | null;
 }
 
 type AvailabilityMap = Record<string, AvailabilityEntry>;
+
+// The backend caps /essentials/availability at 50 ids per request, so larger
+// lists (e.g. a whole category catalog) are split into chunks.
+const MAX_IDS_PER_REQUEST = 50;
 
 interface CheckAvailabilityOptions {
   force?: boolean;
@@ -53,22 +59,32 @@ export function useEssentialAvailability(): UseEssentialAvailabilityReturn {
       setIsChecking(true);
       setCheckError(null);
       try {
-        const params = essentialIds.map(encodeURIComponent).join("|");
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/essentials/availability?ids=${params}`,
-          { signal: controller.signal },
+        const chunks: string[][] = [];
+        for (let i = 0; i < essentialIds.length; i += MAX_IDS_PER_REQUEST) {
+          chunks.push(essentialIds.slice(i, i + MAX_IDS_PER_REQUEST));
+        }
+        const responses = await Promise.all(
+          chunks.map((chunk) =>
+            fetch(
+              `${process.env.NEXT_PUBLIC_EXPRESS_API_URL}/essentials/availability?ids=${chunk
+                .map(encodeURIComponent)
+                .join("|")}`,
+              { signal: controller.signal },
+            ),
+          ),
         );
 
-        if (!res.ok) {
-          throw new Error(`Failed to check availability (${res.status})`);
+        if (responses.some((res) => !res.ok)) {
+          throw new Error("Failed to check availability");
         }
 
-        const data = await res.json();
+        const payloads = await Promise.all(responses.map((res) => res.json()));
         const next: AvailabilityMap = {};
-        for (const entry of data?.essentials ?? []) {
+        for (const entry of payloads.flatMap((data) => data?.essentials ?? [])) {
           next[entry.id] = {
             isAvailable: entry.isAvailable !== false,
             price: typeof entry.price === "number" ? entry.price : null,
+            stock: typeof entry.stock === "number" ? entry.stock : null,
           };
         }
         setAvailability(next);
