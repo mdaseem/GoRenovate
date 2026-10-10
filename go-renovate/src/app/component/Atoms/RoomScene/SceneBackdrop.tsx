@@ -1,5 +1,5 @@
 import React from "react";
-import { ResolvedScene, SceneFixture } from "@/app/utils/sceneSpec";
+import { ResolvedScene, SceneFixture, bookcaseLayout } from "@/app/utils/sceneSpec";
 
 // Draws a Space as inline SVG: tiny, crisp at any size, themeable and needing
 // no image hosting. The drawing is in real centimetres converted to SVG units
@@ -55,6 +55,47 @@ function Fixture({
         <g>
           <rect x={x} y={y} width={w} height={h} rx="2" fill="#5b4a3a" />
           <rect x={x + border} y={y + border} width={w - border * 2} height={h - border * 2} fill={fixture.color ?? "#cdbf9f"} />
+        </g>
+      );
+    }
+    case "bookcase": {
+      const layout = bookcaseLayout(fixture);
+      const frame = layout.frameCm * unit;
+      const board = layout.boardCm * unit;
+      const divider = layout.dividerCm * unit;
+      const wood = fixture.color ?? "#b58a56";
+      const dark = "#8f6a3f";
+      const cells = layout.cells.filter((cell) => cell.row === 0);
+      return (
+        <g>
+          <rect x={x} y={y} width={w} height={h} rx="3" fill={wood} />
+          {/* back panel */}
+          <rect x={x + frame} y={y + frame} width={w - frame * 2} height={h - frame - layout.plinthCm * unit} fill="#a57a48" />
+          {/* shelf boards */}
+          {layout.boardBottomsCm.map((bottom) => (
+            <rect
+              key={bottom}
+              x={x + frame}
+              y={wallBottomY - (bottom + layout.boardCm) * unit}
+              width={w - frame * 2}
+              height={board}
+              fill={wood}
+            />
+          ))}
+          <rect x={x + frame} y={wallBottomY - (layout.boardBottomsCm[0] + layout.boardCm) * unit + board} width={w - frame * 2} height={Math.max(1, board * 0.5)} fill={dark} opacity="0.35" />
+          {/* vertical dividers */}
+          {cells.slice(0, -1).map((cell) => (
+            <rect
+              key={cell.col}
+              x={(cell.leftCm + cell.widthCm) * unit}
+              y={y + frame}
+              width={divider}
+              height={h - frame - layout.plinthCm * unit}
+              fill={wood}
+            />
+          ))}
+          {/* plinth */}
+          <rect x={x} y={wallBottomY - layout.plinthCm * unit} width={w} height={layout.plinthCm * unit} fill={dark} />
         </g>
       );
     }

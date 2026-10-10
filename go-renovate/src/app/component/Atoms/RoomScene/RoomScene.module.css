@@ -184,6 +184,91 @@
   border-radius: 12px;
 }
 
+/* Live height readout while dragging a wall piece. */
+.dragLabel {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #fff;
+  background: rgba(26, 31, 46, 0.85);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* Near the ceiling there is no room above the piece — put the label below it. */
+.dragLabelBelow {
+  bottom: auto;
+  top: calc(100% + 6px);
+}
+
+/* While a resting piece is dragged: pieces that can hold it are outlined,
+   and the one it will land on is outlined more strongly. */
+.itemSupport {
+  outline: 2px dashed rgba(39, 139, 46, 0.55);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.itemSupportActive {
+  outline: 3px solid #278b2e;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* A marked shelf / worktop (drawn as a line along its surface). */
+.surfaceHint {
+  position: absolute;
+  z-index: 56;
+  height: 0;
+  border-top: 2px dashed rgba(39, 139, 46, 0.7);
+  pointer-events: none;
+}
+
+.surfaceHintActive {
+  border-top: 4px solid #278b2e;
+}
+
+.placeOn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+/* 16px so iOS Safari doesn't zoom the page when the select is focused. */
+.placeOnSelect {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 10px;
+  font-size: 16px;
+  color: #1a1f2e;
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
+}
+
+.placeOnSelect:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.overlapNotice {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #7a4b00;
+  background: #fff6e0;
+  border-radius: 8px;
+}
+
 .toolbarInfo {
   display: flex;
   flex-direction: column;

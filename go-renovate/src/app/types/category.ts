@@ -14,8 +14,14 @@ export interface SceneConfig {
 }
 
 export interface EssentialPlacement {
-  zone?: "floor" | "wall" | "ceiling";
+  // "surface" = rests ON another piece (a plant on a table, a vase on a shelf).
+  zone?: "floor" | "wall" | "ceiling" | "surface";
   layer?: number;
+  // WALL pieces: height of the piece's centre above the floor, in cm.
+  elevationCm?: number;
+  // Floor/wall pieces that can hold surface pieces (tables, consoles, wall
+  // shelves); the resting surface is the piece's top edge.
+  supports?: boolean;
 }
 
 // ── Spaces: selectable base layouts for the Customize room preview ─────────
@@ -25,7 +31,7 @@ export type SpaceKind = "room-elevation" | "shelf-grid" | "plan";
 export type SpaceZone = "floor" | "wall" | "ceiling";
 
 export interface SpaceFixture {
-  type: "window" | "door" | "artframe" | "counter";
+  type: "window" | "door" | "artframe" | "counter" | "bookcase";
   // Current geometry, in real-world centimetres: distance from the left wall,
   // height of the bottom edge above the floor, and the fixture's size.
   xCm?: number;
@@ -33,6 +39,9 @@ export interface SpaceFixture {
   widthCm?: number;
   heightCm?: number;
   color?: string;
+  // bookcase: compartments stacked (rows) and side by side (columns).
+  rows?: number;
+  columns?: number;
   // LEGACY geometry (0–1 fractions of the old fixed 16:10 box) on spaces seeded
   // before the true-scale model; utils/sceneSpec converts it.
   x?: number;

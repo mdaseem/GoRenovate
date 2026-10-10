@@ -156,12 +156,10 @@ function selectionFromRoom(
     const picked = essentials.find((essential) =>
       roomEssentialIds.has(essential._id),
     );
-    const fallback = essentials[0];
-    if (picked) {
-      selection[slotId] = picked._id;
-    } else if (fallback) {
-      selection[slotId] = fallback._id;
-    }
+    // A curated room is exactly its own pieces: a slot the room doesn't use
+    // stays empty (it used to auto-fill with the slot's first product, which
+    // would silently add extras once a category gains slots like wall decor).
+    if (picked) selection[slotId] = picked._id;
   });
   return selection;
 }
