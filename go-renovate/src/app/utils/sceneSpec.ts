@@ -25,6 +25,81 @@ export interface SceneFixture {
   widthCm: number;
   heightCm: number;
   color?: string;
+  // bookcase only.
+  rows?: number;
+  columns?: number;
+}
+
+// Geometry of a bookcase fixture, in centimetres — shared by the backdrop (which
+// draws it) and the support logic (whose shelves pieces rest on) so the two can
+// never disagree. Row 0 is the BOTTOM shelf.
+const BOOKCASE_FRAME_CM = 3;
+const BOOKCASE_PLINTH_CM = 8;
+const BOOKCASE_BOARD_CM = 2.5;
+const BOOKCASE_DIVIDER_CM = 2;
+
+export interface BookcaseCell {
+  row: number; // 0 = bottom shelf
+  rowFromTop: number; // 1 = top shelf
+  col: number; // 0 = leftmost
+  columns: number;
+  rows: number;
+  // Compartment: left edge from the left wall, its width, and the height of the
+  // shelf surface it rests on above the floor.
+  leftCm: number;
+  widthCm: number;
+  surfaceCm: number;
+}
+
+export interface BookcaseLayout {
+  frameCm: number;
+  plinthCm: number;
+  boardCm: number;
+  dividerCm: number;
+  // Height of the underside/top of each shelf board above the floor.
+  boardBottomsCm: number[];
+  cells: BookcaseCell[];
+}
+
+export function bookcaseLayout(fixture: SceneFixture): BookcaseLayout {
+  const rows = Math.max(1, Math.round(fixture.rows ?? 4));
+  const columns = Math.max(1, Math.round(fixture.columns ?? 1));
+  const interior = fixture.heightCm - BOOKCASE_PLINTH_CM - BOOKCASE_FRAME_CM;
+  const pitch = interior / rows;
+  const cellWidth =
+    (fixture.widthCm - BOOKCASE_FRAME_CM * 2 - BOOKCASE_DIVIDER_CM * (columns - 1)) /
+    columns;
+  const boardBottomsCm: number[] = [];
+  const cells: BookcaseCell[] = [];
+  for (let row = 0; row < rows; row += 1) {
+    const boardBottom = fixture.bottomCm + BOOKCASE_PLINTH_CM + row * pitch;
+    boardBottomsCm.push(boardBottom);
+    for (let col = 0; col < columns; col += 1) {
+      cells.push({
+        row,
+        rowFromTop: rows - row,
+        col,
+        columns,
+        rows,
+        leftCm:
+          fixture.xCm +
+          BOOKCASE_FRAME_CM +
+          col * (cellWidth + BOOKCASE_DIVIDER_CM),
+        widthCm: cellWidth,
+        surfaceCm: boardBottom + BOOKCASE_BOARD_CM,
+      });
+    }
+  }
+  // Reading order: top shelf first, left to right.
+  cells.sort((a, b) => a.rowFromTop - b.rowFromTop || a.col - b.col);
+  return {
+    frameCm: BOOKCASE_FRAME_CM,
+    plinthCm: BOOKCASE_PLINTH_CM,
+    boardCm: BOOKCASE_BOARD_CM,
+    dividerCm: BOOKCASE_DIVIDER_CM,
+    boardBottomsCm,
+    cells,
+  };
 }
 
 export interface ResolvedSpec {
@@ -185,6 +260,8 @@ function fixtureToCm(
       widthCm: fixture.widthCm,
       heightCm: fixture.heightCm ?? 100,
       color: fixture.color,
+      rows: fixture.rows,
+      columns: fixture.columns,
     };
   }
   const x = fixture.x ?? 0;

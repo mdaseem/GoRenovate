@@ -14,7 +14,16 @@ import {
   clampScale,
   computeAutoLayout,
   depthScale,
+  WALL_NUDGE_CM,
   formatDimensions,
+  getFixtureOverlaps,
+  wallElevationCm,
+  yForWallElevation,
+  findSupportAt,
+  getSpaceSupports,
+  getSupportInfo,
+  surfaceRestY,
+  SupportInfo,
   getPlacement,
   itemBoxPct,
   keyOf,
@@ -43,6 +52,8 @@ type Props = {
 };
 
 const NUDGE_PCT = 2;
+// Paint order of a piece resting on a counter / bookcase shelf.
+const FIXED_SUPPORT_Z = 55;
 
 export default function RoomScene({
   scene,
@@ -60,9 +71,15 @@ export default function RoomScene({
   );
   // A piece currently being dragged is tracked locally and only committed on
   // release, so a drag doesn't re-render the whole page per pointer move.
-  const [drag, setDrag] = useState<{ id: string; x: number; y: number } | null>(
-    null,
-  );
+  const [drag, setDrag] = useState<{
+    id: string;
+    x: number;
+    y: number;
+    onKey?: string;
+    dx?: number;
+  } | null>(null);
+  // Where the drag began, so a plain tap (no movement) records no undo step.
+  const dragStartRef = useRef<{ x: number; y: number; onKey?: string; dx?: number } | null>(null);
   // Products whose cutout image failed to load (404, bad URL): drawn as the
   // labelled tile instead of an invisible empty box.
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
@@ -80,12 +97,50 @@ export default function RoomScene({
   const settledOf = (item: ScenePiece): ScenePosition =>
     layout[keyOf(item)] ?? autoLayout[keyOf(item)];
 
-  const positionOf = (item: ScenePiece): ScenePosition => {
+  const itemByKey = new Map(items.map((item) => [keyOf(item), item]));
+  // Supports that belong to the space itself (counters, bookcase shelves).
+  const spaceSupports = useMemo(() => getSpaceSupports(scene), [scene]);
+
+  // Settled position with any drag in progress applied (a resting piece keeps
+  // the support it is hovering over while dragged).
+  const baseOf = (item: ScenePiece): ScenePosition => {
     const settled = settledOf(item);
     return drag?.id === keyOf(item)
-      ? { ...settled, x: drag.x, y: drag.y }
+      ? { ...settled, x: drag.x, y: drag.y, onKey: drag.onKey, dx: drag.dx }
       : settled;
   };
+
+  // The surface a resting piece is on right now (null when it has none, or
+  // its support was removed).
+  const supportOf = (base: ScenePosition): SupportInfo | null => {
+    if (!base.onKey) return null;
+    const fixed = spaceSupports.find((support) => support.key === base.onKey);
+    if (fixed) return fixed;
+    const parent = itemByKey.get(base.onKey);
+    return parent ? getSupportInfo(parent, baseOf(parent), scene) : null;
+  };
+
+  const positionOf = (item: ScenePiece): ScenePosition => {
+    const base = baseOf(item);
+    if (getPlacement(item, scene).zone !== "surface") return base;
+    const support = supportOf(base);
+    // On a support: x/y come from it, so the piece moves whenever it does.
+    if (support) {
+      return { ...base, x: support.x + (base.dx ?? 0), y: support.topY };
+    }
+    // Support removed (or never set): the piece stands on the floor.
+    return { ...base, y: surfaceRestY(scene), onKey: undefined, dx: undefined };
+  };
+
+  // Every surface currently on offer (tables, wall shelves…), optionally
+  // leaving one piece out (the one being placed).
+  const supportInfos = (excludeKey?: string): SupportInfo[] => [
+    ...items
+      .filter((candidate) => keyOf(candidate) !== excludeKey)
+      .map((candidate) => getSupportInfo(candidate, baseOf(candidate), scene))
+      .filter((info): info is SupportInfo => info !== null),
+    ...spaceSupports,
+  ];
 
   const pointerToScene = (event: React.PointerEvent) => {
     const rect = sceneRef.current?.getBoundingClientRect();
@@ -105,18 +160,42 @@ export default function RoomScene({
     grabOffsetRef.current = point
       ? { dx: current.x - point.x, dy: current.y - point.y }
       : { dx: 0, dy: 0 };
-    setDrag({ id: keyOf(item), x: current.x, y: current.y });
+    dragStartRef.current = {
+      x: current.x,
+      y: current.y,
+      onKey: current.onKey,
+      dx: current.dx,
+    };
+    setDrag({
+      id: keyOf(item),
+      x: current.x,
+      y: current.y,
+      onKey: current.onKey,
+      dx: current.dx,
+    });
   };
 
   const handlePointerMove = (event: React.PointerEvent, item: ScenePiece) => {
     if (!drag || drag.id !== keyOf(item)) return;
     const point = pointerToScene(event);
     if (!point) return;
+    const candidate = {
+      x: point.x + grabOffsetRef.current.dx,
+      y: point.y + grabOffsetRef.current.dy,
+    };
+    if (getPlacement(item, scene).zone === "surface") {
+      // Over a table / shelf → snap onto it; otherwise stand on the floor.
+      const hit = findSupportAt(supportInfos(keyOf(item)), candidate.x, candidate.y);
+      if (hit) {
+        const childHalf = itemBoxPct(item, scene, "surface", 2).w / 2;
+        const range = Math.max(0, hit.halfWidth - childHalf);
+        const dx = Math.min(range, Math.max(-range, candidate.x - hit.x));
+        setDrag({ id: keyOf(item), x: hit.x + dx, y: hit.topY, onKey: hit.key, dx });
+        return;
+      }
+    }
     const next = clampPosition(
-      {
-        x: point.x + grabOffsetRef.current.dx,
-        y: point.y + grabOffsetRef.current.dy,
-      },
+      { ...candidate, scale: settledOf(item).scale },
       item,
       scene,
     );
@@ -125,13 +204,17 @@ export default function RoomScene({
 
   const handlePointerEnd = (item: ScenePiece) => {
     if (!drag || drag.id !== keyOf(item)) return;
-    const { x, y } = drag;
+    const { x, y, onKey, dx } = drag;
+    const start = dragStartRef.current;
     setDrag(null);
     // A tap (no movement) selects without recording an undo step.
-    const settled = settledOf(item);
-    if (x !== settled.x || y !== settled.y) {
-      onChange?.(keyOf(item), { ...settled, x, y });
-    }
+    const changed =
+      !start ||
+      x !== start.x ||
+      y !== start.y ||
+      onKey !== start.onKey ||
+      dx !== start.dx;
+    if (changed) onChange?.(keyOf(item), { ...settledOf(item), x, y, onKey, dx });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent, item: ScenePiece) => {
@@ -147,11 +230,21 @@ export default function RoomScene({
     if (!move) return;
     event.preventDefault();
     const current = positionOf(item);
+    const support = getPlacement(item, scene).zone === "surface" ? supportOf(current) : null;
+    if (support) {
+      // Resting on a surface: arrows slide along it (up/down do nothing).
+      const childHalf = itemBoxPct(item, scene, "surface", 2).w / 2;
+      const range = Math.max(0, support.halfWidth - childHalf);
+      const dx = Math.min(range, Math.max(-range, (current.dx ?? 0) + move[0]));
+      if (dx !== (current.dx ?? 0)) onChange(keyOf(item), { ...settledOf(item), dx });
+      return;
+    }
     const next = clampPosition(
       { x: current.x + move[0], y: current.y + move[1] },
       item,
       scene,
     );
+    if (next.x === current.x && next.y === current.y) return;
     onChange(keyOf(item), { ...current, x: next.x, y: next.y });
   };
 
@@ -159,9 +252,88 @@ export default function RoomScene({
   const selectedPosition = selected ? positionOf(selected) : null;
   const selectedScale = selectedPosition?.scale ?? 1;
 
+  const selectedPlacement = selected ? getPlacement(selected, scene) : null;
+  const isWallSelected = selectedPlacement?.zone === "wall";
+  const selectedElevation =
+    selected && selectedPosition && isWallSelected
+      ? wallElevationCm(selected, selectedPosition, scene)
+      : null;
+
+  const isSurfaceSelected = selectedPlacement?.zone === "surface";
+  const selectedSupports =
+    selected && isSurfaceSelected ? supportInfos(keyOf(selected)) : [];
+  // "Place on…" labels: duplicate names get a number so they stay distinguishable.
+  const supportLabels = selectedSupports.map((support) => {
+    const same = selectedSupports.filter((other) => other.name === support.name);
+    return same.length > 1
+      ? `${support.name} (${same.indexOf(support) + 1})`
+      : support.name;
+  });
+  const placeOnValue =
+    selectedPosition?.onKey && selectedSupports.some((s) => s.key === selectedPosition.onKey)
+      ? selectedPosition.onKey
+      : "floor";
+
+  // The keyboard / touch / screen-reader way to put a piece on a surface (or
+  // back on the floor) without dragging.
+  const placeOn = (value: string) => {
+    if (!selected || !selectedPosition) return;
+    const settled = settledOf(selected);
+    if (value === "floor") {
+      onChange?.(keyOf(selected), {
+        ...settled,
+        x: selectedPosition.x,
+        y: surfaceRestY(scene),
+        onKey: undefined,
+        dx: undefined,
+      });
+      return;
+    }
+    const target = selectedSupports.find((support) => support.key === value);
+    if (!target) return;
+    onChange?.(keyOf(selected), {
+      ...settled,
+      x: target.x,
+      y: target.topY,
+      onKey: target.key,
+      dx: 0,
+    });
+  };
+
+  // Raise / Lower a wall piece by a few cm (clamped between baseboard and ceiling).
+  const moveWall = (deltaCm: number) => {
+    if (!selected || !selectedPosition || selectedElevation === null) return;
+    const y = yForWallElevation(
+      selected,
+      selectedElevation + deltaCm,
+      scene,
+      selectedPosition.scale,
+    );
+    const next = clampPosition({ ...selectedPosition, y }, selected, scene);
+    if (next.y !== selectedPosition.y) tweak({ y: next.y });
+  };
+
+  // Heads-up for wall pieces sitting on a window/door/frame (allowed, just flagged).
+  const overlaps = isInteractive
+    ? getFixtureOverlaps(
+        items.map((item) => ({ item, position: positionOf(item) })),
+        scene,
+      )
+    : [];
+
   const tweak = (patch: Partial<ScenePosition>) => {
     if (!selected || !selectedPosition) return;
     onChange?.(keyOf(selected), { ...selectedPosition, ...patch });
+  };
+
+  // Paint order of a supporting piece, so its resting pieces sit just above it.
+  const baseZ = (item: ScenePiece): number => {
+    const position = positionOf(item);
+    const { zone, layer } = getPlacement(item, scene);
+    return (
+      (position.front ? 500 : 0) +
+      (zone === "wall" || zone === "ceiling" ? 50 + layer : layer * 100 + Math.round(position.y))
+    );
   };
 
   const summary = items.length
@@ -188,6 +360,25 @@ export default function RoomScene({
         <SceneBackdrop scene={scene} />
         {showScale && <ScaleFigure scene={scene} />}
 
+        {/* While a resting piece is dragged, mark every shelf / worktop it can land on. */}
+        {isInteractive &&
+          drag !== null &&
+          getPlacement(itemByKey.get(drag.id) ?? items[0], scene).zone === "surface" &&
+          spaceSupports.map((support) => (
+            <span
+              key={support.key}
+              aria-hidden="true"
+              className={`${styles.surfaceHint}${
+                drag.onKey === support.key ? ` ${styles.surfaceHintActive}` : ""
+              }`}
+              style={{
+                left: `${support.x - support.halfWidth}%`,
+                width: `${support.halfWidth * 2}%`,
+                top: `${support.topY}%`,
+              }}
+            />
+          ))}
+
         {items.map((item) => {
           const position = positionOf(item);
           const { zone, layer } = getPlacement(item, scene);
@@ -198,13 +389,25 @@ export default function RoomScene({
           // Real width AND height (a product without a height keeps its
           // artwork's proportions). The user's resize and the small
           // perspective cue scale both together.
+          // A piece on a support inherits the support's perspective factor so
+          // the pair keep their relative size.
+          const support = zone === "surface" ? supportOf(position) : null;
           const box = itemBoxPct(
             item,
             scene,
             zone,
             layer,
-            (position.scale ?? 1) * depthScale(zone, position.y, scene),
+            (position.scale ?? 1) *
+              (support ? support.depth : depthScale(zone, position.y, scene)),
           );
+          const isSupportTarget =
+            isInteractive && drag !== null && drag.onKey === keyOf(item);
+          const offersSupport =
+            isInteractive &&
+            drag !== null &&
+            drag.id !== keyOf(item) &&
+            getPlacement(itemByKey.get(drag.id) ?? item, scene).zone === "surface" &&
+            getPlacement(item, scene).supports;
           const style = {
             "--x": position.x,
             "--y": position.y,
@@ -215,9 +418,15 @@ export default function RoomScene({
             zIndex:
               (isDragging ? 1000 : 0) +
               (position.front ? 500 : 0) +
-              (zone === "floor"
-                ? layer * 100 + Math.round(position.y)
-                : 50 + layer),
+              (support
+                ? // Just above whatever it rests on (a room fixture: above wall
+                  // pieces, below anything standing on the floor).
+                  itemByKey.has(support.key)
+                  ? baseZ(itemByKey.get(support.key) as ScenePiece) + 1
+                  : FIXED_SUPPORT_Z
+                : zone === "wall" || zone === "ceiling"
+                  ? 50 + layer
+                  : layer * 100 + Math.round(position.y)),
           } as React.CSSProperties;
 
           const visual = item.cutoutUrl && !failedImages.has(item._id) ? (
@@ -246,11 +455,13 @@ export default function RoomScene({
           );
 
           const className = `${styles.item} ${
-            zone === "floor" ? styles.itemFloor : styles.itemHung
+            zone === "wall" || zone === "ceiling" ? styles.itemHung : styles.itemFloor
           }${isDragging ? ` ${styles.itemDragging}` : ""}${
             isUnavailable ? ` ${styles.itemUnavailable}` : ""
           }${isInteractive ? ` ${styles.itemInteractive}` : ""}${
             isSelected ? ` ${styles.itemSelected}` : ""
+          }${offersSupport ? ` ${styles.itemSupport}` : ""}${
+            isSupportTarget ? ` ${styles.itemSupportActive}` : ""
           }`;
 
           const badge = isUnavailable ? (
@@ -258,6 +469,18 @@ export default function RoomScene({
               {entry?.stock === 0 ? "Out of stock" : "Unavailable"}
             </span>
           ) : null;
+
+          const dragLabel =
+            isDragging && zone === "wall" ? (
+              <span
+                className={`${styles.dragLabel}${
+                  position.y < 10 ? ` ${styles.dragLabelBelow}` : ""
+                }`}
+                aria-hidden="true"
+              >
+                {wallElevationCm(item, position, scene)} cm from floor
+              </span>
+            ) : null;
 
           // A soft contact shadow grounds standing pieces (not flat rugs).
           const shadow =
@@ -283,6 +506,7 @@ export default function RoomScene({
               {shadow}
               {visual}
               {badge}
+              {dragLabel}
             </button>
           ) : (
             <div key={keyOf(item)} className={className} style={style}>
@@ -302,7 +526,11 @@ export default function RoomScene({
         >
           <div className={styles.toolbarInfo}>
             <span className={styles.toolbarName}>{selected.name}</span>
-            <span className={styles.toolbarSize}>{formatDimensions(selected)}</span>
+            <span className={styles.toolbarSize}>
+              {formatDimensions(selected)}
+              {selectedElevation !== null &&
+                ` · hangs ${selectedElevation} cm above the floor`}
+            </span>
           </div>
           <div className={styles.toolbarButtons}>
             <button
@@ -323,6 +551,56 @@ export default function RoomScene({
             >
               <span aria-hidden="true">+</span>
             </button>
+            {isSurfaceSelected && (
+              <label className={styles.placeOn}>
+                <span>Place on</span>
+                <select
+                  value={placeOnValue}
+                  onChange={(event) => placeOn(event.target.value)}
+                  className={styles.placeOnSelect}
+                >
+                  <option value="floor">The floor</option>
+                  {selectedSupports.map((support, index) =>
+                    support.fixed ? null : (
+                      <option key={support.key} value={support.key}>
+                        {supportLabels[index]}
+                      </option>
+                    ),
+                  )}
+                  {selectedSupports.some((support) => support.fixed) && (
+                    <optgroup label="In the room">
+                      {selectedSupports.map((support, index) =>
+                        support.fixed ? (
+                          <option key={support.key} value={support.key}>
+                            {supportLabels[index]}
+                          </option>
+                        ) : null,
+                      )}
+                    </optgroup>
+                  )}
+                </select>
+              </label>
+            )}
+            {isWallSelected && (
+              <>
+                <button
+                  type="button"
+                  className={styles.toolButton}
+                  onClick={() => moveWall(WALL_NUDGE_CM)}
+                  aria-label={`Raise ${WALL_NUDGE_CM} cm`}
+                >
+                  Raise
+                </button>
+                <button
+                  type="button"
+                  className={styles.toolButton}
+                  onClick={() => moveWall(-WALL_NUDGE_CM)}
+                  aria-label={`Lower ${WALL_NUDGE_CM} cm`}
+                >
+                  Lower
+                </button>
+              </>
+            )}
             <button
               type="button"
               className={styles.toolButton}
@@ -341,6 +619,15 @@ export default function RoomScene({
             </button>
           </div>
         </div>
+      )}
+
+      {overlaps.length > 0 && (
+        <p className={styles.overlapNotice} role="status">
+          {overlaps
+            .map((overlap) => `${overlap.name} overlaps ${overlap.fixture}`)
+            .join("; ")}
+          . Move it if you&apos;d rather keep it clear.
+        </p>
       )}
 
       {!compact && (
