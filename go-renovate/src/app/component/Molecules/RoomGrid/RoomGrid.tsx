@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import "./RoomGrid.css";
 import "@/app/component/Molecules/ProductListPage/ProductListPage.style.css";
@@ -16,6 +16,8 @@ import {
 import { buildRoomsQueryString } from "../RoomFilters/roomFilterConfig";
 import { useRoomFilters } from "../RoomFilters/useRoomFilters";
 import RoomCard from "../../Atoms/RoomCard/RoomCard";
+import { Essential } from "@/app/types/category";
+import { resolveScene } from "@/app/utils/sceneSpec";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import { Loader1 } from "../Loader/Loader";
 
@@ -31,6 +33,38 @@ export default function RoomGrid({ categorySlug }: Props) {
   const rooms = useAppSelector(
     (state: RootState) => state.categoryState.roomGridResults,
   );
+  const detail = useAppSelector(
+    (state: RootState) => state.categoryState.activeCategoryDetail,
+  );
+  // Each curated room drawn in its own space (Room.spaceSlug, else the
+  // category default) for the card thumbnail. Only for rooms whose pieces have
+  // vendor cutouts — others keep their hero image / placeholder.
+  const previews = useMemo(() => {
+    if (!detail || detail.category.slug !== categorySlug) return {};
+    const catalog = new Map(
+      Object.values(detail.essentialsBySlot)
+        .flat()
+        .map((item) => [item._id, item] as const),
+    );
+    const result: Record<
+      string,
+      { scene: ReturnType<typeof resolveScene>; items: Essential[]; spaceName?: string }
+    > = {};
+    for (const room of rooms) {
+      const items = room.essentialIds
+        .map((id) => catalog.get(id))
+        .filter((item): item is Essential => Boolean(item));
+      if (!items.some((item) => item.cutoutUrl)) continue;
+      const scene = resolveScene(detail, room.spaceSlug);
+      result[room._id] = {
+        scene,
+        items,
+        spaceName: detail.spaces?.find((space) => space.slug === scene.slug)?.name,
+      };
+    }
+    return result;
+  }, [detail, rooms, categorySlug]);
+
   const catalogSnapshot = useAppSelector(
     (state: RootState) => state.categoryState.roomGridCatalogSnapshot,
   );
@@ -83,6 +117,7 @@ export default function RoomGrid({ categorySlug }: Props) {
             <RoomCard
               key={room._id}
               room={room}
+              preview={previews[room._id]}
               onOpen={() => handleOpen(room._id)}
             />
           ))}

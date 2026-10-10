@@ -1,0 +1,113 @@
+/* Sticky total + checkout bar shared by the Room-detail overlay and the
+   Customize tab, so both surfaces check out identically. */
+.footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #f5f4f1;
+  border-radius: 12px;
+  box-shadow: 0 -8px 20px rgba(26, 31, 46, 0.08);
+}
+
+.totalRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.totalInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.totalLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #278b2e;
+}
+
+.totalSub {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.totalValue {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a1f2e;
+  animation: totalPulse 0.3s ease;
+}
+
+@keyframes totalPulse {
+  0% {
+    transform: scale(1.1);
+    color: #278b2e;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.checkout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  background: #c4fd5b;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 1.5rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.checkout svg {
+  flex-shrink: 0;
+}
+
+.checkout:hover:not(:disabled) {
+  background: green;
+  color: #fff;
+}
+
+.checkout:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.checkout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkout:focus-visible {
+  outline: 2px solid #1a1f2e;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkout {
+    transition: none;
+  }
+
+  .totalValue {
+    animation: none;
+  }
+}

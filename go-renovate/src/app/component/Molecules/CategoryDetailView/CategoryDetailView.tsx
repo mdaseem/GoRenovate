@@ -1,8 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./CategoryDetailView.css";
-import { useAppDispatch } from "@/app/store/hooks";
-import { getCategoryDetail } from "@/app/store/features/categorySlice";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { RootState } from "@/app/store/store";
+import {
+  acknowledgeCustomizeRequest,
+  getCategoryDetail,
+} from "@/app/store/features/categorySlice";
 import RoomConfigurator from "../RoomConfigurator/RoomConfigurator";
 import RoomGrid from "../RoomGrid/RoomGrid";
 import RoomGridFilters from "../RoomGrid/RoomGridFilters";
@@ -21,6 +25,16 @@ export default function CategoryDetailView({ categorySlug }: Props) {
   useEffect(() => {
     dispatch(getCategoryDetail({ slug: categorySlug }));
   }, [dispatch, categorySlug]);
+
+  // "Customize this room" (Room-detail overlay) asks for the Customize tab.
+  const customizeRequested = useAppSelector(
+    (state: RootState) => state.categoryState.customizeRequested,
+  );
+  useEffect(() => {
+    if (!customizeRequested) return;
+    setActiveTab("configurator");
+    dispatch(acknowledgeCustomizeRequest());
+  }, [customizeRequested, dispatch]);
 
   return (
     <div className="category-detail-view">
@@ -73,7 +87,10 @@ export default function CategoryDetailView({ categorySlug }: Props) {
             hidden={activeTab !== "configurator"}
           >
             {activeTab === "configurator" && (
-              <RoomConfigurator categorySlug={categorySlug} />
+              <RoomConfigurator
+                categorySlug={categorySlug}
+                onBrowseRooms={() => setActiveTab("browse")}
+              />
             )}
           </div>
           <div

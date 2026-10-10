@@ -5,6 +5,72 @@ export interface CategorySlot {
   label: string;
 }
 
+// LEGACY single-scene settings for a category (all optional). Superseded by
+// spaces; used only as the fallback when a category has none (utils/sceneSpec).
+export interface SceneConfig {
+  backdrop?: string;
+  sceneWidthCm?: number;
+  floorLine?: number;
+}
+
+export interface EssentialPlacement {
+  zone?: "floor" | "wall" | "ceiling";
+  layer?: number;
+}
+
+// ── Spaces: selectable base layouts for the Customize room preview ─────────
+// (see the room-visual-preview skill). All fixture coordinates are fractions
+// (0–1) of the scene's width/height.
+export type SpaceKind = "room-elevation" | "shelf-grid" | "plan";
+export type SpaceZone = "floor" | "wall" | "ceiling";
+
+export interface SpaceFixture {
+  type: "window" | "door" | "artframe" | "counter";
+  // Current geometry, in real-world centimetres: distance from the left wall,
+  // height of the bottom edge above the floor, and the fixture's size.
+  xCm?: number;
+  bottomCm?: number;
+  widthCm?: number;
+  heightCm?: number;
+  color?: string;
+  // LEGACY geometry (0–1 fractions of the old fixed 16:10 box) on spaces seeded
+  // before the true-scale model; utils/sceneSpec converts it.
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
+}
+
+export interface SpaceSpec {
+  wall: { color: string; shade?: string; pattern?: "plain" | "tiles" };
+  floor: { color: string; lineColor?: string };
+  baseboard?: string;
+  // LEGACY (0–1 from the top). Superseded by SpaceTemplate.ceilingHeightCm.
+  floorLine?: number;
+  fixtures: SpaceFixture[];
+  // Placement zones this space supports.
+  zones: SpaceZone[];
+}
+
+export interface SpaceTemplate {
+  slug: string;
+  categorySlug: string;
+  name: string;
+  description?: string;
+  sortOrder: number;
+  isDefault?: boolean;
+  kind: SpaceKind;
+  // Real-world width the scene's full width represents.
+  sceneWidthCm: number;
+  // Floor-to-ceiling height. With the width it defines the scene's shape.
+  ceilingHeightCm?: number;
+  // How much floor the camera sees in front of the back wall (default 90 cm).
+  floorViewDepthCm?: number;
+  // LEGACY: aspect of the old fixed box; used only when ceilingHeightCm is absent.
+  aspect?: number;
+  spec: SpaceSpec;
+}
+
 export interface Category {
   _id: string;
   slug: string;
@@ -12,6 +78,7 @@ export interface Category {
   icon: string;
   slots: CategorySlot[];
   sortOrder: number;
+  scene?: SceneConfig;
 }
 
 export interface Essential {
@@ -27,6 +94,10 @@ export interface Essential {
   slot: string;
   purchaseMode: PurchaseMode;
   externalStoreUrl?: string;
+  // Vendor-supplied transparent, front-view image used by the room preview.
+  cutoutUrl?: string;
+  dimensionsCm?: { w: number; h: number; d: number };
+  placement?: EssentialPlacement;
 }
 
 export interface Room {
@@ -37,12 +108,16 @@ export interface Room {
   heroImageUrl?: string;
   totalPrice: number;
   styleTags: string[];
+  // The Space this curated Room is previewed in; unset/unknown = the category default.
+  spaceSlug?: string;
 }
 
 export interface CategoryDetail {
   category: Category;
   rooms: Room[];
   essentialsBySlot: Record<string, Essential[]>;
+  // Selectable base layouts, default first. Absent on an un-seeded backend.
+  spaces?: SpaceTemplate[];
 }
 
 // Shared by RoomConfigurator, RoomDetailOverlay, and EssentialSwapPicker —

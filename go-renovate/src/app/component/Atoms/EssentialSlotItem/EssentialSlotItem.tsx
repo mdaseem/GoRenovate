@@ -17,7 +17,20 @@ type Props = {
   // (name/image/last-known price), just flagged so Swap reads as the
   // obvious next step instead of an optional one.
   isUnavailable?: boolean;
+  // Why it is unavailable: "Out of stock" vs the default "No longer available".
+  unavailableLabel?: string;
+  // Units left when stock is tracked and running low — shown as a nudge.
+  lowStock?: number | null;
+  // Customize only: lets the user empty the slot again.
+  onRemove?: () => void;
+  // Customize only: how many copies are in the room, with a stepper. Omit for
+  // single-quantity rows (curated rooms).
+  quantity?: number;
+  onQuantityChange?: (next: number) => void;
+  maxQuantity?: number;
 };
+
+export const LOW_STOCK_THRESHOLD = 5;
 
 const MAX_PEEK_THUMBS = 2;
 
@@ -31,6 +44,12 @@ export default function EssentialSlotItem({
   alternatives,
   onSwap,
   isUnavailable = false,
+  unavailableLabel = "No longer available",
+  lowStock = null,
+  onRemove,
+  quantity,
+  onQuantityChange,
+  maxQuantity = 10,
 }: Props) {
   const image = essential.images[0];
   const peekItems = alternatives.slice(0, MAX_PEEK_THUMBS);
@@ -65,15 +84,64 @@ export default function EssentialSlotItem({
         <p className="essential-slot-item-name">{essential.name}</p>
         {isUnavailable ? (
           <p className="essential-slot-item-unavailable-notice">
-            No longer available
+            {unavailableLabel}
             {alternatives.length > 0 ? " — tap Swap to choose another" : ""}
           </p>
         ) : (
           <p className="essential-slot-item-meta">
-            {formatPrice(essential.price)} · {essential.vendorName}
+            {formatPrice(essential.price)}
+            {quantity !== undefined && quantity > 1 ? ` × ${quantity}` : ""} ·{" "}
+            {essential.vendorName}
+            {lowStock !== null &&
+              lowStock > 0 &&
+              lowStock <= LOW_STOCK_THRESHOLD && (
+                <span className="essential-slot-item-low-stock">
+                  {" "}
+                  · Only {lowStock} left
+                </span>
+              )}
           </p>
         )}
       </div>
+      {onQuantityChange && quantity !== undefined && (
+        <div
+          className="essential-slot-item-qty"
+          role="group"
+          aria-label={`Quantity of ${essential.name}`}
+        >
+          <button
+            type="button"
+            className="essential-slot-item-qty-button"
+            onClick={() => onQuantityChange(quantity - 1)}
+            disabled={quantity <= 1}
+            aria-label={`Decrease quantity of ${essential.name}`}
+          >
+            <span aria-hidden="true">−</span>
+          </button>
+          <span className="essential-slot-item-qty-value" aria-live="polite">
+            {quantity}
+          </span>
+          <button
+            type="button"
+            className="essential-slot-item-qty-button"
+            onClick={() => onQuantityChange(quantity + 1)}
+            disabled={quantity >= maxQuantity}
+            aria-label={`Increase quantity of ${essential.name}`}
+          >
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
+      )}
+      {onRemove && (
+        <button
+          type="button"
+          className="essential-slot-item-remove"
+          onClick={onRemove}
+          aria-label={`Remove ${essential.name} from ${slot.label}`}
+        >
+          <span aria-hidden="true">✕</span>
+        </button>
+      )}
       {alternatives.length > 0 && (
         <button
           type="button"

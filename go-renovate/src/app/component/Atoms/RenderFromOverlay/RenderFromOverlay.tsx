@@ -17,6 +17,7 @@ import {
 } from "@/app/store/features/overLaySlice";
 import { getFavorites, clearFavorites } from "@/app/store/features/favoritesSlice";
 import Chat from "../../Atoms/Chat/Chat";
+import CustomPiecePicker from "../CustomPiecePicker/CustomPiecePicker";
 import dynamic from "next/dynamic";
 import Loader, { Loader1 } from "../../Molecules/Loader/Loader";
 import { useStopScrollOnOverlay } from "../../CustomHooks/useStopScrollOnOverlay";
@@ -104,6 +105,9 @@ function RenderFromOverlay() {
   );
   const isOpenSlotPicker = useAppSelector(
     (state: RootState) => state.overlay.isOpenSlotPicker,
+  );
+  const isCustomPickerActive = useAppSelector(
+    (state: RootState) => state.categoryState.isCustomPickerActive,
   );
   const isOpenRoomDetail = useAppSelector(
     (state: RootState) => state.overlay.isOpenRoomDetail,
@@ -207,7 +211,13 @@ function RenderFromOverlay() {
       setIsOpen: (payload) => dispatch(setOpenStateSlotPicker(payload)),
       mountOnlyWhenOpen: true,
       errorTitle: "This picker is unavailable",
-      content: <EssentialSwapPicker />,
+      // One picker overlay, two modes: swap-in-a-slot for curated Rooms,
+      // or free-form "add a piece" for the Customize tab.
+      content: isCustomPickerActive ? (
+        <CustomPiecePicker />
+      ) : (
+        <EssentialSwapPicker />
+      ),
     },
   ];
 

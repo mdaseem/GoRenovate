@@ -1,6 +1,6 @@
 .room-configurator {
   max-width: 640px;
-  padding: 24px 16px 100px;
+  padding: 24px 16px 24px;
 }
 
 .room-configurator-status {
@@ -13,7 +13,11 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+}
+
+.room-configurator-heading {
+  min-width: 0;
 }
 
 .room-configurator-icon {
@@ -43,20 +47,178 @@
   gap: 12px;
 }
 
-.room-configurator-total {
+.room-configurator-progress-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
-  background: #f5f4f1;
-  border-radius: 12px;
-  font-weight: 600;
+  gap: 12px;
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.room-configurator-progress-label strong {
   color: #1a1f2e;
 }
 
-.room-configurator-total-value {
-  font-size: 1.2rem;
+.room-configurator-reset {
+  min-height: 44px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: #278b2e;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.room-configurator-reset:focus-visible,
+.room-configurator-browse:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+/* Empty state: one calm canvas instead of a checklist of slots. */
+.room-configurator-canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px 20px 24px;
+  text-align: center;
+  background: linear-gradient(160deg, #f0f9f0, #fbfaf7 70%);
+  border: 2px dashed #cfd8c8;
+  border-radius: 16px;
+}
+
+.room-configurator-canvas-title {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.room-configurator-canvas-sub {
+  max-width: 34ch;
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.room-configurator-canvas-cta,
+.room-configurator-add-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 12px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.room-configurator-canvas-cta {
+  color: #000;
+  background: #c4fd5b;
+  border: none;
+}
+
+.room-configurator-canvas-cta:hover:not(:disabled) {
+  color: #fff;
+  background: green;
+}
+
+.room-configurator-canvas-cta:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.room-configurator-canvas-cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.room-configurator-canvas-cta:focus-visible,
+.room-configurator-add-more:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+/* "Add another piece": a dashed, always-available invitation under the list. */
+.room-configurator-add-more {
+  width: 100%;
+  margin-bottom: 20px;
+  color: #278b2e;
+  background: #fbfaf7;
+  border: 2px dashed #cfd8c8;
+}
+
+.room-configurator-add-more:hover {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.room-configurator-add-more-plus {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  font-size: 1.2rem;
+  line-height: 1;
+  background: #eefbd8;
+  border-radius: 50%;
+}
+
+/* A slot that has just been filled pops in. */
+.room-configurator-list > .essential-slot-item {
+  animation: roomConfiguratorSlotPop 0.35s ease;
+}
+
+@keyframes roomConfiguratorSlotPop {
+  0% {
+    transform: scale(0.96);
+    border-color: #278b2e;
+    box-shadow: 0 0 0 4px rgba(39, 139, 46, 0.18);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(39, 139, 46, 0);
+  }
+}
+
+.room-configurator-browse {
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #278b2e;
+  text-align: left;
+  cursor: pointer;
+}
+
+.room-configurator-browse:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-configurator-canvas-cta,
+  .room-configurator-add-more {
+    transition: none;
+  }
+
+  .room-configurator-list > .essential-slot-item {
+    animation: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -168,4 +330,28 @@
   .room-configurator-skeleton-shimmer {
     animation: none;
   }
+}
+
+/* Shown when the chosen space can't show a piece as intended. */
+.room-configurator-fit-notice {
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #7a4b00;
+  background: #fff6e0;
+  border-radius: 8px;
+}
+
+/* Undo / Redo / Start over share one row of text buttons. */
+.room-configurator-history {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.room-configurator-reset:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: none;
 }

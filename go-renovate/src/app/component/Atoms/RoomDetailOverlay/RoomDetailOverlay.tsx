@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import "./RoomDetailOverlay.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -7,29 +7,22 @@ import { RootState } from "@/app/store/store";
 import {
   openSwapPicker,
   closeRoomDetail,
+  startCustomFromPieces,
 } from "@/app/store/features/categorySlice";
 import {
   setOpenStateSlotPicker,
   setOpenStateRoomDetail,
 } from "@/app/store/features/overLaySlice";
 import EssentialSlotItem from "../EssentialSlotItem/EssentialSlotItem";
-import Overlay from "../../HOC/Overlay/Overlay";
-import RoomCheckoutForm, {
-  RoomCheckoutItem,
-} from "../../Molecules/RoomCheckoutForm/RoomCheckoutForm";
-import { useToast } from "@/app/component/Features/VendorPage/hooks/useToast";
-import Toast from "@/app/component/Features/VendorPage/components/Toast";
+import RoomCheckoutFooter from "../../Molecules/RoomCheckoutFooter/RoomCheckoutFooter";
+import RoomScene from "../RoomScene/RoomScene";
 import { humanizeStyleTag } from "@/app/types/category";
+import { resolveScene } from "@/app/utils/sceneSpec";
+import { ScenePositions } from "@/app/utils/roomScene";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
-
-function formatPrice(price: number): string {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
 
 export default function RoomDetailOverlay() {
   const dispatch = useAppDispatch();
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const { toast, showToast } = useToast();
   const activeRoomId = useAppSelector(
     (state: RootState) => state.categoryState.activeRoomId,
   );
@@ -41,6 +34,15 @@ export default function RoomDetailOverlay() {
   );
   const { availability, isChecking, checkAvailability } =
     useEssentialAvailability();
+  // The room is previewed in the space it's bound to (Room.spaceSlug), else
+  // the category's default.
+  const roomSpaceSlug = detail?.rooms.find((candidate) => candidate._id === activeRoomId)?.spaceSlug;
+  const scene = useMemo(
+    () => resolveScene(detail, roomSpaceSlug),
+    [detail, roomSpaceSlug],
+  );
+  // Manual arrangement in the room preview — kept only while this room is open.
+  const [sceneLayout, setSceneLayout] = useState<ScenePositions>({});
 
   const selectedItemIds = detail
     ? detail.category.slots
@@ -48,6 +50,10 @@ export default function RoomDetailOverlay() {
         .filter((id): id is string => Boolean(id))
     : [];
   const selectedItemIdsKey = selectedItemIds.join(",");
+
+  useEffect(() => {
+    setSceneLayout({});
+  }, [activeRoomId]);
 
   useEffect(() => {
     if (!activeRoomId || selectedItemIds.length === 0) return;
@@ -94,51 +100,58 @@ export default function RoomDetailOverlay() {
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
+  // Curated Rooms use the same room preview as Customize (read-only) once at
+  // least one piece has a vendor cutout; otherwise the original hero is kept.
+  const hasScenePreview =
+    !room.heroImageUrl && selectedItems.some((item) => item.cutoutUrl);
+
   const livePrice = (item: { _id: string; price: number }) =>
     availability[item._id]?.price ?? item.price;
-  const total = selectedItems.reduce((sum, item) => sum + livePrice(item), 0);
-  const vendorCount = new Set(selectedItems.map((item) => item.vendorId)).size;
-  const hasUnavailableSelectedItem = selectedItems.some(
-    (item) => availability[item._id]?.isAvailable === false,
-  );
 
-  const checkoutItems: RoomCheckoutItem[] = selectedItems.map((item) => ({
-    essentialId: item._id,
-    name: item.name,
-    price: livePrice(item),
-    quantity: 1,
-    imageUrl: item.images[0],
-    vendorId: item.vendorId,
-    vendorName: item.vendorName,
-  }));
-
-  const handleOrderPlaced = () => {
-    setIsCheckoutOpen(false);
+  // Hand this room to the Customize tab as a starting point: its pieces (as
+  // currently swapped) and the space it's bound to. Replaces any design in
+  // progress there.
+  const handleCustomize = () => {
+    dispatch(
+      startCustomFromPieces({
+        essentialIds: selectedItems.map((item) => item._id),
+        spaceSlug: room.spaceSlug ?? null,
+      }),
+    );
     dispatch(setOpenStateRoomDetail(false));
     dispatch(closeRoomDetail());
-    showToast("Order placed! You'll see it in My Orders soon.");
   };
 
-  const handleCheckoutClick = async () => {
-    const fresh = await checkAvailability(
-      checkoutItems.map((item) => item.essentialId),
-      { force: true },
-    );
-    const hasUnavailable = fresh
-      ? checkoutItems.some(
-          (item) => fresh[item.essentialId]?.isAvailable === false,
-        )
-      : hasUnavailableSelectedItem;
-    if (hasUnavailable) {
-      showToast("Some items are no longer available. Tap Swap to choose another.");
-      return;
-    }
-    setIsCheckoutOpen(true);
+  const handleOrderPlaced = () => {
+    dispatch(setOpenStateRoomDetail(false));
+    dispatch(closeRoomDetail());
   };
 
   return (
     <div className="room-detail-overlay">
-      {toast && <Toast text={toast.text} />}
+      {hasScenePreview ? (
+        <>
+          <RoomScene
+            scene={scene}
+            items={selectedItems}
+            availability={availability}
+            layout={sceneLayout}
+            onChange={(key, next) =>
+              setSceneLayout((prev) => ({ ...prev, [key]: next }))
+            }
+            onTidy={() => setSceneLayout({})}
+          />
+          {room.styleTags.length > 0 && (
+            <ul className="room-detail-overlay-scene-tags" aria-label="Style">
+              {room.styleTags.map((tag) => (
+                <li key={tag} className="room-detail-overlay-hero-tag">
+                  {humanizeStyleTag(tag)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      ) : (
       <div className="room-detail-overlay-hero">
         {room.heroImageUrl ? (
           <Image
@@ -184,6 +197,21 @@ export default function RoomDetailOverlay() {
           </ul>
         )}
       </div>
+      )}
+
+      <div className="room-detail-overlay-customize">
+        <button
+          type="button"
+          className="room-detail-overlay-customize-button"
+          onClick={handleCustomize}
+        >
+          Customize this room →
+        </button>
+        <span className="room-detail-overlay-customize-note">
+          Opens it in Customize so you can add, remove and move pieces. Replaces
+          any design you have in progress there.
+        </span>
+      </div>
 
       <h2 className="room-detail-overlay-title">
         {room.title}
@@ -212,74 +240,24 @@ export default function RoomDetailOverlay() {
               alternatives={alternatives}
               onSwap={() => handleSwap(slot.id)}
               isUnavailable={availability[selected._id]?.isAvailable === false}
+              unavailableLabel={
+                availability[selected._id]?.stock === 0
+                  ? "Out of stock"
+                  : undefined
+              }
+              lowStock={availability[selected._id]?.stock ?? null}
             />
           );
         })}
       </ul>
 
-      <div className="room-detail-overlay-footer">
-        <div className="room-detail-overlay-total-row">
-          <div className="room-detail-overlay-total-info">
-            <span className="room-detail-overlay-total-label">Room total</span>
-            <span className="room-detail-overlay-total-sub">
-              {selectedItems.length} item{selectedItems.length !== 1 ? "s" : ""} ·{" "}
-              {vendorCount} vendor{vendorCount !== 1 ? "s" : ""}
-            </span>
-          </div>
-          <span
-            key={total}
-            className="room-detail-overlay-total-value"
-            aria-live="polite"
-          >
-            {formatPrice(total)}
-          </span>
-        </div>
-        <button
-          type="button"
-          className="room-detail-overlay-checkout"
-          onClick={handleCheckoutClick}
-          disabled={checkoutItems.length === 0 || isChecking}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M6 9V7a6 6 0 1 1 12 0v2"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <rect
-              x="4"
-              y="9"
-              width="16"
-              height="12"
-              rx="2"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-          </svg>
-          {isChecking ? "Checking…" : "Checkout →"}
-        </button>
-      </div>
-
-      <Overlay
-        isOpen={isCheckoutOpen}
-        setIsOpen={setIsCheckoutOpen}
-        isDisable={false}
-        shouldReturnNull={!isCheckoutOpen}
-      >
-        <RoomCheckoutForm
-          items={checkoutItems}
-          totalPrice={total}
-          onClose={() => setIsCheckoutOpen(false)}
-          onPlaced={handleOrderPlaced}
-        />
-      </Overlay>
+      <RoomCheckoutFooter
+        selectedItems={selectedItems}
+        availability={availability}
+        isChecking={isChecking}
+        checkAvailability={checkAvailability}
+        onOrderPlaced={handleOrderPlaced}
+      />
     </div>
   );
 }

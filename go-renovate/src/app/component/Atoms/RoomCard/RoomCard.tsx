@@ -1,11 +1,20 @@
 import React from "react";
 import Image from "next/image";
 import "./RoomCard.css";
-import { Room, humanizeStyleTag } from "@/app/types/category";
+import { Essential, Room, humanizeStyleTag } from "@/app/types/category";
+import RoomScene from "../RoomScene/RoomScene";
+import { ResolvedScene } from "@/app/utils/sceneSpec";
 
 type Props = {
   room: Room;
   onOpen: () => void;
+  // The room's pieces drawn in its space. Only passed when at least one piece
+  // has a vendor cutout; otherwise the card keeps its hero image / placeholder.
+  preview?: {
+    scene: ResolvedScene;
+    items: Essential[];
+    spaceName?: string;
+  };
 };
 
 function formatPrice(price: number): string {
@@ -24,7 +33,7 @@ const ArrowIcon = () => (
   </svg>
 );
 
-export default function RoomCard({ room, onOpen }: Props) {
+export default function RoomCard({ room, onOpen, preview }: Props) {
   const pieceCount = room.essentialIds.length;
   const pieceLabel = `${pieceCount} ${pieceCount === 1 ? "piece" : "pieces"}`;
 
@@ -35,8 +44,12 @@ export default function RoomCard({ room, onOpen }: Props) {
       onClick={onOpen}
       aria-label={`Configure ${room.title} — ${pieceLabel}, ${formatPrice(room.totalPrice)}`}
     >
-      <div className="room-card-media">
-        {room.heroImageUrl ? (
+      <div
+        className={`room-card-media${preview ? " room-card-media--scene" : ""}`}
+      >
+        {preview ? (
+          <RoomScene scene={preview.scene} items={preview.items} compact />
+        ) : room.heroImageUrl ? (
           <Image
             src={room.heroImageUrl}
             alt=""
@@ -55,6 +68,9 @@ export default function RoomCard({ room, onOpen }: Props) {
         <span className="room-card-eyebrow">Curated Room</span>
         <p className="room-card-title">{room.title}</p>
         <p className="room-card-piece-count">{pieceLabel} · multi-vendor bundle</p>
+        {preview?.spaceName && (
+          <p className="room-card-space">In: {preview.spaceName}</p>
+        )}
         {room.styleTags.length > 0 && (
           <ul className="room-card-tags" aria-label="Style">
             {room.styleTags.map((tag) => (
