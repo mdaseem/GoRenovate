@@ -1,0 +1,135 @@
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 14px;
+  background: #fbfaf7;
+  border: 1px solid #ece9e3;
+  border-radius: 14px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #278b2e;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.primary,
+.secondary {
+  flex: 1 1 150px;
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.primary {
+  color: #000;
+  background: #c4fd5b;
+  border: none;
+}
+
+.primary:hover:not(:disabled) {
+  color: #fff;
+  background: green;
+}
+
+.secondary {
+  color: #278b2e;
+  background: #fff;
+  border: 2px solid #cfd8c8;
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.primary:focus-visible,
+.secondary:focus-visible,
+.input:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.error {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #b42318;
+  background: #fef3f2;
+  border-radius: 8px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.linkRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.linkRow .secondary {
+  flex: 0 0 auto;
+  min-width: 76px;
+}
+
+.input {
+  flex: 1 1 200px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 12px;
+  /* 16px stops iOS zooming the page when the field is focused. */
+  font-size: 16px;
+  color: #1a1f2e;
+  background: #fff;
+  border: 1px solid #cfd8c8;
+  border-radius: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+/* Reserve the line so "Link copied." doesn't shift the page when it appears. */
+.status {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1f4d24;
+}

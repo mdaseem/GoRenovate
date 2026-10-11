@@ -73,8 +73,7 @@
   cursor: pointer;
 }
 
-.room-configurator-reset:focus-visible,
-.room-configurator-browse:focus-visible {
+.room-configurator-reset:focus-visible {
   outline: 2px solid #278b2e;
   outline-offset: 2px;
 }
@@ -194,24 +193,48 @@
   }
 }
 
-.room-configurator-browse {
-  min-height: 44px;
-  padding: 0;
-  border: none;
-  background: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #278b2e;
-  text-align: left;
-  cursor: pointer;
+/* Empty state: two side-by-side ways in (add pieces / start from a curated room). */
+.room-configurator-canvas-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
 }
 
-.room-configurator-browse:hover {
-  text-decoration: underline;
+.room-configurator-canvas-actions > button {
+  flex: 1 1 200px;
+  max-width: 320px;
+}
+
+.room-configurator-canvas-secondary {
+  min-height: 48px;
+  padding: 0 20px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: #fff;
+  border: 2px solid #cfd8c8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.room-configurator-canvas-secondary:hover {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.room-configurator-canvas-secondary:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .room-configurator-canvas-cta,
+  .room-configurator-canvas-secondary,
   .room-configurator-add-more {
     transition: none;
   }
@@ -330,17 +353,6 @@
   .room-configurator-skeleton-shimmer {
     animation: none;
   }
-}
-
-/* Shown when the chosen space can't show a piece as intended. */
-.room-configurator-fit-notice {
-  margin: 0 0 14px;
-  padding: 8px 12px;
-  font-size: 0.8rem;
-  line-height: 1.45;
-  color: #7a4b00;
-  background: #fff6e0;
-  border-radius: 8px;
 }
 
 /* Undo / Redo / Start over share one row of text buttons. */

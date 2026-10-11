@@ -5,6 +5,14 @@
   margin-bottom: 16px;
 }
 
+/* The room plus its selected-piece bar. A plain column here; on phones it is
+   what gets pinned (see .wrapperSticky). */
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* Thumbnail variant: sits flush inside a card. */
 .wrapperCompact {
   width: 100%;
@@ -30,6 +38,22 @@
   /* Lets items position themselves with cqw/cqh (percent of THIS box) via
      transform, so moving them never triggers layout. */
   container-type: size;
+}
+
+/* With a piece selected, two fingers pinch it — so the room must not hand the
+   gesture to page scrolling (a tap on the bare room deselects and frees it). */
+.sceneSelected {
+  touch-action: none;
+}
+
+/* Programmatic focus (after a removal) shows a ring only for keyboard users. */
+.scene:focus {
+  outline: none;
+}
+
+.scene:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
 }
 
 /* --x / --y are the piece's anchor as a percent of the scene. Floor pieces
@@ -108,6 +132,13 @@
   content: "";
   position: absolute;
   inset: -20px -8px;
+}
+
+/* Fingers are bigger than cursors: a wider grab zone around small pieces. */
+@media (pointer: coarse) {
+  .itemInteractive::before {
+    inset: -22px -12px;
+  }
 }
 
 .itemInteractive:focus-visible {
@@ -259,14 +290,61 @@
   outline-offset: 2px;
 }
 
-.overlapNotice {
+/* One amber box for every heads-up about the arrangement. */
+.notices {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   margin: 0;
   padding: 8px 12px;
+  list-style: none;
   font-size: 0.8rem;
   line-height: 1.45;
   color: #7a4b00;
   background: #fff6e0;
   border-radius: 8px;
+}
+
+.toolbarSize.toolbarSizeMissing {
+  font-weight: 700;
+  color: #7a4b00;
+}
+
+/* First-use coaching under the scene. */
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 2px 4px 2px 12px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #1f4d24;
+  background: #eefbd8;
+  border-radius: 10px;
+}
+
+.hintText {
+  flex: 1;
+  min-width: 0;
+}
+
+.hintDismiss {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1f4d24;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.hintDismiss:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
 }
 
 .toolbarInfo {
@@ -323,6 +401,15 @@
 .toolButton:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.toolButtonDanger {
+  color: #b42318;
+}
+
+.toolButtonDanger:hover:not(:disabled) {
+  border-color: #b42318;
+  background: #fef3f2;
 }
 
 .toolButton:focus-visible {
@@ -412,6 +499,66 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
+  }
+}
+
+/* Phones: pin the room under the site header while the piece list scrolls.
+   The wrapper dissolves (display: contents) so .stage's containing block is the
+   whole Customize column, not just this component. The scene is capped to a
+   share of the viewport height; width and height shrink together, so the
+   true-scale maths is unchanged. CategoryDetailView.css lets the tab bar scroll
+   away while a [data-sticky-stage] exists. */
+@media (max-width: 768px) {
+  .wrapperSticky {
+    display: contents;
+  }
+
+  .wrapperSticky .stage {
+    position: sticky;
+    top: var(--site-header-height, 0px);
+    z-index: 30;
+    margin-bottom: 8px;
+    padding: 8px 0;
+    background: #fff;
+    box-shadow: 0 8px 8px -8px rgba(26, 31, 46, 0.3);
+  }
+
+  /* vh first as the fallback for browsers without dvh. */
+  .wrapperSticky .scene {
+    width: min(100%, max(60%, calc(30vh * var(--scene-aspect))));
+    width: min(100%, max(60%, calc(30dvh * var(--scene-aspect))));
+    margin-inline: auto;
+  }
+
+  /* One short row: name above, buttons scrolling sideways. */
+  .wrapperSticky .toolbar {
+    flex-direction: column;
+    /* nowrap: a wrapping column would size its line to the button row. */
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .wrapperSticky .toolbarButtons {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .wrapperSticky .toolButton,
+  .wrapperSticky .placeOn {
+    flex-shrink: 0;
+  }
+
+  /* The wrapper's own gap/margin are gone with display: contents. */
+  .wrapperSticky .hint,
+  .wrapperSticky .notices,
+  .wrapperSticky .caption {
+    margin-top: 8px;
+  }
+
+  .wrapperSticky .caption {
+    margin-bottom: 16px;
   }
 }
 

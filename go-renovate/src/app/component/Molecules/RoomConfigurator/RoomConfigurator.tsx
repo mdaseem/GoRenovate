@@ -14,17 +14,16 @@ import {
   setCustomRoomWidth,
   setCustomRoomHeight,
   setCustomSurface,
-  updateCustomPiece,
   undoCustom,
   redoCustom,
   clearCustomHistory,
-  clearCustomPositions,
 } from "@/app/store/features/categorySlice";
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
 import EssentialSlotItem from "../../Atoms/EssentialSlotItem/EssentialSlotItem";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import RoomCheckoutFooter from "../RoomCheckoutFooter/RoomCheckoutFooter";
-import RoomScene from "../../Atoms/RoomScene/RoomScene";
+import CustomRoomScene from "../CustomRoomScene/CustomRoomScene";
+import ShareDesign from "../ShareDesign/ShareDesign";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
 import { Essential } from "@/app/types/category";
 import { getSelectableSpaces, resolveScene } from "@/app/utils/sceneSpec";
@@ -55,6 +54,8 @@ function describeFitIssue(issue: FitIssue): string {
       return "has no wall space here, so it sits on the floor";
     case "too-tall":
       return "is taller than this room's ceiling";
+    case "no-size":
+      return "has no size from its vendor, so it is drawn at an estimated size";
     default:
       return "is wider than this space";
   }
@@ -124,14 +125,14 @@ export default function RoomConfigurator({
   const customSurfaces = useAppSelector(
     (state: RootState) => state.categoryState.customSurfaces,
   );
+  const designNotice = useAppSelector(
+    (state: RootState) => state.categoryState.designNotice,
+  );
   const canUndo = useAppSelector(
     (state: RootState) => state.categoryState.customHistory.past.length > 0,
   );
   const canRedo = useAppSelector(
     (state: RootState) => state.categoryState.customHistory.future.length > 0,
-  );
-  const customPositions = useAppSelector(
-    (state: RootState) => state.categoryState.customPositions,
   );
 
   const { availability, isChecking, checkAvailability } =
@@ -149,6 +150,52 @@ export default function RoomConfigurator({
     [detail, customSpaceSlug, customRoomWidthCm, customRoomHeightCm, customSurfaces],
   );
   const selectableSpaces = useMemo(() => getSelectableSpaces(detail), [detail]);
+  // The space at its own size — the baseline "Fit my room" resets to.
+  const defaultScene = useMemo(
+    () => resolveScene(detail, customSpaceSlug),
+    [detail, customSpaceSlug],
+  );
+
+  // Derived from the catalog + the user's list. Memoised (and declared before
+  // the early returns below) so the scene gets stable props: unrelated
+  // re-renders (undo/redo availability, totals) don't rebuild every piece.
+  const catalog = useMemo(
+    () => Object.values(detail?.essentialsBySlot ?? {}).flat(),
+    [detail],
+  );
+  const catalogById = useMemo(
+    () => new Map(catalog.map((item) => [item._id, item])),
+    [catalog],
+  );
+  // One entry per distinct product (list rows, stock checks, checkout)…
+  const addedItems = useMemo(
+    () =>
+      uniqueIds(customEssentialIds)
+        .map((id) => catalogById.get(id))
+        .filter((item): item is Essential => Boolean(item)),
+    [customEssentialIds, catalogById],
+  );
+  // …and one per COPY for the preview, so two bedside tables are two pieces.
+  const sceneItems = useMemo(
+    () =>
+      buildPieces(customEssentialIds)
+        .map((piece): ScenePiece | undefined => {
+          const item = catalogById.get(piece.essentialId);
+          return item ? { ...item, pieceKey: piece.key } : undefined;
+        })
+        .filter((item): item is ScenePiece => Boolean(item)),
+    [customEssentialIds, catalogById],
+  );
+  const fitNotices = useMemo(
+    () => [
+      ...(designNotice ? [designNotice] : []),
+      ...getFitIssues(addedItems, scene).map(
+        (issue) => `${issue.name} ${describeFitIssue(issue)}.`,
+      ),
+    ],
+    [designNotice, addedItems, scene],
+  );
+
 
   // Live stock check for every added piece — re-runs when the list changes,
   // so an out-of-stock piece is flagged right away.
@@ -183,27 +230,29 @@ export default function RoomConfigurator({
     return <RoomConfiguratorSkeleton />;
   }
 
-  const catalog = Object.values(detail.essentialsBySlot).flat();
-  const catalogById = new Map(catalog.map((item) => [item._id, item]));
   const slotById = new Map(detail.category.slots.map((slot) => [slot.id, slot]));
-  // One entry per distinct product (list rows, stock checks, checkout)…
-  const addedItems = uniqueIds(customEssentialIds)
-    .map((id) => catalogById.get(id))
-    .filter((item): item is Essential => Boolean(item));
   const quantityById = countById(customEssentialIds);
-  // …and one per COPY for the preview, so two bedside tables are two pieces.
-  const sceneItems = buildPieces(customEssentialIds)
-    .map((piece): ScenePiece | undefined => {
-      const item = catalogById.get(piece.essentialId);
-      return item ? { ...item, pieceKey: piece.key } : undefined;
-    })
-    .filter((item): item is ScenePiece => Boolean(item));
   const pieceCount = sceneItems.length;
   const vendorCount = new Set(catalog.map((item) => item.vendorId)).size;
-  const fitIssues = getFitIssues(addedItems, scene);
+
+  // Ctrl/Cmd+Z undoes, Ctrl+Shift+Z / Ctrl+Y redoes (not while typing in a field).
+  const handleShortcuts = (event: React.KeyboardEvent) => {
+    if (!(event.ctrlKey || event.metaKey)) return;
+    if ((event.target as HTMLElement).closest("input, textarea, select, [contenteditable='true']")) return;
+    const key = event.key.toLowerCase();
+    if (key === "z" && !event.shiftKey) {
+      if (!canUndo) return;
+      event.preventDefault();
+      dispatch(undoCustom());
+    } else if (key === "y" || (key === "z" && event.shiftKey)) {
+      if (!canRedo) return;
+      event.preventDefault();
+      dispatch(redoCustom());
+    }
+  };
 
   return (
-    <div className="room-configurator">
+    <div className="room-configurator" onKeyDown={handleShortcuts}>
       <header className="room-configurator-header">
         <span className="room-configurator-icon" aria-hidden="true">
           {detail.category.icon}
@@ -226,16 +275,20 @@ export default function RoomConfigurator({
         />
       )}
 
-      <RoomScene
+      <CustomRoomScene
         scene={scene}
         items={sceneItems}
         availability={availability}
-        layout={customPositions[scene.slug]}
-        onChange={(key, transform) =>
-          dispatch(updateCustomPiece({ spaceSlug: scene.slug, key, transform }))
-        }
-        onTidy={() => dispatch(clearCustomPositions(scene.slug))}
+        notices={fitNotices}
       />
+
+      {addedItems.length > 0 && (
+        <ShareDesign
+          categorySlug={categorySlug}
+          categoryName={detail.category.name}
+          spaceSlug={scene.slug}
+        />
+      )}
 
       <SurfaceSwatches
         wallId={customSurfaces.wallId}
@@ -247,18 +300,11 @@ export default function RoomConfigurator({
       <RoomSizeControl
         widthCm={customRoomWidthCm}
         heightCm={customRoomHeightCm}
-        defaultWidthCm={resolveScene(detail, customSpaceSlug).sceneWidthCm}
-        defaultHeightCm={resolveScene(detail, customSpaceSlug).ceilingHeightCm}
+        defaultWidthCm={defaultScene.sceneWidthCm}
+        defaultHeightCm={defaultScene.ceilingHeightCm}
         onWidthChange={(widthCm) => dispatch(setCustomRoomWidth(widthCm))}
         onHeightChange={(heightCm) => dispatch(setCustomRoomHeight(heightCm))}
       />
-
-      {fitIssues.length > 0 && (
-        <p className="room-configurator-fit-notice" role="status">
-          <strong>Adjusted for this space:</strong>{" "}
-          {fitIssues.map((issue) => `${issue.name} ${describeFitIssue(issue)}`).join("; ")}.
-        </p>
-      )}
 
       {addedItems.length === 0 ? (
         <div className="room-configurator-canvas">
@@ -270,23 +316,25 @@ export default function RoomConfigurator({
             across {vendorCount} vendor{vendorCount === 1 ? "" : "s"} and place
             them in your room.
           </p>
-          <button
-            type="button"
-            className="room-configurator-canvas-cta"
-            onClick={handleAddPiece}
-            disabled={catalog.length === 0}
-          >
-            <span aria-hidden="true">+</span> Add your first piece
-          </button>
-          {onBrowseRooms && (
+          <div className="room-configurator-canvas-actions">
             <button
               type="button"
-              className="room-configurator-browse"
-              onClick={onBrowseRooms}
+              className="room-configurator-canvas-cta"
+              onClick={handleAddPiece}
+              disabled={catalog.length === 0}
             >
-              Want a head start? Browse ready-made rooms →
+              <span aria-hidden="true">+</span> Add your first piece
             </button>
-          )}
+            {onBrowseRooms && (
+              <button
+                type="button"
+                className="room-configurator-canvas-secondary"
+                onClick={onBrowseRooms}
+              >
+                Start from a ready-made room
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <>
@@ -303,6 +351,8 @@ export default function RoomConfigurator({
                 className="room-configurator-reset"
                 onClick={() => dispatch(undoCustom())}
                 disabled={!canUndo}
+                aria-keyshortcuts="Control+Z Meta+Z"
+                title="Undo (Ctrl+Z)"
               >
                 Undo
               </button>
@@ -311,6 +361,8 @@ export default function RoomConfigurator({
                 className="room-configurator-reset"
                 onClick={() => dispatch(redoCustom())}
                 disabled={!canRedo}
+                aria-keyshortcuts="Control+Shift+Z Control+Y Meta+Shift+Z"
+                title="Redo (Ctrl+Shift+Z)"
               >
                 Redo
               </button>

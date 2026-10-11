@@ -7,6 +7,7 @@ import { watchSearch } from "./searchSaga";
 import { watchFavorites } from "./favoritesSaga";
 import { watchCategories } from "./categorySaga";
 import { watchEssentialOrders } from "./essentialOrderSaga";
+import { watchDesigns } from "./designSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga() {
     fork(watchFavorites),
     fork(watchCategories),
     fork(watchEssentialOrders),
+    fork(watchDesigns),
   ]);
 }

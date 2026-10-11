@@ -355,28 +355,6 @@ export function computeAutoLayout(
     positions[keyOf(ceiling[i])] = { x, y: 0 };
   });
 
-  // Wall pieces hang at their elevation (default 150 cm) and are spread along
-  // the wall, nudged sideways to clear windows, doors and each other.
-  const wall = items.filter((item) => getPlacement(item, scene).zone === "wall");
-  const takenOnWall: CmRect[] = [];
-  const preferredX = spread(wall.length, wall.length > 1 ? 30 : 50, 70);
-  // Widest pieces choose their spot first, so a crowded wall still finds room
-  // for the big ones (a shelf) and the small ones fit in around them.
-  const byWidth = wall
-    .map((item, i) => ({ item, preferred: preferredX[i] }))
-    .sort((a, b) => itemWidthPct(b.item, scene) - itemWidthPct(a.item, scene));
-  byWidth.forEach(({ item, preferred }) => {
-    const elevation =
-      getPlacement(item, scene).elevationCm ?? DEFAULT_WALL_ELEVATION_CM;
-    const x = findFreeWallX(item, preferred, elevation, scene, takenOnWall);
-    takenOnWall.push(wallPieceRect(item, x, elevation, scene));
-    positions[keyOf(item)] = clampPosition(
-      { x, y: yForWallElevation(item, elevation, scene) },
-      item,
-      scene,
-    );
-  });
-
   const floorItems = items.filter((item) => getPlacement(item, scene).zone === "floor");
 
   // Layer 0: flat floor coverings (rugs) sit centred under everything.
@@ -413,17 +391,71 @@ export function computeAutoLayout(
     cursor += width + gap * fit;
   });
 
-  // Layer 2+: low, front-of-room pieces (coffee tables…) sit in front of the
-  // widest main piece, or in the middle when there is none.
-  const front = floorItems
-    .filter((item) => getPlacement(item, scene).layer >= 2)
-    .sort((a, b) => getPlacement(a, scene).layer - getPlacement(b, scene).layer);
-  const anchorX = main.length > 0 ? positions[keyOf(main[0])].x : 50;
-  front.forEach((item, i) => {
-    positions[keyOf(item)] = {
-      x: clampX(anchorX + i * 14, itemWidthPct(item, scene)),
-      y: Math.min(97, floor + band * 0.825 + i * 2),
-    };
+  // Wall pieces hang at their elevation (default 150 cm) and are spread along
+  // the wall, nudged sideways to clear windows, doors, tall furniture and each other.
+  const wall = items.filter((item) => getPlacement(item, scene).zone === "wall");
+  // Tall floor pieces (wardrobes, beds, floor lamps…) stand against the wall and
+  // hide the part they cover, so hanging pieces start out clear of them.
+  const standing: CmRect[] = main
+    .filter((item) => (item.dimensionsCm?.h ?? 0) > 0)
+    .map((item) => {
+      const widthCm = item.dimensionsCm?.w ?? FALLBACK_WIDTH_CM;
+      const centreX = (positions[keyOf(item)].x / 100) * scene.sceneWidthCm;
+      return {
+        left: centreX - widthCm / 2,
+        right: centreX + widthCm / 2,
+        bottom: 0,
+        top: item.dimensionsCm?.h ?? 0,
+      };
+    });
+  const takenOnWall: CmRect[] = [...standing];
+  const preferredX = spread(wall.length, wall.length > 1 ? 30 : 50, 70);
+  // Widest pieces choose their spot first, so a crowded wall still finds room
+  // for the big ones (a shelf) and the small ones fit in around them.
+  const byWidth = wall
+    .map((item, i) => ({ item, preferred: preferredX[i] }))
+    .sort((a, b) => itemWidthPct(b.item, scene) - itemWidthPct(a.item, scene));
+  byWidth.forEach(({ item, preferred }) => {
+    const elevation =
+      getPlacement(item, scene).elevationCm ?? DEFAULT_WALL_ELEVATION_CM;
+    const x = findFreeWallX(item, preferred, elevation, scene, takenOnWall);
+    takenOnWall.push(wallPieceRect(item, x, elevation, scene));
+    positions[keyOf(item)] = clampPosition(
+      { x, y: yForWallElevation(item, elevation, scene) },
+      item,
+      scene,
+    );
+  });
+
+  // Layer 2+: front-of-room pieces (coffee tables, dining tables, chairs…) form
+  // rows, nearest layer first. A row's pieces stand side by side — widest first —
+  // centred on the widest piece of the row behind it (or on the main piece / the
+  // room's middle for the first row), so chairs end up in front of the table and
+  // two tables don't overlap. Rows that are too wide are compressed.
+  const front = floorItems.filter((item) => getPlacement(item, scene).layer >= 2);
+  const frontLayers = [...new Set(front.map((item) => getPlacement(item, scene).layer))].sort(
+    (x, y) => x - y,
+  );
+  let rowCentre = main.length > 0 ? positions[keyOf(main[0])].x : 50;
+  frontLayers.forEach((layerValue, rowIndex) => {
+    const row = front
+      .filter((item) => getPlacement(item, scene).layer === layerValue)
+      .sort((p, q) => itemWidthPct(q, scene) - itemWidthPct(p, scene));
+    const rowGap = 2;
+    const rowWidth =
+      row.reduce((sum, item) => sum + itemWidthPct(item, scene), 0) +
+      rowGap * Math.max(0, row.length - 1);
+    const rowFit = rowWidth > 92 ? 92 / rowWidth : 1;
+    let cursor = rowCentre - (rowWidth * rowFit) / 2;
+    row.forEach((item) => {
+      const width = itemWidthPct(item, scene) * rowFit;
+      positions[keyOf(item)] = {
+        x: clampX(cursor + width / 2, itemWidthPct(item, scene)),
+        y: Math.min(97, floor + band * (0.825 + rowIndex * 0.09)),
+      };
+      cursor += width + rowGap * rowFit;
+    });
+    rowCentre = positions[keyOf(row[0])].x;
   });
 
   // Resting pieces (plants, vases, lamps…) go onto the available supports in
@@ -490,11 +522,12 @@ export function computeAutoLayout(
 export interface FitIssue {
   id: string;
   name: string;
-  reason: "no-ceiling" | "no-wall" | "too-wide" | "too-tall";
+  reason: "no-ceiling" | "no-wall" | "too-wide" | "too-tall" | "no-size";
 }
 
 // Pieces the current space can't show as intended: their zone isn't supported
-// (they're parked on the floor instead) or they're wider than the room. The UI
+// (they're parked on the floor instead), they're wider/taller than the room, or
+// they have no size to draw to scale. The UI
 // tells the user instead of silently moving things. Pieces are never dropped.
 export function getFitIssues(items: Essential[], scene: ResolvedScene): FitIssue[] {
   const issues: FitIssue[] = [];
@@ -502,6 +535,10 @@ export function getFitIssues(items: Essential[], scene: ResolvedScene): FitIssue
   for (const item of items) {
     if (seen.has(item._id)) continue; // a product added twice is reported once
     seen.add(item._id);
+    // No vendor width: the piece is drawn at an estimated size, so say so.
+    if (item.dimensionsCm?.w === undefined) {
+      issues.push({ id: item._id, name: item.name, reason: "no-size" });
+    }
     const declared = item.placement?.zone ?? "floor";
     if (declared !== "surface" && !scene.spec.zones.includes(declared)) {
       issues.push({

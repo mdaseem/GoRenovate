@@ -83,6 +83,47 @@
   }
 }
 
+/* A shared design that could not be opened. */
+.category-detail-view-design-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 1.5rem 0;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #b42318;
+  background: #fef3f2;
+  border-radius: 8px;
+}
+
+.category-detail-view-design-error button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #b42318;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.category-detail-view-design-error button:focus-visible {
+  outline: 2px solid #b42318;
+  outline-offset: 2px;
+}
+
+/* Customize on phones pins the room under the site header (RoomScene's
+   [data-sticky-stage]); the tab bar scrolls away so the room has the space. */
+@media (max-width: 768px) {
+  .category-detail-view-main-col:has([data-sticky-stage]) .category-detail-view-tablist {
+    position: static;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .category-detail-view-tab {
     transition: none;
