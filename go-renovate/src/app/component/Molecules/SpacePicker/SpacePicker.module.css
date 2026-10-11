@@ -15,6 +15,17 @@
   color: #278b2e;
 }
 
+/* Screen-reader-only legend. */
+.legendHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* Sideways scroller with snap points; the next card peeks in to hint at more. */
 .track {
   display: flex;

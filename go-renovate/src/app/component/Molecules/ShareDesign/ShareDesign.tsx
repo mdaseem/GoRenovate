@@ -12,12 +12,19 @@ type Props = {
   categoryName: string;
   // The space the room is shown in right now (its positions are the ones saved).
   spaceSlug: string;
+  // Inside the room dock: no card of its own, the heading is for screen readers only.
+  embedded?: boolean;
 };
 
 // "Share your room": save the design to a link anyone can open (no login), or
 // download the picture. The link keeps pieces, positions, room size and colours
 // — prices and stock are always read live when it is opened.
-export default function ShareDesign({ categorySlug, categoryName, spaceSlug }: Props) {
+export default function ShareDesign({
+  categorySlug,
+  categoryName,
+  spaceSlug,
+  embedded = false,
+}: Props) {
   const dispatch = useAppDispatch();
   const customEssentialIds = useAppSelector((s: RootState) => s.categoryState.customEssentialIds);
   const customPositions = useAppSelector((s: RootState) => s.categoryState.customPositions);
@@ -103,8 +110,14 @@ export default function ShareDesign({ categorySlug, categoryName, spaceSlug }: P
   };
 
   return (
-    <section className={styles.share} aria-labelledby="share-design-heading">
-      <h2 id="share-design-heading" className={styles.heading}>
+    <section
+      className={`${styles.share}${embedded ? ` ${styles.embedded}` : ""}`}
+      aria-labelledby="share-design-heading"
+    >
+      <h2
+        id="share-design-heading"
+        className={`${styles.heading}${embedded ? ` ${styles.headingHidden}` : ""}`}
+      >
         Share your room
       </h2>
 

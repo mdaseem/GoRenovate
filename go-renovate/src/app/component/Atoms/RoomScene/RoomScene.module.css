@@ -418,21 +418,24 @@
 }
 
 .caption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
   color: #6b7280;
 }
 
-/* Show scale / Tidy up sit together on the right of the caption. */
-.captionActions {
+/* Undo / Redo (from the parent) · Show scale · Tidy up · Start over (from the parent). */
+.roomBar {
   display: flex;
-  flex-shrink: 0;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  margin: 0;
+}
+
+.roomBarSpacer {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .scaleFigure {
@@ -467,8 +470,8 @@
 .tidy {
   flex-shrink: 0;
   min-height: 44px;
-  padding: 0 12px;
-  font-size: 0.82rem;
+  padding: 0 8px;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #278b2e;
   background: none;
@@ -494,14 +497,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .caption {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-  }
-}
-
 /* Phones: pin the room under the site header while the piece list scrolls.
    The wrapper dissolves (display: contents) so .stage's containing block is the
    whole Customize column, not just this component. The scene is capped to a
@@ -524,7 +519,8 @@
   }
 
   /* vh first as the fallback for browsers without dvh. */
-  .wrapperSticky .scene {
+  .wrapperSticky .scene,
+  .wrapperCapped .scene {
     width: min(100%, max(60%, calc(30vh * var(--scene-aspect))));
     width: min(100%, max(60%, calc(30dvh * var(--scene-aspect))));
     margin-inline: auto;

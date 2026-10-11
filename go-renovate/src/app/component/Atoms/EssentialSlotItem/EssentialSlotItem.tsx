@@ -28,6 +28,9 @@ type Props = {
   quantity?: number;
   onQuantityChange?: (next: number) => void;
   maxQuantity?: number;
+  // A tighter row (Customize list on phones): smaller picture, full name,
+  // stepper beside the price, a corner remove button.
+  compact?: boolean;
 };
 
 export const LOW_STOCK_THRESHOLD = 5;
@@ -50,6 +53,7 @@ export default function EssentialSlotItem({
   quantity,
   onQuantityChange,
   maxQuantity = 10,
+  compact = false,
 }: Props) {
   const image = essential.images[0];
   const peekItems = alternatives.slice(0, MAX_PEEK_THUMBS);
@@ -59,7 +63,7 @@ export default function EssentialSlotItem({
     <li
       className={`essential-slot-item${
         isUnavailable ? " essential-slot-item-unavailable" : ""
-      }`}
+      }${compact ? " essential-slot-item--compact" : ""}`}
     >
       <div className="essential-slot-item-media">
         {image ? (

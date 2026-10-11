@@ -11,6 +11,8 @@ type Props = {
   floorId: string | null;
   onWallChange: (id: string | null) => void;
   onFloorChange: (id: string | null) => void;
+  // Render just the swatches (inside the room dock) instead of a collapsible panel of their own.
+  embedded?: boolean;
 };
 
 type Option = { id: string | null; name: string; color: string | null };
@@ -70,6 +72,15 @@ function SwatchGroup({
   );
 }
 
+// What the current choice is, in words ("Sage walls, Walnut floor"), or "" for the space's own.
+export function describeSurfaces(wallId: string | null, floorId: string | null): string {
+  const wall = WALL_SWATCHES.find((swatch) => swatch.id === wallId);
+  const floor = FLOOR_SWATCHES.find((swatch) => swatch.id === floorId);
+  return [wall && `${wall.name} walls`, floor && `${floor.name} floor`]
+    .filter(Boolean)
+    .join(", ");
+}
+
 // "Walls & floor": try a wall colour and a floor material in the preview.
 // Both apply to whichever space is chosen. Choosing one offers the matching
 // renovation service — the other half of the app — as a link.
@@ -78,66 +89,62 @@ export default function SurfaceSwatches({
   floorId,
   onWallChange,
   onFloorChange,
+  embedded = false,
 }: Props) {
   const wall = WALL_SWATCHES.find((swatch) => swatch.id === wallId);
   const floor = FLOOR_SWATCHES.find((swatch) => swatch.id === floorId);
-  const summary = [wall && `${wall.name} walls`, floor && `${floor.name} floor`]
-    .filter(Boolean)
-    .join(", ");
+
+  const body = (
+    <div className={styles.body}>
+      <SwatchGroup
+        legend="Wall colour"
+        name="custom-wall"
+        options={[{ id: null, name: "Space default", color: null }, ...WALL_SWATCHES]}
+        selectedId={wallId}
+        onSelect={onWallChange}
+        round
+      />
+      <SwatchGroup
+        legend="Floor"
+        name="custom-floor"
+        options={[{ id: null, name: "Space default", color: null }, ...FLOOR_SWATCHES]}
+        selectedId={floorId}
+        onSelect={onFloorChange}
+        round={false}
+      />
+
+      {(wall || floor) && (
+        <div className={styles.cta}>
+          <p className={styles.ctaNote}>Colours are approximate. Ready to make it real?</p>
+          <div className={styles.ctaLinks}>
+            {wall && (
+              <Link href="/vendors/category/painting" className={styles.ctaLink}>
+                Get the walls painted →
+              </Link>
+            )}
+            {floor && (
+              <Link href="/vendors/category/flooring" className={styles.ctaLink}>
+                Get new flooring →
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  if (embedded) return body;
 
   return (
     <details className={styles.panel}>
       <summary className={styles.summary}>
         <span className={styles.summaryTitle}>Walls &amp; floor</span>
         <span className={styles.summaryValue}>
-          {summary || "Try colours and materials"}
+          {describeSurfaces(wallId, floorId) || "Try colours and materials"}
         </span>
       </summary>
 
-      <div className={styles.body}>
-        <SwatchGroup
-          legend="Wall colour"
-          name="custom-wall"
-          options={[
-            { id: null, name: "Space default", color: null },
-            ...WALL_SWATCHES,
-          ]}
-          selectedId={wallId}
-          onSelect={onWallChange}
-          round
-        />
-        <SwatchGroup
-          legend="Floor"
-          name="custom-floor"
-          options={[
-            { id: null, name: "Space default", color: null },
-            ...FLOOR_SWATCHES,
-          ]}
-          selectedId={floorId}
-          onSelect={onFloorChange}
-          round={false}
-        />
-
-        {(wall || floor) && (
-          <div className={styles.cta}>
-            <p className={styles.ctaNote}>
-              Colours are approximate. Ready to make it real?
-            </p>
-            <div className={styles.ctaLinks}>
-              {wall && (
-                <Link href="/vendors/category/painting" className={styles.ctaLink}>
-                  Get the walls painted →
-                </Link>
-              )}
-              {floor && (
-                <Link href="/vendors/category/flooring" className={styles.ctaLink}>
-                  Get new flooring →
-                </Link>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      {body}
     </details>
   );
 }
