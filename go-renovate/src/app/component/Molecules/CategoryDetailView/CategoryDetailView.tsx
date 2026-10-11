@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import "./CategoryDetailView.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
@@ -7,6 +8,7 @@ import {
   acknowledgeCustomizeRequest,
   getCategoryDetail,
 } from "@/app/store/features/categorySlice";
+import { dismissLoadError, loadDesignRequest } from "@/app/store/features/designSlice";
 import RoomConfigurator from "../RoomConfigurator/RoomConfigurator";
 import RoomGrid from "../RoomGrid/RoomGrid";
 import RoomGridFilters from "../RoomGrid/RoomGridFilters";
@@ -25,6 +27,20 @@ export default function CategoryDetailView({ categorySlug }: Props) {
   useEffect(() => {
     dispatch(getCategoryDetail({ slug: categorySlug }));
   }, [dispatch, categorySlug]);
+
+  // A shared link (?design=<id>): once the category is loaded, open that design
+  // in Customize. Each id is requested once per visit.
+  const designId = useSearchParams().get("design");
+  const isCategoryLoaded = useAppSelector(
+    (state: RootState) => state.categoryState.activeCategoryDetail?.category.slug === categorySlug,
+  );
+  const designLoadError = useAppSelector((state: RootState) => state.designState.loadError);
+  const requestedDesignRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!designId || !isCategoryLoaded || requestedDesignRef.current === designId) return;
+    requestedDesignRef.current = designId;
+    dispatch(loadDesignRequest({ id: designId, categorySlug }));
+  }, [designId, isCategoryLoaded, categorySlug, dispatch]);
 
   // "Customize this room" (Room-detail overlay) asks for the Customize tab.
   const customizeRequested = useAppSelector(
@@ -79,6 +95,15 @@ export default function CategoryDetailView({ categorySlug }: Props) {
               Customize
             </button>
           </div>
+
+          {designLoadError && (
+            <p className="category-detail-view-design-error" role="alert">
+              <span>{designLoadError}</span>
+              <button type="button" onClick={() => dispatch(dismissLoadError())}>
+                Dismiss
+              </button>
+            </p>
+          )}
 
           <div
             role="tabpanel"

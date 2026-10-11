@@ -11,6 +11,7 @@ import {
   CategoryDetail,
   Room,
 } from "@/app/types/category";
+import { SavedDesign } from "@/app/types/design";
 
 interface CustomSnapshot {
   ids: string[];
@@ -64,6 +65,9 @@ interface CategoryState {
   // "Customize this room") wants the Customize tab to open; CategoryDetailView
   // acknowledges it.
   customizeRequested: boolean;
+  // A heads-up after opening a shared design (e.g. some of its pieces are no
+  // longer sold). Cleared when the build is replaced or emptied.
+  designNotice: string | null;
   // True while the "add pieces" picker (CustomPiecePicker) is the content of
   // the shared slot-picker overlay; customPickerSnapshot is the list as it
   // was when the picker opened, so Cancel can restore it.
@@ -97,6 +101,7 @@ const initialState: CategoryState = {
   customHistory: { past: [], future: [] },
   customPickerHistoryMark: 0,
   customizeRequested: false,
+  designNotice: null,
   isCustomPickerActive: false,
   customPickerSnapshot: [],
 
@@ -203,6 +208,7 @@ export const categorySlice = createSlice({
       store.customRoomHeightCm = null;
       store.customSurfaces = { wallId: null, floorId: null };
       store.customHistory = { past: [], future: [] };
+      store.designNotice = null;
       store.isLoadingCategoryDetail = false;
     },
     setCategoryDetailError: (store, { payload }: PayloadAction<string>) => {
@@ -274,6 +280,49 @@ export const categorySlice = createSlice({
       store.customEssentialIds = [];
       // "Start over" empties the room but keeps the chosen space and room width.
       store.customPositions = {};
+      store.designNotice = null;
+    },
+    // Open a shared design: replace the Customize build with its pieces (those
+    // this catalogue still sells), arrangement, room size and colours, then ask
+    // for the Customize tab. One undo step takes the user back to what they had.
+    applyCustomDesign: (store, { payload }: PayloadAction<SavedDesign>) => {
+      const detail = store.activeCategoryDetail;
+      if (!detail) return;
+      const known = new Set(
+        Object.values(detail.essentialsBySlot)
+          .flat()
+          .map((item) => item._id),
+      );
+      const ids = payload.essentialIds.filter((id) => known.has(id));
+      const skipped = payload.essentialIds.length - ids.length;
+      const copies: Record<string, number> = {};
+      ids.forEach((id) => {
+        copies[id] = (copies[id] ?? 0) + 1;
+      });
+      // Keep only the saved positions of copies that still exist.
+      const positions = Object.fromEntries(
+        Object.entries(payload.positions).filter(([key]) => {
+          const [id, copy] = key.split("#");
+          return (copies[id] ?? 0) > Number(copy);
+        }),
+      );
+      pushHistory(store);
+      store.customEssentialIds = ids;
+      store.customSpaceSlug =
+        payload.spaceSlug && detail.spaces?.some((space) => space.slug === payload.spaceSlug)
+          ? payload.spaceSlug
+          : null;
+      store.customPositions = payload.spaceSlug ? { [payload.spaceSlug]: positions } : {};
+      store.customRoomWidthCm = payload.roomWidthCm;
+      store.customRoomHeightCm = payload.roomHeightCm;
+      store.customSurfaces = { wallId: payload.wallId, floorId: payload.floorId };
+      store.designNotice =
+        ids.length === 0
+          ? "None of the pieces in that shared design are available any more."
+          : skipped > 0
+            ? `${skipped} piece${skipped === 1 ? "" : "s"} from the shared design ${skipped === 1 ? "is" : "are"} no longer available and ${skipped === 1 ? "was" : "were"} left out.`
+            : null;
+      store.customizeRequested = true;
     },
     // "Customize this room": replace the Customize build with a curated
     // room's pieces and the space it is bound to, then ask for the tab.
@@ -287,6 +336,7 @@ export const categorySlice = createSlice({
       store.customEssentialIds = [...payload.essentialIds];
       store.customPositions = {};
       store.customSpaceSlug = payload.spaceSlug ?? null;
+      store.designNotice = null;
       store.customizeRequested = true;
     },
     setCustomRoomHeight: (store, { payload }: PayloadAction<number | null>) => {
@@ -459,6 +509,7 @@ export const {
   removeOneCustomPiece,
   removeCustomEssential,
   startCustomFromPieces,
+  applyCustomDesign,
   acknowledgeCustomizeRequest,
   setCustomRoomWidth,
   setCustomRoomHeight,

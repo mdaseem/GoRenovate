@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styles from "./SpacePicker.module.css";
 import SceneBackdrop from "../../Atoms/RoomScene/SceneBackdrop";
 import { SpaceTemplate } from "@/app/types/category";
@@ -21,14 +21,16 @@ function formatWidth(widthCm: number): string {
 // Switching is non-destructive — pieces stay and each space remembers its own
 // arrangement — so it is safe to offer at any point.
 export default function SpacePicker({ spaces, selectedSlug, onSelect }: Props) {
+  // Resolved once per space list so each card's (memoised) backdrop is skipped on re-render.
+  const thumbs = useMemo(() => spaces.map(resolveSpaceTemplate), [spaces]);
   return (
     <fieldset className={styles.picker}>
       <legend className={styles.legend}>Choose your space</legend>
       <div className={styles.track}>
-        {spaces.map((space) => {
+        {spaces.map((space, index) => {
           const inputId = `custom-space-${space.slug}`;
           const isSelected = space.slug === selectedSlug;
-          const thumb = resolveSpaceTemplate(space);
+          const thumb = thumbs[index];
           return (
             <div key={space.slug} className={styles.option}>
               <input
@@ -50,7 +52,7 @@ export default function SpacePicker({ spaces, selectedSlug, onSelect }: Props) {
                   style={{ aspectRatio: 1.6 }}
                   aria-hidden="true"
                 >
-                  <SceneBackdrop scene={thumb} />
+                  <SceneBackdrop scene={thumb} simple />
                   {isSelected && <span className={styles.tick}>✓</span>}
                 </span>
                 <span className={styles.name}>{space.name}</span>

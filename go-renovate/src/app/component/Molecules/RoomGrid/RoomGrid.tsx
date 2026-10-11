@@ -46,6 +46,8 @@ export default function RoomGrid({ categorySlug }: Props) {
         .flat()
         .map((item) => [item._id, item] as const),
     );
+    // Rooms in the same space share one resolved scene (and one backdrop).
+    const sceneBySlug = new Map<string | undefined, ReturnType<typeof resolveScene>>();
     const result: Record<
       string,
       { scene: ReturnType<typeof resolveScene>; items: Essential[]; spaceName?: string }
@@ -55,7 +57,11 @@ export default function RoomGrid({ categorySlug }: Props) {
         .map((id) => catalog.get(id))
         .filter((item): item is Essential => Boolean(item));
       if (!items.some((item) => item.cutoutUrl)) continue;
-      const scene = resolveScene(detail, room.spaceSlug);
+      let scene = sceneBySlug.get(room.spaceSlug);
+      if (!scene) {
+        scene = resolveScene(detail, room.spaceSlug);
+        sceneBySlug.set(room.spaceSlug, scene);
+      }
       result[room._id] = {
         scene,
         items,

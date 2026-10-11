@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ResolvedScene, SceneFixture, bookcaseLayout } from "@/app/utils/sceneSpec";
 
 // Draws a Space as inline SVG: tiny, crisp at any size, themeable and needing
@@ -9,6 +9,9 @@ const W = 1000;
 
 type Props = {
   scene: ResolvedScene;
+  // Thumbnails (a few hundred px wide at most): leave out detail that would be
+  // sub-pixel there (the floor-plank lines).
+  simple?: boolean;
 };
 
 function Fixture({
@@ -125,12 +128,14 @@ function Fixture({
   }
 }
 
-export default function SceneBackdrop({ scene }: Props) {
+// Memoised: the room redraws on every drag frame, the backdrop never changes
+// unless the scene does (resolveScene() results are cached by the callers).
+function SceneBackdrop({ scene, simple = false }: Props) {
   const { spec } = scene;
   const unit = W / scene.sceneWidthCm;
   const height = Math.round(scene.heightCm * unit);
   const fy = Math.round(spec.floorLine * height);
-  const planks = Array.from({ length: 9 }, (_, i) => i);
+  const planks = simple ? [] : Array.from({ length: 9 }, (_, i) => i);
   const shade = spec.wall.shade ?? spec.wall.color;
   const isTiled = spec.wall.pattern === "tiles";
   // Wall tiles are ~30 cm square, so they scale with the room.
@@ -140,6 +145,7 @@ export default function SceneBackdrop({ scene }: Props) {
     <svg
       viewBox={`0 0 ${W} ${height}`}
       preserveAspectRatio="xMidYMax slice"
+      data-scene-backdrop=""
       aria-hidden="true"
       focusable="false"
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
@@ -206,3 +212,5 @@ export default function SceneBackdrop({ scene }: Props) {
     </svg>
   );
 }
+
+export default memo(SceneBackdrop);

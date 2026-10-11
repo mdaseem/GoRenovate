@@ -1,8 +1,10 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import "./RoomCard.css";
 import { Essential, Room, humanizeStyleTag } from "@/app/types/category";
 import RoomScene from "../RoomScene/RoomScene";
+import { useInView } from "../../CustomHooks/useInView";
 import { ResolvedScene } from "@/app/utils/sceneSpec";
 
 type Props = {
@@ -36,6 +38,9 @@ const ArrowIcon = () => (
 export default function RoomCard({ room, onOpen, preview }: Props) {
   const pieceCount = room.essentialIds.length;
   const pieceLabel = `${pieceCount} ${pieceCount === 1 ? "piece" : "pieces"}`;
+  // The scene thumbnail (SVG backdrop + one image per piece) is only built once
+  // its card is near the screen; until then the sized box below holds the space.
+  const [mediaRef, isNearScreen] = useInView<HTMLDivElement>();
 
   return (
     <button
@@ -45,10 +50,13 @@ export default function RoomCard({ room, onOpen, preview }: Props) {
       aria-label={`Configure ${room.title} — ${pieceLabel}, ${formatPrice(room.totalPrice)}`}
     >
       <div
+        ref={mediaRef}
         className={`room-card-media${preview ? " room-card-media--scene" : ""}`}
       >
         {preview ? (
-          <RoomScene scene={preview.scene} items={preview.items} compact />
+          isNearScreen && (
+            <RoomScene scene={preview.scene} items={preview.items} compact />
+          )
         ) : room.heroImageUrl ? (
           <Image
             src={room.heroImageUrl}
