@@ -111,3 +111,45 @@
     animation: none;
   }
 }
+
+/* Phones: price on the left, Checkout on the right — one row instead of a
+   tall two-row card, so it covers far less of the list. */
+@media (max-width: 600px) {
+  .footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+    padding: 10px 12px;
+  }
+
+  .totalRow {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .totalInfo {
+    gap: 0;
+  }
+
+  /* "Room total" stays for screen readers; the big price says it visually. */
+  .totalLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .totalValue {
+    font-size: 1.2rem;
+    line-height: 1.15;
+  }
+
+  .checkout {
+    width: auto;
+    padding: 0 18px;
+  }
+}

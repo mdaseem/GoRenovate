@@ -1,0 +1,39 @@
+/* Undo / Redo / Start over, sitting in the room bar under the picture. */
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: #278b2e;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: #eefbd8;
+}
+
+.iconButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.textButton {
+  min-height: 44px;
+  padding: 0 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.iconButton:focus-visible,
+.textButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}

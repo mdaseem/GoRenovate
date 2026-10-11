@@ -8,6 +8,8 @@ type Props = {
   spaces: SpaceTemplate[];
   selectedSlug: string;
   onSelect: (slug: string) => void;
+  // The dock already says what this is: keep the legend for screen readers only.
+  hideLegend?: boolean;
 };
 
 function formatWidth(widthCm: number): string {
@@ -20,12 +22,14 @@ function formatWidth(widthCm: number): string {
 // screen readers work for free; the row scrolls sideways on narrow screens.
 // Switching is non-destructive — pieces stay and each space remembers its own
 // arrangement — so it is safe to offer at any point.
-export default function SpacePicker({ spaces, selectedSlug, onSelect }: Props) {
+export default function SpacePicker({ spaces, selectedSlug, onSelect, hideLegend = false }: Props) {
   // Resolved once per space list so each card's (memoised) backdrop is skipped on re-render.
   const thumbs = useMemo(() => spaces.map(resolveSpaceTemplate), [spaces]);
   return (
     <fieldset className={styles.picker}>
-      <legend className={styles.legend}>Choose your space</legend>
+      <legend className={`${styles.legend}${hideLegend ? ` ${styles.legendHidden}` : ""}`}>
+        Choose your space
+      </legend>
       <div className={styles.track}>
         {spaces.map((space, index) => {
           const inputId = `custom-space-${space.slug}`;

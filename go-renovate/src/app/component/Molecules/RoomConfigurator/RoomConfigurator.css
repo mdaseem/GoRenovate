@@ -12,8 +12,8 @@
 .room-configurator-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .room-configurator-heading {
@@ -21,13 +21,13 @@
 }
 
 .room-configurator-icon {
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   line-height: 1;
 }
 
 .room-configurator-title {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #1a1f2e;
 }
@@ -38,44 +38,58 @@
   color: #6b7280;
 }
 
-.room-configurator-list {
-  list-style: none;
-  margin: 0 0 20px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.room-configurator-progress-label {
+/* Header of the piece list: how many, and the way to add more. */
+.room-configurator-list-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 8px 0 0;
-  font-size: 0.85rem;
+  margin: 4px 0 8px;
+}
+
+.room-configurator-list-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: #6b7280;
 }
 
-.room-configurator-progress-label strong {
+.room-configurator-list-title strong {
   color: #1a1f2e;
 }
 
-.room-configurator-reset {
+.room-configurator-add-piece {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 44px;
-  padding: 0 4px;
-  border: none;
-  background: none;
-  font-size: 0.82rem;
-  font-weight: 600;
+  padding: 0 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: #278b2e;
-  text-decoration: underline;
+  background: #fbfaf7;
+  border: 2px dashed #cfd8c8;
+  border-radius: 12px;
   cursor: pointer;
 }
 
-.room-configurator-reset:focus-visible {
+.room-configurator-add-piece:hover {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.room-configurator-add-piece:focus-visible {
   outline: 2px solid #278b2e;
   outline-offset: 2px;
+}
+
+.room-configurator-list {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* Empty state: one calm canvas instead of a checklist of slots. */
@@ -106,8 +120,7 @@
   color: #6b7280;
 }
 
-.room-configurator-canvas-cta,
-.room-configurator-add-more {
+.room-configurator-canvas-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -123,9 +136,6 @@
     color 0.2s ease,
     border-color 0.2s ease,
     transform 0.1s ease;
-}
-
-.room-configurator-canvas-cta {
   color: #000;
   background: #c4fd5b;
   border: none;
@@ -145,35 +155,9 @@
   cursor: not-allowed;
 }
 
-.room-configurator-canvas-cta:focus-visible,
-.room-configurator-add-more:focus-visible {
+.room-configurator-canvas-cta:focus-visible {
   outline: 2px solid #278b2e;
   outline-offset: 2px;
-}
-
-/* "Add another piece": a dashed, always-available invitation under the list. */
-.room-configurator-add-more {
-  width: 100%;
-  margin-bottom: 20px;
-  color: #278b2e;
-  background: #fbfaf7;
-  border: 2px dashed #cfd8c8;
-}
-
-.room-configurator-add-more:hover {
-  border-color: #278b2e;
-  background: #f0f9f0;
-}
-
-.room-configurator-add-more-plus {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  font-size: 1.2rem;
-  line-height: 1;
-  background: #eefbd8;
-  border-radius: 50%;
 }
 
 /* A slot that has just been filled pops in. */
@@ -234,8 +218,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .room-configurator-canvas-cta,
-  .room-configurator-canvas-secondary,
-  .room-configurator-add-more {
+  .room-configurator-canvas-secondary {
     transition: none;
   }
 
@@ -246,7 +229,12 @@
 
 @media (max-width: 480px) {
   .room-configurator {
-    padding: 16px 12px 80px;
+    padding: 8px 12px 16px;
+  }
+
+  /* The subtitle only repeats the empty-state copy: on phones the room gets the room. */
+  .room-configurator-combo-title {
+    display: none;
   }
 }
 
@@ -356,14 +344,3 @@
 }
 
 /* Undo / Redo / Start over share one row of text buttons. */
-.room-configurator-history {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.room-configurator-reset:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  text-decoration: none;
-}

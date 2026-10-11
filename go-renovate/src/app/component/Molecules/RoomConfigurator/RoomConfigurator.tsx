@@ -24,13 +24,14 @@ import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import RoomCheckoutFooter from "../RoomCheckoutFooter/RoomCheckoutFooter";
 import CustomRoomScene from "../CustomRoomScene/CustomRoomScene";
 import ShareDesign from "../ShareDesign/ShareDesign";
+import RoomDock, { DockTool } from "../RoomDock/RoomDock";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
 import { Essential } from "@/app/types/category";
 import { getSelectableSpaces, resolveScene } from "@/app/utils/sceneSpec";
 import { FitIssue, getFitIssues } from "@/app/utils/roomScene";
 import SpacePicker from "../SpacePicker/SpacePicker";
 import RoomSizeControl from "../RoomSizeControl/RoomSizeControl";
-import SurfaceSwatches from "../SurfaceSwatches/SurfaceSwatches";
+import SurfaceSwatches, { describeSurfaces } from "../SurfaceSwatches/SurfaceSwatches";
 import { sceneOverridesFor } from "@/app/utils/surfaceSwatches";
 import { ScenePiece } from "@/app/utils/roomScene";
 import {
@@ -59,6 +60,17 @@ function describeFitIssue(issue: FitIssue): string {
     default:
       return "is wider than this space";
   }
+}
+
+// 450 -> "4.5", 300 -> "3" (metres, at most one decimal).
+function formatMetres(cm: number): string {
+  return String(Number((cm / 100).toFixed(1)));
+}
+
+// "Bedroom — window wall" -> "Window wall" (the chip already sits in the bedroom).
+function shortSpaceName(name: string): string {
+  const part = name.includes("—") ? (name.split("—").pop() ?? name).trim() : name;
+  return part.charAt(0).toUpperCase() + part.slice(1);
 }
 
 function RoomConfiguratorSkeleton() {
@@ -127,6 +139,11 @@ export default function RoomConfigurator({
   );
   const designNotice = useAppSelector(
     (state: RootState) => state.categoryState.designNotice,
+  );
+  const hasSavedLink = useAppSelector(
+    (state: RootState) =>
+      state.designState.savedCategorySlug === categorySlug &&
+      state.designState.savedDesignId !== null,
   );
   const canUndo = useAppSelector(
     (state: RootState) => state.categoryState.customHistory.past.length > 0,
@@ -235,6 +252,75 @@ export default function RoomConfigurator({
   const pieceCount = sceneItems.length;
   const vendorCount = new Set(catalog.map((item) => item.vendorId)).size;
 
+  // The room's settings, as chips under the room (see RoomDock).
+  const dockTools: DockTool[] = [
+    ...(selectableSpaces.length > 1
+      ? [
+          {
+            id: "space",
+            label: "Space",
+            summary: shortSpaceName(
+              selectableSpaces.find((space) => space.slug === scene.slug)?.name ?? "Default",
+            ),
+            content: (
+              <SpacePicker
+                spaces={selectableSpaces}
+                selectedSlug={scene.slug}
+                onSelect={(slug) => dispatch(selectCustomSpace(slug))}
+                hideLegend
+              />
+            ),
+          },
+        ]
+      : []),
+    {
+      id: "colours",
+      label: "Colours",
+      summary: describeSurfaces(customSurfaces.wallId, customSurfaces.floorId) || "Space default",
+      content: (
+        <SurfaceSwatches
+          embedded
+          wallId={customSurfaces.wallId}
+          floorId={customSurfaces.floorId}
+          onWallChange={(id) => dispatch(setCustomSurface({ surface: "wall", id }))}
+          onFloorChange={(id) => dispatch(setCustomSurface({ surface: "floor", id }))}
+        />
+      ),
+    },
+    {
+      id: "size",
+      label: "Size",
+      summary: `${formatMetres(scene.sceneWidthCm)} × ${formatMetres(scene.ceilingHeightCm)} m`,
+      content: (
+        <RoomSizeControl
+          widthCm={customRoomWidthCm}
+          heightCm={customRoomHeightCm}
+          defaultWidthCm={defaultScene.sceneWidthCm}
+          defaultHeightCm={defaultScene.ceilingHeightCm}
+          onWidthChange={(widthCm) => dispatch(setCustomRoomWidth(widthCm))}
+          onHeightChange={(heightCm) => dispatch(setCustomRoomHeight(heightCm))}
+        />
+      ),
+    },
+    ...(addedItems.length > 0
+      ? [
+          {
+            id: "share",
+            label: "Share",
+            summary: hasSavedLink ? "Link ready" : "Get a link",
+            content: (
+              <ShareDesign
+                embedded
+                categorySlug={categorySlug}
+                categoryName={detail.category.name}
+                spaceSlug={scene.slug}
+              />
+            ),
+          },
+        ]
+      : []),
+  ];
+
   // Ctrl/Cmd+Z undoes, Ctrl+Shift+Z / Ctrl+Y redoes (not while typing in a field).
   const handleShortcuts = (event: React.KeyboardEvent) => {
     if (!(event.ctrlKey || event.metaKey)) return;
@@ -267,14 +353,6 @@ export default function RoomConfigurator({
         </div>
       </header>
 
-      {selectableSpaces.length > 1 && (
-        <SpacePicker
-          spaces={selectableSpaces}
-          selectedSlug={scene.slug}
-          onSelect={(slug) => dispatch(selectCustomSpace(slug))}
-        />
-      )}
-
       <CustomRoomScene
         scene={scene}
         items={sceneItems}
@@ -282,29 +360,7 @@ export default function RoomConfigurator({
         notices={fitNotices}
       />
 
-      {addedItems.length > 0 && (
-        <ShareDesign
-          categorySlug={categorySlug}
-          categoryName={detail.category.name}
-          spaceSlug={scene.slug}
-        />
-      )}
-
-      <SurfaceSwatches
-        wallId={customSurfaces.wallId}
-        floorId={customSurfaces.floorId}
-        onWallChange={(id) => dispatch(setCustomSurface({ surface: "wall", id }))}
-        onFloorChange={(id) => dispatch(setCustomSurface({ surface: "floor", id }))}
-      />
-
-      <RoomSizeControl
-        widthCm={customRoomWidthCm}
-        heightCm={customRoomHeightCm}
-        defaultWidthCm={defaultScene.sceneWidthCm}
-        defaultHeightCm={defaultScene.ceilingHeightCm}
-        onWidthChange={(widthCm) => dispatch(setCustomRoomWidth(widthCm))}
-        onHeightChange={(heightCm) => dispatch(setCustomRoomHeight(heightCm))}
-      />
+      <RoomDock tools={dockTools} ariaLabel="Room settings" />
 
       {addedItems.length === 0 ? (
         <div className="room-configurator-canvas">
@@ -338,43 +394,21 @@ export default function RoomConfigurator({
         </div>
       ) : (
         <>
-          <p className="room-configurator-progress-label">
-            <span>
+          <div className="room-configurator-list-head">
+            <h2 className="room-configurator-list-title">
               <strong>
                 {pieceCount} piece{pieceCount === 1 ? "" : "s"}
               </strong>{" "}
               in your room
-            </span>
-            <span className="room-configurator-history">
-              <button
-                type="button"
-                className="room-configurator-reset"
-                onClick={() => dispatch(undoCustom())}
-                disabled={!canUndo}
-                aria-keyshortcuts="Control+Z Meta+Z"
-                title="Undo (Ctrl+Z)"
-              >
-                Undo
-              </button>
-              <button
-                type="button"
-                className="room-configurator-reset"
-                onClick={() => dispatch(redoCustom())}
-                disabled={!canRedo}
-                aria-keyshortcuts="Control+Shift+Z Control+Y Meta+Shift+Z"
-                title="Redo (Ctrl+Shift+Z)"
-              >
-                Redo
-              </button>
-              <button
-                type="button"
-                className="room-configurator-reset"
-                onClick={() => dispatch(resetCustomSelection())}
-              >
-                Start over
-              </button>
-            </span>
-          </p>
+            </h2>
+            <button
+              type="button"
+              className="room-configurator-add-piece"
+              onClick={handleAddPiece}
+            >
+              <span aria-hidden="true">+</span> Add piece
+            </button>
+          </div>
 
           <ul className="room-configurator-list">
             {addedItems.map((item) => {
@@ -408,21 +442,11 @@ export default function RoomConfigurator({
                         : undefined
                   }
                   lowStock={entry?.stock ?? null}
+                  compact
                 />
               );
             })}
           </ul>
-
-          <button
-            type="button"
-            className="room-configurator-add-more"
-            onClick={handleAddPiece}
-          >
-            <span className="room-configurator-add-more-plus" aria-hidden="true">
-              +
-            </span>
-            Add another piece
-          </button>
 
           <RoomCheckoutFooter
             selectedItems={addedItems}

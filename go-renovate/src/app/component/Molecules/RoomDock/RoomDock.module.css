@@ -1,0 +1,110 @@
+.dock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+/* One equal-width chip per tool. */
+.chips {
+  display: grid;
+  grid-template-columns: repeat(var(--dock-count, 4), minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chipItem {
+  min-width: 0;
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+  min-height: 52px;
+  padding: 6px 8px;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.chip:hover {
+  border-color: #278b2e;
+}
+
+.chipOpen {
+  border-color: #278b2e;
+  background: #f0f9f0;
+  box-shadow: 0 0 0 1px #278b2e inset;
+}
+
+.chip:focus-visible,
+.close:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.chipLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.chipSummary {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.68rem;
+  color: #6b7280;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel {
+  position: relative;
+  padding: 12px 12px 4px;
+  background: #fbfaf7;
+  border: 1px solid #ece9e3;
+  border-radius: 14px;
+}
+
+/* scrollIntoView keeps the panel clear of the pinned room above it and the checkout bar below. */
+@media (max-width: 768px) {
+  .panel {
+    scroll-margin-top: 340px;
+    scroll-margin-bottom: 96px;
+  }
+}
+
+.panelBody {
+  min-width: 0;
+}
+
+.close {
+  display: block;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0 0 0 auto;
+  padding: 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+}

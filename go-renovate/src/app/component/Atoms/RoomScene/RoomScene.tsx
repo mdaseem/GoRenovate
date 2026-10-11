@@ -55,6 +55,10 @@ type Props = {
   // Heads-ups about the arrangement (a piece that doesn't fit, has no size…),
   // shown together with the scene's own overlap warnings in one place.
   notices?: string[];
+  // Buttons for the slim bar under the room (Customize puts Undo/Redo before
+  // "Show scale" / "Tidy up", and "Start over" after them).
+  leadingActions?: React.ReactNode;
+  trailingActions?: React.ReactNode;
   // Thumbnail use (e.g. Browse All cards): no caption, tighter chrome.
   compact?: boolean;
 };
@@ -75,6 +79,8 @@ function RoomScene({
   onRemove,
   sticky = false,
   notices = [],
+  leadingActions,
+  trailingActions,
   compact = false,
 }: Props) {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -512,6 +518,8 @@ function RoomScene({
 
   // Pinned only on phones (CSS) and only once there is something to arrange.
   const isSticky = sticky && isInteractive && !compact && items.length > 0;
+  // With no pieces yet the room is not pinned, but it is still kept short on phones.
+  const isCapped = sticky && isInteractive && !compact && !isSticky;
 
   const summary = items.length
     ? `Room preview with ${items.map((item) => item.name).join(", ")}.`
@@ -521,7 +529,7 @@ function RoomScene({
     <div
       className={`${styles.wrapper}${compact ? ` ${styles.wrapperCompact}` : ""}${
         isSticky ? ` ${styles.wrapperSticky}` : ""
-      }`}
+      }${isCapped ? ` ${styles.wrapperCapped}` : ""}`}
     >
       <div className={styles.stage} data-sticky-stage={isSticky ? "" : undefined}>
         <div
@@ -776,6 +784,27 @@ function RoomScene({
         )}
       </div>
 
+      {isInteractive && !compact && (
+        <div className={styles.roomBar}>
+          {leadingActions}
+          <span className={styles.roomBarSpacer} />
+          <button
+            type="button"
+            className={styles.tidy}
+            onClick={() => setShowScale((on) => !on)}
+            aria-pressed={showScale}
+          >
+            {showScale ? "Hide scale" : "Show scale"}
+          </button>
+          {onTidy && items.length > 0 && (
+            <button type="button" className={styles.tidy} onClick={onTidy}>
+              Tidy up
+            </button>
+          )}
+          {trailingActions}
+        </div>
+      )}
+
       {isInteractive && !compact && showHint && items.length > 0 && (
         <p className={styles.hint} role="note">
           <span aria-hidden="true">👆</span>
@@ -798,27 +827,7 @@ function RoomScene({
 
       {!compact && (
         <p className={styles.caption}>
-          <span>
-            Illustrative preview — real colours, sizes and finishes may differ.
-            {isInteractive && " Drag pieces to arrange; tap one to resize or flip it."}
-          </span>
-          <span className={styles.captionActions}>
-            {isInteractive && (
-              <button
-                type="button"
-                className={styles.tidy}
-                onClick={() => setShowScale((on) => !on)}
-                aria-pressed={showScale}
-              >
-                {showScale ? "Hide scale" : "Show scale"}
-              </button>
-            )}
-            {onTidy && items.length > 0 && (
-              <button type="button" className={styles.tidy} onClick={onTidy}>
-                Tidy up
-              </button>
-            )}
-          </span>
+          Illustrative preview — real colours, sizes and finishes may differ.
         </p>
       )}
     </div>
