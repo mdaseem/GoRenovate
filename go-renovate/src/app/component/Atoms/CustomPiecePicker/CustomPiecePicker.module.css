@@ -223,6 +223,12 @@
   color: #b3261e;
 }
 
+/* "View in 3D" pill: above the card-wide checkbox (z-index) so tapping it doesn't toggle the piece. */
+.view3d {
+  z-index: 1;
+  margin-top: 2px;
+}
+
 /* Quantity stepper on an added card. Sits above the card-wide checkbox
    (z-index) so its buttons don't toggle the piece off. */
 .stepper {

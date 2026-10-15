@@ -6,6 +6,7 @@ import { Essential, Room, humanizeStyleTag } from "@/app/types/category";
 import RoomScene from "../RoomScene/RoomScene";
 import { useInView } from "../../CustomHooks/useInView";
 import { ResolvedScene } from "@/app/utils/sceneSpec";
+import View3DButton from "../View3DButton/View3DButton";
 
 type Props = {
   room: Room;
@@ -17,6 +18,10 @@ type Props = {
     items: Essential[];
     spaceName?: string;
   };
+  // The room's pieces that have a 3D model. The card shows a "3D" button when there
+  // is at least one; with several, the viewer lets you switch between them.
+  modelPieces?: { id: string; name: string }[];
+  onView3D?: (firstId: string, groupIds: string[]) => void;
 };
 
 function formatPrice(price: number): string {
@@ -35,14 +40,19 @@ const ArrowIcon = () => (
   </svg>
 );
 
-export default function RoomCard({ room, onOpen, preview }: Props) {
+export default function RoomCard({ room, onOpen, preview, modelPieces, onView3D }: Props) {
   const pieceCount = room.essentialIds.length;
   const pieceLabel = `${pieceCount} ${pieceCount === 1 ? "piece" : "pieces"}`;
   // The scene thumbnail (SVG backdrop + one image per piece) is only built once
   // its card is near the screen; until then the sized box below holds the space.
   const [mediaRef, isNearScreen] = useInView<HTMLDivElement>();
 
+  const has3D = Boolean(onView3D && modelPieces && modelPieces.length > 0);
+
+  // The card itself is one <button>, and a button cannot sit inside a button, so
+  // the "3D" pill is its sibling inside this wrapper, laid over the card's corner.
   return (
+    <div className="room-card-shell">
     <button
       type="button"
       className="room-card"
@@ -98,5 +108,13 @@ export default function RoomCard({ room, onOpen, preview }: Props) {
         </span>
       </div>
     </button>
+    {has3D && modelPieces && onView3D && (
+      <View3DButton
+        label={modelPieces.length === 1 ? modelPieces[0].name : `${room.title} (${modelPieces.length} pieces)`}
+        className="room-card-3d"
+        onClick={() => onView3D(modelPieces[0].id, modelPieces.map((piece) => piece.id))}
+      />
+    )}
+    </div>
   );
 }

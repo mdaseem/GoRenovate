@@ -14,6 +14,7 @@ import {
   setOpenStateRoomDetail,
 } from "@/app/store/features/overLaySlice";
 import EssentialSlotItem from "../EssentialSlotItem/EssentialSlotItem";
+import { useProductViewer } from "../../CustomHooks/useProductViewer";
 import RoomCheckoutFooter from "../../Molecules/RoomCheckoutFooter/RoomCheckoutFooter";
 import RoomScene from "../RoomScene/RoomScene";
 import { humanizeStyleTag } from "@/app/types/category";
@@ -23,6 +24,7 @@ import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailabi
 
 export default function RoomDetailOverlay() {
   const dispatch = useAppDispatch();
+  const openProductViewer = useProductViewer();
   const activeRoomId = useAppSelector(
     (state: RootState) => state.categoryState.activeRoomId,
   );
@@ -246,6 +248,7 @@ export default function RoomDetailOverlay() {
                   : undefined
               }
               lowStock={availability[selected._id]?.stock ?? null}
+              onView3D={() => openProductViewer(selected._id)}
             />
           );
         })}

@@ -46,6 +46,14 @@
   touch-action: none;
 }
 
+/* A button over the room's top-right corner, above every piece (even while one is dragged). */
+.corner {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1100;
+}
+
 /* Programmatic focus (after a removal) shows a ring only for keyboard users. */
 .scene:focus {
   outline: none;

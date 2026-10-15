@@ -1,0 +1,236 @@
+.overlay {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 12px 16px 24px;
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.hint,
+.note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+.depth {
+  padding: 10px 12px;
+  background: #f6f7f4;
+  border-radius: 12px;
+}
+
+.pieces {
+  margin: 0;
+  padding: 10px 12px;
+  background: #f6f7f4;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #1a1f2e;
+}
+
+.pieces summary {
+  min-height: 32px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pieces summary:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.pieceList {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 8px 12px 20px;
+  }
+}
+
+.status,
+.legend {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #1a1f2e;
+}
+
+.legend {
+  font-weight: 700;
+  color: #278b2e;
+}
+
+.warning {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #92400e;
+  background: #fffbeb;
+  border-radius: 8px;
+}
+
+/* The selected piece: a short panel of Move buttons (the accessible, precise way to move it). */
+.mover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f0f9f0;
+  border: 1px solid #cfe8d0;
+  border-radius: 12px;
+}
+
+.moverTitle {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #1a1f2e;
+  overflow-wrap: anywhere;
+}
+
+.nudges,
+.history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nudge {
+  flex: 1 1 72px;
+  min-height: 48px;
+  padding: 0 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: #fff;
+  border: 2px solid #cfd8c8;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.nudge:hover:not(:disabled) {
+  border-color: #278b2e;
+  background: #f0f9f0;
+}
+
+.nudge:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nudge:focus-visible,
+.pickButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.done {
+  color: #fff;
+  background: #278b2e;
+  border-color: #278b2e;
+}
+
+.done:hover:not(:disabled) {
+  background: #1f7226;
+}
+
+.pieceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.pieceRow > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pieceNote {
+  flex: none;
+  font-size: 0.74rem;
+  color: #6b7280;
+}
+
+.pickButton {
+  flex: none;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: #fff;
+  border: 2px solid #cfd8c8;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.pickButton[aria-pressed="true"] {
+  color: #fff;
+  background: #278b2e;
+  border-color: #278b2e;
+}
+
+/* Spoken after each move; not shown. */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Dollhouse / Stand inside: two toggle buttons side by side. */
+.modes {
+  display: flex;
+  gap: 8px;
+}
+
+.modeButton {
+  flex: 1 1 0;
+  min-height: 48px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: #fff;
+  border: 2px solid #cfd8c8;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.modeButton[aria-pressed="true"] {
+  color: #fff;
+  background: #278b2e;
+  border-color: #278b2e;
+}
+
+.modeButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.moverNote {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #4b5563;
+}

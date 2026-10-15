@@ -17,7 +17,7 @@ type Props = {
 };
 
 // "Share your room": save the design to a link anyone can open (no login), or
-// download the picture. The link keeps pieces, positions, room size and colours
+// download the picture. The link keeps pieces, positions, room size (width, height and 3D depth) and colours
 // — prices and stock are always read live when it is opened.
 export default function ShareDesign({
   categorySlug,
@@ -30,6 +30,7 @@ export default function ShareDesign({
   const customPositions = useAppSelector((s: RootState) => s.categoryState.customPositions);
   const roomWidthCm = useAppSelector((s: RootState) => s.categoryState.customRoomWidthCm);
   const roomHeightCm = useAppSelector((s: RootState) => s.categoryState.customRoomHeightCm);
+  const roomDepthCm = useAppSelector((s: RootState) => s.categoryState.customRoomDepthCm);
   const surfaces = useAppSelector((s: RootState) => s.categoryState.customSurfaces);
   const designState = useAppSelector((s: RootState) => s.designState);
   const { isSaving, savedSignature, saveError } = designState;
@@ -48,6 +49,7 @@ export default function ShareDesign({
     positions: customPositions[spaceSlug] ?? {},
     roomWidthCm,
     roomHeightCm,
+    roomDepthCm,
     wallId: surfaces.wallId,
     floorId: surfaces.floorId,
   };
@@ -162,7 +164,7 @@ export default function ShareDesign({
           <p className={styles.note}>
             {isStale
               ? "You've changed the room since saving — this link still shows the earlier version."
-              : "The link keeps your pieces, their positions, the room size and colours. Prices and stock are always up to date when it's opened. It doesn't include your name and expires after a year."}
+              : "The link keeps your pieces, their positions, the room size (including its depth in 3D) and colours. Prices and stock are always up to date when it's opened. It doesn't include your name and expires after a year."}
           </p>
         </div>
       )}

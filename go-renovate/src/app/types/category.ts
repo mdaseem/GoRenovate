@@ -90,6 +90,23 @@ export interface Category {
   scene?: SceneConfig;
 }
 
+// A vendor-supplied 3D model (.glb) for the in-house viewer. The cutout / first
+// image is its poster while it loads (and the fallback if 3D is unavailable).
+export type Model3dSource = "vendor" | "commissioned" | "scanned" | "test-placeholder";
+
+export interface Model3d {
+  url: string;
+  sizeBytes?: number;
+  triangles?: number;
+  // The model's own measured bounding box in cm, recorded when it was checked.
+  sizeCm?: { w: number; h: number; d: number };
+  // Where it came from, so a shopper (and we) can tell a vendor's file from a stand-in.
+  source?: Model3dSource;
+  credit?: string;
+  licence?: string;
+  checkedAt?: string; // ISO date
+}
+
 export interface Essential {
   _id: string;
   name: string;
@@ -107,6 +124,7 @@ export interface Essential {
   cutoutUrl?: string;
   dimensionsCm?: { w: number; h: number; d: number };
   placement?: EssentialPlacement;
+  model3d?: Model3d;
 }
 
 export interface Room {

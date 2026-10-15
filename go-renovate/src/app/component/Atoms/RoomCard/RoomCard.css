@@ -280,3 +280,17 @@
     transform: none;
   }
 }
+
+/* Wrapper so the "3D" pill can sit over the card without being inside its <button>. */
+.room-card-shell {
+  position: relative;
+}
+
+/* Over the thumbnail's top-left corner: the right side holds the price and "Configure". */
+.room-card-shell .room-card-3d {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1;
+  box-shadow: 0 1px 4px rgba(26, 31, 46, 0.18);
+}

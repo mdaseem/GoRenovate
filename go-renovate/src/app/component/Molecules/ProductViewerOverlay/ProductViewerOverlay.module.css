@@ -1,0 +1,119 @@
+.overlay {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 12px 16px 24px;
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  overflow-wrap: anywhere;
+}
+
+.hint,
+.note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+/* Pieces of the room that have a 3D view: a row of toggle buttons that wraps. */
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.switchButton {
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: #fff;
+  border: 2px solid #cfd8c8;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.switchButton[aria-pressed="true"] {
+  color: #fff;
+  background: #278b2e;
+  border-color: #278b2e;
+}
+
+.switchButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.facts > div {
+  min-width: 0;
+  padding: 8px 12px;
+  background: #f6f7f4;
+  border-radius: 10px;
+}
+
+.facts dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #5a6475;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.facts dd {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  color: #1a1f2e;
+  overflow-wrap: anywhere;
+}
+
+.alert {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #b42318;
+  background: #fef3f2;
+  border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 8px 12px 20px;
+  }
+}
+
+.noteStrong {
+  font-weight: 700;
+  color: #92400e;
+}
+
+.warning {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #92400e;
+  background: #fffbeb;
+  border-radius: 8px;
+}

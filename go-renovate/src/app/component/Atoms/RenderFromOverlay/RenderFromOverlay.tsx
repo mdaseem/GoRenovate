@@ -14,6 +14,9 @@ import {
   setOpenStateRoomFilters,
   setOpenStateSlotPicker,
   setOpenStateRoomDetail,
+  setOpenStateRoom3D,
+  setOpenStateProductViewer,
+  setOpenStateDollhouse,
 } from "@/app/store/features/overLaySlice";
 import { getFavorites, clearFavorites } from "@/app/store/features/favoritesSlice";
 import Chat from "../../Atoms/Chat/Chat";
@@ -65,6 +68,21 @@ const RoomDetailOverlay = dynamic(
   { loading: () => <Loader1 />, ssr: false },
 );
 
+const Room3DOverlay = dynamic(
+  () => import("@/app/component/Molecules/Room3DOverlay/Room3DOverlay"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
+const ProductViewerOverlay = dynamic(
+  () => import("@/app/component/Molecules/ProductViewerOverlay/ProductViewerOverlay"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
+const DollhouseOverlay = dynamic(
+  () => import("@/app/component/Molecules/DollhouseOverlay/DollhouseOverlay"),
+  { loading: () => <Loader1 />, ssr: false },
+);
+
 type OverlaySurface = {
   key: string;
   isOpen: boolean;
@@ -111,6 +129,15 @@ function RenderFromOverlay() {
   );
   const isOpenRoomDetail = useAppSelector(
     (state: RootState) => state.overlay.isOpenRoomDetail,
+  );
+  const isOpenRoom3D = useAppSelector(
+    (state: RootState) => state.overlay.isOpenRoom3D,
+  );
+  const isOpenProductViewer = useAppSelector(
+    (state: RootState) => state.overlay.isOpenProductViewer,
+  );
+  const isOpenDollhouse = useAppSelector(
+    (state: RootState) => state.overlay.isOpenDollhouse,
   );
   const favorites = useAppSelector((state: RootState) => state.favoriteList);
 
@@ -203,6 +230,14 @@ function RenderFromOverlay() {
       content: <RoomDetailOverlay />,
     },
     {
+      key: "room3D",
+      isOpen: isOpenRoom3D,
+      setIsOpen: (payload) => dispatch(setOpenStateRoom3D(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "The 3D view is unavailable",
+      content: <Room3DOverlay />,
+    },
+    {
       // Registered after "roomDetail" so it stacks visually on top when
       // both are open (Swap is triggered from inside the room-detail
       // overlay) — array/DOM order determines paint order here.
@@ -218,6 +253,23 @@ function RenderFromOverlay() {
       ) : (
         <EssentialSwapPicker />
       ),
+    },
+    {
+      // Last, so it stacks above the room-detail overlay it can be opened from.
+      key: "productViewer",
+      isOpen: isOpenProductViewer,
+      setIsOpen: (payload) => dispatch(setOpenStateProductViewer(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "The 3D view is unavailable",
+      content: <ProductViewerOverlay />,
+    },
+    {
+      key: "dollhouse",
+      isOpen: isOpenDollhouse,
+      setIsOpen: (payload) => dispatch(setOpenStateDollhouse(payload)),
+      mountOnlyWhenOpen: true,
+      errorTitle: "The 3D room is unavailable",
+      content: <DollhouseOverlay />,
     },
   ];
 

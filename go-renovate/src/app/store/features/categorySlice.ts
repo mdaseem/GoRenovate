@@ -49,6 +49,8 @@ interface CategoryState {
   customPositions: Record<string, Record<string, ScenePosition>>;
   // The user's real room width in cm ("Fit my room"); null = use the space's own width.
   customRoomWidthCm: number | null;
+  // How deep the room is for the 3D views (the flat editor has no depth). null = automatic.
+  customRoomDepthCm: number | null;
   // The user's real ceiling height in cm (null = the space's own).
   customRoomHeightCm: number | null;
   // Wall colour / floor material the user is trying (swatch ids, null = the
@@ -78,6 +80,9 @@ interface CategoryState {
   isLoadingRoomGrid: boolean;
   roomGridError: string | null;
   activeRoomId: string | null;
+  productViewerId: string | null;
+  // The pieces the viewer can switch between (a room's pieces that have a model).
+  productViewerGroup: string[];
 }
 
 const initialState: CategoryState = {
@@ -96,6 +101,7 @@ const initialState: CategoryState = {
   customSpaceSlug: null,
   customPositions: {},
   customRoomWidthCm: null,
+  customRoomDepthCm: null,
   customRoomHeightCm: null,
   customSurfaces: { wallId: null, floorId: null },
   customHistory: { past: [], future: [] },
@@ -111,6 +117,8 @@ const initialState: CategoryState = {
   roomGridError: null,
 
   activeRoomId: null,
+  productViewerId: null,
+  productViewerGroup: [],
 };
 
 // Forget saved positions (in every space) for pieces that left the room.
@@ -206,6 +214,7 @@ export const categorySlice = createSlice({
       store.customPositions = {};
       store.customRoomWidthCm = null;
       store.customRoomHeightCm = null;
+      store.customRoomDepthCm = null;
       store.customSurfaces = { wallId: null, floorId: null };
       store.customHistory = { past: [], future: [] };
       store.designNotice = null;
@@ -315,6 +324,7 @@ export const categorySlice = createSlice({
       store.customPositions = payload.spaceSlug ? { [payload.spaceSlug]: positions } : {};
       store.customRoomWidthCm = payload.roomWidthCm;
       store.customRoomHeightCm = payload.roomHeightCm;
+      store.customRoomDepthCm = payload.roomDepthCm ?? null;
       store.customSurfaces = { wallId: payload.wallId, floorId: payload.floorId };
       store.designNotice =
         ids.length === 0
@@ -359,6 +369,10 @@ export const categorySlice = createSlice({
     // the space's own width. Positions are percentages so they carry over.
     setCustomRoomWidth: (store, { payload }: PayloadAction<number | null>) => {
       store.customRoomWidthCm = payload;
+    },
+    // Room depth for the 3D views, or null for the automatic depth (see roomDepthCm).
+    setCustomRoomDepth: (store, { payload }: PayloadAction<number | null>) => {
+      store.customRoomDepthCm = payload;
     },
     // Pick the space the Customize preview is drawn in (non-destructive: the
     // pieces stay, and each space remembers its own arrangement).
@@ -491,6 +505,15 @@ export const categorySlice = createSlice({
     closeRoomDetail: (store) => {
       store.activeRoomId = null;
     },
+    // Which product the "View in 3D" overlay shows (the overlay itself is opened
+    // through overLaySlice's isOpenProductViewer).
+    setProductViewerId: (
+      store,
+      { payload }: PayloadAction<{ id: string | null; group?: string[] }>,
+    ) => {
+      store.productViewerId = payload.id;
+      store.productViewerGroup = payload.group ?? [];
+    },
   },
 });
 
@@ -512,6 +535,7 @@ export const {
   applyCustomDesign,
   acknowledgeCustomizeRequest,
   setCustomRoomWidth,
+  setCustomRoomDepth,
   setCustomRoomHeight,
   setCustomSurface,
   resetCustomSelection,
@@ -530,5 +554,6 @@ export const {
   setRoomGridError,
   openRoomDetail,
   closeRoomDetail,
+  setProductViewerId,
 } = categorySlice.actions;
 export default categorySlice.reducer;

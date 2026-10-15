@@ -12,6 +12,9 @@ export interface SharedDesign {
   positions: Record<string, ScenePosition>;
   roomWidthCm: number | null;
   roomHeightCm: number | null;
+  // The room's depth for the 3D views; null = automatic. Optional because a server
+  // that predates it (or a design saved before it) does not send it.
+  roomDepthCm?: number | null;
   wallId: string | null;
   floorId: string | null;
 }

@@ -3,6 +3,7 @@ import React, { useCallback } from "react";
 import styles from "./CustomRoomScene.module.css";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { RootState } from "@/app/store/store";
+import { setOpenStateDollhouse, setOpenStateRoom3D } from "@/app/store/features/overLaySlice";
 import {
   clearCustomPositions,
   redoCustom,
@@ -64,6 +65,36 @@ export default function CustomRoomScene({ scene, items, availability, notices }:
       onRemove={handleRemoveOne}
       sticky
       notices={notices}
+      cornerAction={
+        items.length > 0 ? (
+          <div className={styles.cornerStack}>
+          <button
+            type="button"
+            className={styles.lookButton}
+            onClick={() => dispatch(setOpenStateDollhouse(true))}
+            aria-haspopup="dialog"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 10 12 4l9 6-9 6-9-6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <path d="M3 10v6l9 5 9-5v-6" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+            </svg>
+            3D room
+          </button>
+          <button
+            type="button"
+            className={styles.lookButton}
+            onClick={() => dispatch(setOpenStateRoom3D(true))}
+            aria-haspopup="dialog"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <path d="M4 7.5 12 12l8-4.5M12 12v9" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+            </svg>
+            Look around
+          </button>
+          </div>
+        ) : undefined
+      }
       leadingActions={
         <>
           <button

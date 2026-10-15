@@ -339,3 +339,33 @@
 .essential-slot-item--compact.essential-slot-item-unavailable .essential-slot-item-details {
   grid-column: 2 / span 2;
 }
+
+/* "View in 3D": a small text button; the invisible ::before pads the tap area past 44px. */
+.essential-slot-item-view3d {
+  position: relative;
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 2px 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #278b2e;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.essential-slot-item-view3d::before {
+  content: "";
+  position: absolute;
+  inset: -12px -12px;
+}
+
+.essential-slot-item-view3d:hover {
+  text-decoration: underline;
+}
+
+.essential-slot-item-view3d:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+  border-radius: 4px;
+}

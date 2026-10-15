@@ -20,6 +20,7 @@ import { Essential } from "@/app/types/category";
 import { resolveScene } from "@/app/utils/sceneSpec";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import { Loader1 } from "../Loader/Loader";
+import { useProductViewer } from "../../CustomHooks/useProductViewer";
 
 type Props = {
   categorySlug: string;
@@ -29,6 +30,7 @@ export default function RoomGrid({ categorySlug }: Props) {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const { activeCount } = useRoomFilters();
+  const openProductViewer = useProductViewer();
 
   const rooms = useAppSelector(
     (state: RootState) => state.categoryState.roomGridResults,
@@ -67,6 +69,25 @@ export default function RoomGrid({ categorySlug }: Props) {
         items,
         spaceName: detail.spaces?.find((space) => space.slug === scene.slug)?.name,
       };
+    }
+    return result;
+  }, [detail, rooms, categorySlug]);
+
+  // Per room: its pieces that have a 3D model (name + id), for the card's "3D" button.
+  const modelPieces = useMemo(() => {
+    if (!detail || detail.category.slug !== categorySlug) return {};
+    const catalog = new Map(
+      Object.values(detail.essentialsBySlot)
+        .flat()
+        .map((item) => [item._id, item] as const),
+    );
+    const result: Record<string, { id: string; name: string }[]> = {};
+    for (const room of rooms) {
+      const pieces = room.essentialIds
+        .map((id) => catalog.get(id))
+        .filter((item): item is Essential => Boolean(item?.model3d))
+        .map((item) => ({ id: item._id, name: item.name }));
+      if (pieces.length > 0) result[room._id] = pieces;
     }
     return result;
   }, [detail, rooms, categorySlug]);
@@ -124,6 +145,8 @@ export default function RoomGrid({ categorySlug }: Props) {
               key={room._id}
               room={room}
               preview={previews[room._id]}
+              modelPieces={modelPieces[room._id]}
+              onView3D={(id, group) => openProductViewer(id, group)}
               onOpen={() => handleOpen(room._id)}
             />
           ))}
