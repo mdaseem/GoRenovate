@@ -1,0 +1,272 @@
+/* The room as a 3D box, from CSS 3D transforms only.
+   World axes (cm, scaled by --u): x → right, y ↓ (CSS), z → toward the viewer,
+   origin at the back wall's top-left corner. */
+
+/* The container the cqw units below measure, and the clip. It must not carry
+   preserve-3d itself (overflow would flatten it) — that lives on .world. */
+.frame {
+  --u: calc(100cqw / var(--room-w));
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  container-type: inline-size;
+  border-radius: 14px;
+  background: #e7eaee;
+  box-shadow: 0 2px 10px rgba(26, 31, 46, 0.12);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  /* The eye sits ~3 room-widths from the back wall, well above the floor: enough
+     perspective for real parallax, little enough that the room still looks like the
+     flat editor at rest. */
+  perspective: calc(3 * 100cqw);
+  perspective-origin: 50% 20%;
+  touch-action: none;
+  cursor: grab;
+  outline-offset: -3px;
+}
+
+.stage:active {
+  cursor: grabbing;
+}
+
+.stage:focus-visible {
+  outline: 2px solid #278b2e;
+}
+
+/* Turned about the middle of the room's box; useLookAround writes the transform. */
+.world {
+  /* The floor runs on this many times the room's depth so the picture never shows
+     its near edge (walls stop at the room's depth: longer ones would swing in front
+     of the camera and hide the room when it is turned). */
+  --run: 2.2;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--room-w) * var(--u));
+  height: calc(var(--room-h) * var(--u));
+  transform-style: preserve-3d;
+  transform-origin: 50% 50% calc(var(--room-d) * var(--u) / 2);
+  will-change: transform;
+}
+
+.world[data-easing] {
+  transition: transform 0.4s ease;
+}
+
+.plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* Back wall: the existing wall drawing (colour, tiles, window, baseboard). */
+.back {
+  width: 100%;
+  height: 100%;
+}
+
+/* Floor: planks running into the room, lying flat at the foot of the back wall. */
+.floor {
+  width: 100%;
+  height: calc(var(--room-d) * var(--u) * var(--run));
+  top: 100%;
+  transform-origin: 50% 0;
+  transform: rotateX(90deg);
+  background-color: var(--floor);
+  background-image:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0) 40%),
+    repeating-linear-gradient(
+      90deg,
+      var(--floor-line) 0,
+      var(--floor-line) calc(var(--u) * 1.2),
+      transparent calc(var(--u) * 1.2),
+      transparent calc(var(--u) * 18)
+    );
+}
+
+.ceiling {
+  width: 100%;
+  height: calc(var(--room-d) * var(--u));
+  transform-origin: 50% 0;
+  transform: rotateX(90deg);
+  background-color: var(--wall);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55));
+}
+
+/* Side walls: a little darker than the back wall, fading toward the viewer. */
+.sideLeft,
+.sideRight {
+  width: calc(var(--room-d) * var(--u));
+  height: 100%;
+  transform-origin: 0 50%;
+  transform: rotateY(-90deg);
+  background-color: var(--wall-shade);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.22));
+}
+
+.sideRight {
+  left: 100%;
+}
+
+/* A piece: a flat card standing at its x / z, its bottom edge at --yb above the floor. */
+.card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--w) * var(--u));
+  transform: translate3d(
+      calc((var(--x) - var(--w) / 2) * var(--u)),
+      calc((var(--room-h) - var(--yb)) * var(--u)),
+      calc(var(--z) * var(--u))
+    )
+    translateY(-100%);
+}
+
+.cardSized {
+  height: calc(var(--h) * var(--u));
+}
+
+/* A piece with thickness: its parts are placed in depth around the card's centre
+   (z = 0 is the middle of the piece, ±d/2 its front and back). */
+.solid {
+  transform-style: preserve-3d;
+}
+
+/* Box: the photo is the front face… */
+.front {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(calc(var(--d) * var(--u) / 2));
+}
+
+/* …and the sides and top are plain faces in shades of the photo's colour (--face,
+   sampled in the browser; a neutral grey until it is known). The sides stop where
+   the body narrows to legs (--solid, 0–1 of the height). */
+.face {
+  position: absolute;
+  background: #8c8c8c;
+  pointer-events: none;
+}
+
+.sideLeftFace,
+.sideRightFace {
+  top: 0;
+  width: calc(var(--d) * var(--u));
+  height: calc(var(--solid, 1) * 100%);
+  transform-origin: 0 0;
+  transform: translateZ(calc(var(--d) * var(--u) / 2)) rotateY(90deg);
+  background: color-mix(in srgb, var(--face, #9a9a9a) 70%, black);
+}
+
+.sideLeftFace {
+  left: 0;
+}
+
+.sideRightFace {
+  left: 100%;
+}
+
+.topFace {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(var(--d) * var(--u));
+  transform-origin: 0 0;
+  transform: translateZ(calc(var(--d) * var(--u) / -2)) rotateX(90deg);
+  background: color-mix(in srgb, var(--face, #9a9a9a) 88%, white);
+}
+
+/* Billboard: a round piece turns against the room (useLookAround writes the
+   counter-rotation) so its picture always faces the viewer. */
+.billboard {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* A known height: the picture is fitted inside its real-size box, never stretched. */
+.imageFit {
+  height: 100%;
+  object-fit: contain;
+}
+
+.imageBottom {
+  object-position: 50% 100%;
+}
+
+.flipped {
+  transform: scaleX(-1);
+}
+
+/* A product with no picture yet: a labelled box so it is not missing. */
+.tile {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: calc(var(--u) * 20);
+  padding: 4px;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  text-align: center;
+  color: #1a1f2e;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px dashed rgba(26, 31, 46, 0.35);
+  border-radius: 6px;
+}
+
+/* A rug lies flat on the floor (its picture is already a top-down view). The tiny
+   lift keeps it from fighting the floor for the same pixels. */
+.rug {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--d) * var(--u));
+  transform-origin: 0 0;
+  transform: translate3d(
+      calc((var(--x) - var(--w) / 2) * var(--u)),
+      calc(var(--room-h) * var(--u) - 0.5px),
+      calc((var(--z) - var(--d) / 2) * var(--u))
+    )
+    rotateX(90deg);
+}
+
+.rug .image {
+  height: 100%;
+  object-fit: fill;
+}
+
+.shadow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--w) * var(--u) * 1.05);
+  height: calc(var(--d) * var(--u) * 0.95);
+  transform-origin: 0 0;
+  transform: translate3d(
+      calc((var(--x) - var(--w) * 0.525) * var(--u)),
+      calc(var(--room-h) * var(--u) - 1px),
+      calc((var(--z) - var(--d) * 0.475) * var(--u))
+    )
+    rotateX(90deg);
+  background: radial-gradient(closest-side, rgba(20, 20, 30, 0.34), rgba(20, 20, 30, 0));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world[data-easing] {
+    transition: none;
+  }
+}

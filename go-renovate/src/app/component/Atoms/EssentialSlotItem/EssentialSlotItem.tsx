@@ -31,6 +31,9 @@ type Props = {
   // A tighter row (Customize list on phones): smaller picture, full name,
   // stepper beside the price, a corner remove button.
   compact?: boolean;
+  // Opens the 3D viewer; the "View in 3D" button only shows when the product
+  // actually has a model.
+  onView3D?: () => void;
 };
 
 export const LOW_STOCK_THRESHOLD = 5;
@@ -54,6 +57,7 @@ export default function EssentialSlotItem({
   onQuantityChange,
   maxQuantity = 10,
   compact = false,
+  onView3D,
 }: Props) {
   const image = essential.images[0];
   const peekItems = alternatives.slice(0, MAX_PEEK_THUMBS);
@@ -105,6 +109,16 @@ export default function EssentialSlotItem({
                 </span>
               )}
           </p>
+        )}
+        {onView3D && essential.model3d && (
+          <button
+            type="button"
+            className="essential-slot-item-view3d"
+            onClick={onView3D}
+            aria-label={`View ${essential.name} in 3D`}
+          >
+            <span aria-hidden="true">⬡</span> View in 3D
+          </button>
         )}
       </div>
       {onQuantityChange && quantity !== undefined && (

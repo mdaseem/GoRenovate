@@ -59,6 +59,8 @@ type Props = {
   // "Show scale" / "Tidy up", and "Start over" after them).
   leadingActions?: React.ReactNode;
   trailingActions?: React.ReactNode;
+  // A button floated over the room's top-right corner (Customize: "Look around").
+  cornerAction?: React.ReactNode;
   // Thumbnail use (e.g. Browse All cards): no caption, tighter chrome.
   compact?: boolean;
 };
@@ -81,6 +83,7 @@ function RoomScene({
   notices = [],
   leadingActions,
   trailingActions,
+  cornerAction,
   compact = false,
 }: Props) {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -661,6 +664,7 @@ function RoomScene({
               />
             );
           })}
+          {isInteractive && cornerAction && <div className={styles.corner}>{cornerAction}</div>}
         </div>
 
         {isInteractive && selected && selectedPosition && (

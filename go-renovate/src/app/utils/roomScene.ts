@@ -566,7 +566,7 @@ export function getFitIssues(items: Essential[], scene: ResolvedScene): FitIssue
 
 // The resting piece's bottom overlaps the surface by this much so it looks
 // seated rather than floating.
-const SURFACE_SINK_PCT = 0.4;
+export const SURFACE_SINK_PCT = 0.4;
 // A dropped piece snaps to a surface whose top is within this vertical distance.
 const SNAP_RANGE_PCT = 10;
 

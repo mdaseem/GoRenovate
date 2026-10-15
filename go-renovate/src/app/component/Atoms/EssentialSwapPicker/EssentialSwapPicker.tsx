@@ -12,6 +12,8 @@ import {
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
 import { computeRoomTotal } from "@/app/types/category";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
+import { useProductViewer } from "../../CustomHooks/useProductViewer";
+import View3DButton from "../View3DButton/View3DButton";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;
@@ -25,6 +27,7 @@ function formatDelta(delta: number): string {
 
 export default function EssentialSwapPicker() {
   const dispatch = useAppDispatch();
+  const openProductViewer = useProductViewer();
   const activeSlotId = useAppSelector(
     (state: RootState) => state.categoryState.activeSwapSlotId,
   );
@@ -140,6 +143,12 @@ export default function EssentialSwapPicker() {
                 <span className="essential-swap-picker-option-meta">
                   {formatPrice(livePrice)} · {essential.vendorName}
                 </span>
+                {essential.model3d && (
+                  <View3DButton
+                    label={essential.name}
+                    onClick={() => openProductViewer(essential._id)}
+                  />
+                )}
                 <span
                   className={`essential-swap-picker-delta${
                     isUnavailable

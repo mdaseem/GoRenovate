@@ -14,6 +14,8 @@ import {
 import { setOpenStateSlotPicker } from "@/app/store/features/overLaySlice";
 import { useEssentialAvailability } from "@/app/component/CustomHooks/useEssentialAvailability";
 import { MAX_QUANTITY_PER_PIECE, countById } from "@/app/utils/customPieces";
+import { useProductViewer } from "@/app/component/CustomHooks/useProductViewer";
+import View3DButton from "../View3DButton/View3DButton";
 
 function formatPrice(price: number): string {
   return `₹${price.toLocaleString("en-IN")}`;
@@ -25,6 +27,7 @@ function formatPrice(price: number): string {
 // are only a way to narrow the list — nothing is required or prescribed.
 export default function CustomPiecePicker() {
   const dispatch = useAppDispatch();
+  const openProductViewer = useProductViewer();
   const detail = useAppSelector(
     (state: RootState) => state.categoryState.activeCategoryDetail,
   );
@@ -196,6 +199,13 @@ export default function CustomPiecePicker() {
                         ? `Only ${entry.stock} left`
                         : "Tap to add"}
                 </span>
+                {essential.model3d && (
+                  <View3DButton
+                    label={essential.name}
+                    className={styles.view3d}
+                    onClick={() => openProductViewer(essential._id)}
+                  />
+                )}
                 {isAdded && (
                   <span
                     className={styles.stepper}

@@ -14,6 +14,9 @@ const initialState: any = {
   isOpenRoomFilters: false,
   isOpenSlotPicker: false,
   isOpenRoomDetail: false,
+  isOpenRoom3D: false,
+  isOpenProductViewer: false,
+  isOpenDollhouse: false,
 };
 
 export const overlaySlice = createSlice({
@@ -68,6 +71,18 @@ export const overlaySlice = createSlice({
       store.isOpenRoomDetail = payload;
       return store;
     },
+    setOpenStateRoom3D: (store, { payload }) => {
+      store.isOpenRoom3D = payload;
+      return store;
+    },
+    setOpenStateProductViewer: (store, { payload }) => {
+      store.isOpenProductViewer = payload;
+      return store;
+    },
+    setOpenStateDollhouse: (store, { payload }) => {
+      store.isOpenDollhouse = payload;
+      return store;
+    },
   },
 });
 
@@ -84,5 +99,8 @@ export const {
   setOpenStateRoomFilters,
   setOpenStateSlotPicker,
   setOpenStateRoomDetail,
+  setOpenStateRoom3D,
+  setOpenStateProductViewer,
+  setOpenStateDollhouse,
 } = overlaySlice.actions;
 export default overlaySlice.reducer;

@@ -12,6 +12,7 @@ import {
   resetCustomSelection,
   selectCustomSpace,
   setCustomRoomWidth,
+  setCustomRoomDepth,
   setCustomRoomHeight,
   setCustomSurface,
   undoCustom,
@@ -25,18 +26,17 @@ import RoomCheckoutFooter from "../RoomCheckoutFooter/RoomCheckoutFooter";
 import CustomRoomScene from "../CustomRoomScene/CustomRoomScene";
 import ShareDesign from "../ShareDesign/ShareDesign";
 import RoomDock, { DockTool } from "../RoomDock/RoomDock";
+import { useCustomRoom } from "../../CustomHooks/useCustomRoom";
+import { useProductViewer } from "../../CustomHooks/useProductViewer";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
-import { Essential } from "@/app/types/category";
-import { getSelectableSpaces, resolveScene } from "@/app/utils/sceneSpec";
+import { getSelectableSpaces } from "@/app/utils/sceneSpec";
+import { roomDepthCm } from "@/app/utils/roomWorld";
 import { FitIssue, getFitIssues } from "@/app/utils/roomScene";
 import SpacePicker from "../SpacePicker/SpacePicker";
 import RoomSizeControl from "../RoomSizeControl/RoomSizeControl";
 import SurfaceSwatches, { describeSurfaces } from "../SurfaceSwatches/SurfaceSwatches";
-import { sceneOverridesFor } from "@/app/utils/surfaceSwatches";
-import { ScenePiece } from "@/app/utils/roomScene";
 import {
   MAX_QUANTITY_PER_PIECE,
-  buildPieces,
   countById,
   uniqueIds,
 } from "@/app/utils/customPieces";
@@ -113,9 +113,8 @@ export default function RoomConfigurator({
   onBrowseRooms,
 }: Props) {
   const dispatch = useAppDispatch();
-  const detail = useAppSelector(
-    (state: RootState) => state.categoryState.activeCategoryDetail,
-  );
+  const openProductViewer = useProductViewer();
+  const { detail } = useCustomRoom();
   const isLoading = useAppSelector(
     (state: RootState) => state.categoryState.isLoadingCategoryDetail,
   );
@@ -125,8 +124,8 @@ export default function RoomConfigurator({
   const customEssentialIds = useAppSelector(
     (state: RootState) => state.categoryState.customEssentialIds,
   );
-  const customSpaceSlug = useAppSelector(
-    (state: RootState) => state.categoryState.customSpaceSlug,
+  const customRoomDepthCm = useAppSelector(
+    (state: RootState) => state.categoryState.customRoomDepthCm,
   );
   const customRoomWidthCm = useAppSelector(
     (state: RootState) => state.categoryState.customRoomWidthCm,
@@ -155,54 +154,10 @@ export default function RoomConfigurator({
   const { availability, isChecking, checkAvailability } =
     useEssentialAvailability();
 
-  // The space (base layout) the preview is drawn in: the user's choice, else
-  // the category's default. Each space remembers its own arrangement.
-  const scene = useMemo(
-    () =>
-      resolveScene(detail, customSpaceSlug, {
-        roomWidthCm: customRoomWidthCm,
-        ceilingHeightCm: customRoomHeightCm,
-        overrides: sceneOverridesFor(customSurfaces.wallId, customSurfaces.floorId),
-      }),
-    [detail, customSpaceSlug, customRoomWidthCm, customRoomHeightCm, customSurfaces],
-  );
+  // The room as data (space + the user's size and colours, catalogue, pieces),
+  // shared with the Look-around view — see CustomHooks/useCustomRoom.
+  const { scene, defaultScene, catalog, addedItems, sceneItems } = useCustomRoom();
   const selectableSpaces = useMemo(() => getSelectableSpaces(detail), [detail]);
-  // The space at its own size — the baseline "Fit my room" resets to.
-  const defaultScene = useMemo(
-    () => resolveScene(detail, customSpaceSlug),
-    [detail, customSpaceSlug],
-  );
-
-  // Derived from the catalog + the user's list. Memoised (and declared before
-  // the early returns below) so the scene gets stable props: unrelated
-  // re-renders (undo/redo availability, totals) don't rebuild every piece.
-  const catalog = useMemo(
-    () => Object.values(detail?.essentialsBySlot ?? {}).flat(),
-    [detail],
-  );
-  const catalogById = useMemo(
-    () => new Map(catalog.map((item) => [item._id, item])),
-    [catalog],
-  );
-  // One entry per distinct product (list rows, stock checks, checkout)…
-  const addedItems = useMemo(
-    () =>
-      uniqueIds(customEssentialIds)
-        .map((id) => catalogById.get(id))
-        .filter((item): item is Essential => Boolean(item)),
-    [customEssentialIds, catalogById],
-  );
-  // …and one per COPY for the preview, so two bedside tables are two pieces.
-  const sceneItems = useMemo(
-    () =>
-      buildPieces(customEssentialIds)
-        .map((piece): ScenePiece | undefined => {
-          const item = catalogById.get(piece.essentialId);
-          return item ? { ...item, pieceKey: piece.key } : undefined;
-        })
-        .filter((item): item is ScenePiece => Boolean(item)),
-    [customEssentialIds, catalogById],
-  );
   const fitNotices = useMemo(
     () => [
       ...(designNotice ? [designNotice] : []),
@@ -299,6 +254,9 @@ export default function RoomConfigurator({
           defaultHeightCm={defaultScene.ceilingHeightCm}
           onWidthChange={(widthCm) => dispatch(setCustomRoomWidth(widthCm))}
           onHeightChange={(heightCm) => dispatch(setCustomRoomHeight(heightCm))}
+          depthCm={customRoomDepthCm}
+          defaultDepthCm={roomDepthCm(scene)}
+          onDepthChange={(depthCm) => dispatch(setCustomRoomDepth(depthCm))}
         />
       ),
     },
@@ -443,6 +401,7 @@ export default function RoomConfigurator({
                   }
                   lowStock={entry?.stock ?? null}
                   compact
+                  onView3D={() => openProductViewer(item._id)}
                 />
               );
             })}

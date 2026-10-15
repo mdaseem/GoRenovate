@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import styles from "./RoomSizeControl.module.css";
+import { MAX_ROOM_DEPTH_CM, MIN_ROOM_DEPTH_CM } from "@/app/utils/roomWorld";
 import {
   MAX_CEILING_HEIGHT_CM,
   MAX_ROOM_WIDTH_CM,
@@ -18,6 +19,10 @@ type Props = {
   defaultHeightCm: number;
   onWidthChange: (cm: number | null) => void;
   onHeightChange: (cm: number | null) => void;
+  // Optional: how deep the room is, used by the 3D views. null = automatic.
+  depthCm?: number | null;
+  defaultDepthCm?: number;
+  onDepthChange?: (cm: number | null) => void;
 };
 
 function toMetres(cm: number): string {
@@ -28,7 +33,7 @@ function toMetres(cm: number): string {
 // exactly what was typed; otherwise it mirrors the committed value (or the
 // space's own). Valid values apply live; invalid ones explain themselves and
 // leave the scene alone.
-function MetreField({
+export function MetreField({
   id,
   label,
   valueCm,
@@ -101,8 +106,11 @@ export default function RoomSizeControl({
   defaultHeightCm,
   onWidthChange,
   onHeightChange,
+  depthCm = null,
+  defaultDepthCm,
+  onDepthChange,
 }: Props) {
-  const isCustom = widthCm !== null || heightCm !== null;
+  const isCustom = widthCm !== null || heightCm !== null || depthCm !== null;
 
   return (
     <div className={styles.control}>
@@ -125,6 +133,17 @@ export default function RoomSizeControl({
           maxCm={MAX_CEILING_HEIGHT_CM}
           onChange={onHeightChange}
         />
+        {onDepthChange && defaultDepthCm !== undefined && (
+          <MetreField
+            id="custom-room-depth"
+            label="Room depth (3D views)"
+            valueCm={depthCm}
+            defaultCm={defaultDepthCm}
+            minCm={MIN_ROOM_DEPTH_CM}
+            maxCm={MAX_ROOM_DEPTH_CM}
+            onChange={onDepthChange}
+          />
+        )}
       </div>
       <p className={styles.hint}>
         Pieces are drawn to scale in a room this size.
@@ -137,6 +156,7 @@ export default function RoomSizeControl({
               onClick={() => {
                 onWidthChange(null);
                 onHeightChange(null);
+                onDepthChange?.(null);
               }}
             >
               Use this space&apos;s {toMetres(defaultWidthCm)} ×{" "}

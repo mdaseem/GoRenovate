@@ -12,6 +12,9 @@ type Props = {
   // Thumbnails (a few hundred px wide at most): leave out detail that would be
   // sub-pixel there (the floor-plank lines).
   simple?: boolean;
+  // "wall": only the wall (colour, tiles, fixtures, baseboard) — the back wall of
+  // the Look-around room. Default: the whole front elevation (wall + floor).
+  part?: "all" | "wall";
 };
 
 function Fixture({
@@ -130,7 +133,7 @@ function Fixture({
 
 // Memoised: the room redraws on every drag frame, the backdrop never changes
 // unless the scene does (resolveScene() results are cached by the callers).
-function SceneBackdrop({ scene, simple = false }: Props) {
+function SceneBackdrop({ scene, simple = false, part = "all" }: Props) {
   const { spec } = scene;
   const unit = W / scene.sceneWidthCm;
   const height = Math.round(scene.heightCm * unit);
@@ -143,7 +146,7 @@ function SceneBackdrop({ scene, simple = false }: Props) {
 
   return (
     <svg
-      viewBox={`0 0 ${W} ${height}`}
+      viewBox={`0 0 ${W} ${part === "wall" ? fy : height}`}
       preserveAspectRatio="xMidYMax slice"
       data-scene-backdrop=""
       aria-hidden="true"
@@ -189,26 +192,30 @@ function SceneBackdrop({ scene, simple = false }: Props) {
         fill={spec.baseboard ?? "#f7f8f9"}
       />
 
-      {/* floor */}
-      <rect x="0" y={fy} width={W} height={height - fy} fill={spec.floor.color} />
-      <rect x="0" y={fy} width={W} height="26" fill="#000" opacity="0.06" />
-      {planks.map((i) => {
-        // Lines fan out from a vanishing point above the room for a hint of depth.
-        const topX = 100 + i * 100;
-        const bottomX = -300 + i * 200;
-        return (
-          <line
-            key={i}
-            x1={topX}
-            y1={fy}
-            x2={bottomX}
-            y2={height}
-            stroke={spec.floor.lineColor ?? spec.floor.color}
-            strokeWidth="2"
-            opacity="0.6"
-          />
-        );
-      })}
+      {part === "all" && (
+        <>
+        {/* floor */}
+        <rect x="0" y={fy} width={W} height={height - fy} fill={spec.floor.color} />
+        <rect x="0" y={fy} width={W} height="26" fill="#000" opacity="0.06" />
+        {planks.map((i) => {
+          // Lines fan out from a vanishing point above the room for a hint of depth.
+          const topX = 100 + i * 100;
+          const bottomX = -300 + i * 200;
+          return (
+            <line
+              key={i}
+              x1={topX}
+              y1={fy}
+              x2={bottomX}
+              y2={height}
+              stroke={spec.floor.lineColor ?? spec.floor.color}
+              strokeWidth="2"
+              opacity="0.6"
+            />
+          );
+        })}
+        </>
+      )}
     </svg>
   );
 }
