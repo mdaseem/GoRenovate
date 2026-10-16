@@ -1,0 +1,556 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+  font-family: "Inter", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.pageWide {
+  max-width: 900px;
+}
+
+.backLink {
+  margin-bottom: 1.25rem;
+}
+
+.heading {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0 0 0.5rem;
+}
+
+.intro {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #4b5563;
+  margin: 0 0 1.75rem;
+}
+
+.sectionHeading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0 0 0.75rem;
+}
+
+/* ---------- loading ---------- */
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeletonBlock {
+  height: 84px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f1efe9 25%, #f8f6f1 50%, #f1efe9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonBlock {
+    animation: none;
+  }
+}
+
+/* ---------- cards and notices ---------- */
+
+.card {
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.cardTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.notice {
+  background: #f8f6f1;
+  border: 1px solid #ece9e3;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #374151;
+}
+
+.noticeTitle {
+  display: block;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin-bottom: 0.25rem;
+}
+
+.noticeRejected {
+  background: #fdf3f1;
+  border-color: #f0cfc9;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 0.7rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #eef7ea;
+  color: #1f6b25;
+}
+
+.badgeWarn {
+  background: #fdf1df;
+  color: #7a4e0c;
+}
+
+.badgeMuted {
+  background: #f1f0eb;
+  color: #4b5563;
+}
+
+.badgeBad {
+  background: #fdeef0;
+  color: #9b2c44;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+}
+
+.detailsItem {
+  min-width: 0;
+}
+
+.detailsLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.15rem;
+}
+
+.detailsValue {
+  font-size: 0.92rem;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.muted {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0.75rem 0 0;
+  line-height: 1.5;
+}
+
+/* ---------- forms ---------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.optional {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid #d8d4c9;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #1a1f2e;
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* globals.css forces 16px on form controls on phones so iOS does not zoom on focus; a class
+   selector here would otherwise beat that element rule, so restate it. */
+@media (max-width: 768px) {
+  .input {
+    font-size: 16px;
+  }
+}
+
+.input:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 1px;
+  border-color: #278b2e;
+}
+
+.inputError {
+  border-color: #c0392b;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.errorMessage {
+  font-size: 0.78rem;
+  color: #c0392b;
+}
+
+.formError {
+  background: #fdf3f1;
+  border: 1px solid #f0cfc9;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #8a2a1e;
+}
+
+.fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 96px), 1fr));
+  gap: 0.6rem;
+}
+
+.choice {
+  position: relative;
+}
+
+.choiceInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.choiceBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #d8d4c9;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1f2e;
+  text-align: center;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.choiceInput:checked + .choiceBox {
+  border-color: #278b2e;
+  background: #eef7ea;
+  color: #1f6b25;
+}
+
+.choiceInput:focus-visible + .choiceBox {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.choicesInvalid .choiceBox {
+  border-color: #c0392b;
+}
+
+/* ---------- buttons ---------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.dangerButton,
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.primaryButton {
+  border: none;
+  background: #07e207;
+  color: #0d1a0d;
+}
+
+.secondaryButton {
+  border: 1.5px solid #d8d4c9;
+  background: #fff;
+  color: #1a1f2e;
+}
+
+.dangerButton {
+  border: 1.5px solid #c0392b;
+  background: #fff;
+  color: #9b2c1f;
+}
+
+.linkButton {
+  border: none;
+  background: none;
+  color: #1f6b25;
+  padding: 0 0.5rem;
+  text-decoration: underline;
+}
+
+@media (hover: hover) {
+  .primaryButton:hover:not(:disabled) {
+    background: #05b505;
+  }
+
+  .secondaryButton:hover:not(:disabled) {
+    border-color: #278b2e;
+  }
+
+  .dangerButton:hover:not(:disabled) {
+    background: #fdf3f1;
+  }
+}
+
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible,
+.dangerButton:focus-visible,
+.linkButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.dangerButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- vendor home ---------- */
+
+.profileHead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.profileName {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin: 0 0 0.25rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 0.8rem;
+  border-radius: 100px;
+  background: #f1efe9;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.section {
+  margin-top: 2rem;
+}
+
+/* ---------- admin ---------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.filterButton {
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1.5px solid #d8d4c9;
+  border-radius: 100px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1f2e;
+  cursor: pointer;
+}
+
+.filterButtonActive {
+  border-color: #278b2e;
+  background: #eef7ea;
+  color: #1f6b25;
+}
+
+.filterButton:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.decision {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ece9e3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shortcut {
+  margin-top: 2.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px dashed #d8d4c9;
+  border-radius: 12px;
+}
+
+.shortcutSummary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1f2e;
+  cursor: pointer;
+}
+
+.shortcutSummary:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.statusLine {
+  font-size: 0.85rem;
+  color: #1f6b25;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1.5rem 1rem 5rem;
+  }
+
+  .actions > * {
+    flex: 1 1 100%;
+  }
+}

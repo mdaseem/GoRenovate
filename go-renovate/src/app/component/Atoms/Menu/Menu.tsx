@@ -14,11 +14,13 @@ import {
 import { logout } from "@/app/store/features/authSlice";
 import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { useAccountInfo } from "../../CustomHooks/useAccountInfo";
 
 const Menu: React.FC = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
   const store = useAppSelector((state) => state.overlay);
+  const { account } = useAccountInfo();
 
   const closeMenu = () => dispatch(setOpenMobileMenu(false));
 
@@ -114,6 +116,40 @@ const Menu: React.FC = () => {
             onClick={closeMenu}
           >
             My Orders
+          </Link>
+        )}
+
+        {/* Signed-out visitors and customers can apply; the role comes from the server, so nothing shows until it is known. */}
+        {((!session && status !== "loading") || account?.role === "customer") && (
+          <Link
+            href="/sell"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            Sell on Go Renovate
+          </Link>
+        )}
+
+        {account?.role === "vendor" && (
+          <Link
+            href="/vendor"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            Vendor area
+          </Link>
+        )}
+
+        {account?.role === "admin" && (
+          <Link
+            href="/admin/vendors"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            Vendor applications
           </Link>
         )}
 
