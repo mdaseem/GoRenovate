@@ -11,6 +11,7 @@ import search from "./features/searchSlice";
 import categoryState from "./features/categorySlice";
 import essentialOrderState from "./features/essentialOrderSlice";
 import designState from "./features/designSlice";
+import productCart from "./features/productCartSlice";
 import rootSaga from "./sagas/rootSaga";
 
 const rootReducer = combineReducers({
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   categoryState,
   essentialOrderState,
   designState,
+  productCart,
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function makeStore(preloadedState?: any) {

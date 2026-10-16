@@ -5,6 +5,13 @@ import Image from "next/image";
 import styles from "./ServiceDetail.module.css";
 import { ServiceOption } from "@/app/types/vendor";
 import { MATERIAL_COLORS, UNIT_LABELS } from "@/app/types/vendorConstants";
+import {
+  formatDimensions,
+  isOutOfStock,
+  maxQuantityFor,
+  PRODUCT_PLACEHOLDER_IMAGE,
+  stockNote,
+} from "@/app/utils/productFacts";
 
 interface ServiceDetailProps {
   service: ServiceOption;
@@ -20,6 +27,7 @@ const FALLBACK_GALLERY = ["/house.jpg", "/house.jpg"];
 function resolveGallery(service: ServiceOption): string[] {
   if (service.images && service.images.length > 0) return service.images;
   if (service.imageUrl) return [service.imageUrl];
+  if (service.product) return [PRODUCT_PLACEHOLDER_IMAGE];
   return FALLBACK_GALLERY;
 }
 
@@ -170,8 +178,15 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({
   onDecrement,
 }) => {
   const images = resolveGallery(service);
-  const material = MATERIAL_COLORS[service.materialTag];
-  const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
+  const product = service.product;
+  const material =
+    !product && service.materialTag ? MATERIAL_COLORS[service.materialTag] : undefined;
+  const unitLabel =
+    !product && service.unit ? (UNIT_LABELS[service.unit] ?? `per ${service.unit}`) : null;
+  const includes = service.includes ?? [];
+  const dimensions = product ? formatDimensions(product.dimensionsCm) : null;
+  const note = product ? stockNote(product) : null;
+  const maxQuantity = product ? maxQuantityFor(product) : Infinity;
 
   const formattedPrice = new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -222,18 +237,33 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({
 
         <p className={styles.description}>{service.description}</p>
 
-        <ul className={styles.includesList} aria-label="What's included">
-          {service.includes.map((item) => (
-            <li key={item} className={styles.includeChip}>
-              ✓ {item}
-            </li>
-          ))}
-        </ul>
+        {product ? (
+          <>
+            {dimensions && (
+              <ul className={styles.includesList} aria-label="Size">
+                <li className={styles.includeChip}>Size: {dimensions}</li>
+              </ul>
+            )}
+            {note && <p className={styles.estimatedDays}>{note}</p>}
+          </>
+        ) : (
+          <>
+            <ul className={styles.includesList} aria-label="What's included">
+              {includes.map((item) => (
+                <li key={item} className={styles.includeChip}>
+                  ✓ {item}
+                </li>
+              ))}
+            </ul>
 
-        <p className={styles.estimatedDays}>
-          Estimated turnaround: ~{service.estimatedDays}{" "}
-          {service.estimatedDays === 1 ? "day" : "days"}
-        </p>
+            {service.estimatedDays !== undefined && (
+              <p className={styles.estimatedDays}>
+                Estimated turnaround: ~{service.estimatedDays}{" "}
+                {service.estimatedDays === 1 ? "day" : "days"}
+              </p>
+            )}
+          </>
+        )}
       </div>
 
       <div className={styles.footer}>
@@ -244,17 +274,33 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({
           >
             {formattedPrice}
           </span>
-          <span className={styles.priceUnit}>{unitLabel}</span>
+          {unitLabel && <span className={styles.priceUnit}>{unitLabel}</span>}
         </div>
 
-        {quantity === 0 ? (
+        {product && product.purchaseMode === "external-store" ? (
+          product.externalStoreUrl ? (
+            <a
+              className={styles.addButton}
+              href={product.externalStoreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visit the store to buy ${service.name} (opens in a new tab)`}
+            >
+              Visit store
+            </a>
+          ) : null
+        ) : product && isOutOfStock(product) ? (
+          <button className={styles.addButton} type="button" disabled>
+            Out of stock
+          </button>
+        ) : quantity === 0 ? (
           <button
             className={styles.addButton}
             onClick={handleAdd}
             type="button"
-            aria-label={`Add ${service.name} to quote`}
+            aria-label={product ? `Add ${service.name} to cart` : `Add ${service.name} to quote`}
           >
-            + Add to quote
+            {product ? "+ Add to cart" : "+ Add to quote"}
           </button>
         ) : (
           <div
@@ -282,6 +328,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({
               onClick={handleIncrement}
               type="button"
               aria-label="Increase quantity"
+              disabled={quantity >= maxQuantity}
             >
               +
             </button>

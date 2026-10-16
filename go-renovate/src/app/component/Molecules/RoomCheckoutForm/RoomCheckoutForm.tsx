@@ -12,6 +12,7 @@ import {
 } from "@/app/store/features/essentialOrderSlice";
 import { setOpenStateLogin } from "@/app/store/features/overLaySlice";
 import { EssentialOrderAddress } from "@/app/types/essentialOrder";
+import { PRODUCT_PLACEHOLDER_IMAGE } from "@/app/utils/productFacts";
 import {
   AddressField,
   AddressFieldInput,
@@ -31,6 +32,8 @@ export interface RoomCheckoutItem {
 }
 
 interface RoomCheckoutFormProps {
+  // "shop" = the cart of products bought from vendor pages; only the wording differs.
+  context?: "room" | "shop";
   items: RoomCheckoutItem[];
   totalPrice: number;
   onClose: () => void;
@@ -70,6 +73,7 @@ function groupByVendor(
 }
 
 const RoomCheckoutForm: React.FC<RoomCheckoutFormProps> = ({
+  context = "room",
   items,
   totalPrice,
   onClose,
@@ -152,7 +156,9 @@ const RoomCheckoutForm: React.FC<RoomCheckoutFormProps> = ({
 
       if (items.length === 0) {
         setLocalError(
-          "Your room has no items — add something before checking out.",
+          context === "shop"
+            ? "Your cart is empty — add something before checking out."
+            : "Your room has no items — add something before checking out.",
         );
         return;
       }
@@ -196,7 +202,7 @@ const RoomCheckoutForm: React.FC<RoomCheckoutFormProps> = ({
         }),
       );
     },
-    [address, fieldErrors, session?.backendToken, items, dispatch],
+    [address, fieldErrors, session?.backendToken, items, context, dispatch],
   );
 
   const submissionError = localError || (hasSubmitted && error) || null;
@@ -205,7 +211,7 @@ const RoomCheckoutForm: React.FC<RoomCheckoutFormProps> = ({
     <div className={styles.checkout}>
       <h2 className={styles.heading}>Checkout</h2>
       <p className={styles.subheading}>
-        Your room includes items from {vendorGroups.length} vendor
+        Your {context === "shop" ? "cart" : "room"} includes items from {vendorGroups.length} vendor
         {vendorGroups.length !== 1 ? "s" : ""} — each ships separately, but
         it&apos;s one order and one address.
       </p>
@@ -227,7 +233,10 @@ const RoomCheckoutForm: React.FC<RoomCheckoutFormProps> = ({
                 <li key={item.essentialId} className={styles.summaryItem}>
                   <div className={styles.summaryItemMedia}>
                     <Image
-                      src={item.imageUrl || FALLBACK_IMAGE}
+                      src={
+                        item.imageUrl ||
+                        (context === "shop" ? PRODUCT_PLACEHOLDER_IMAGE : FALLBACK_IMAGE)
+                      }
                       alt=""
                       width={44}
                       height={44}

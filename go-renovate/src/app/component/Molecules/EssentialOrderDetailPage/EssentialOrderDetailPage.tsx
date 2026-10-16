@@ -98,7 +98,7 @@ const EssentialOrderDetailPage: React.FC<EssentialOrderDetailPageProps> = ({
       <BackLink className={styles.backLink} />
       <div className={styles.header}>
         <p className={styles.orderNumber}>{order.orderNumber}</p>
-        <h1 className={styles.heading}>Room order</h1>
+        <h1 className={styles.heading}>Order</h1>
         <p className={styles.headerMeta}>
           Placed {formattedDate} · {order.vendorOrders.length} vendor
           {order.vendorOrders.length !== 1 ? "s" : ""} ·{" "}

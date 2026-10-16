@@ -28,6 +28,7 @@ import {
 } from "@/app/component/Molecules/Filters/filterConfig";
 import { useVendorFilters } from "@/app/component/Molecules/Filters/hooks/useVendorFilters";
 import { useDebouncedValue } from "@/app/component/CustomHooks/useDebouncedValue";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 const FILTER_FETCH_DEBOUNCE_MS = 0;
 
@@ -191,9 +192,19 @@ const CategoryVendorList: React.FC<CategoryVendorListProps> = ({
           <div>
             <h1 className={styles.heading}>{category.label} Vendors</h1>
             <p className={styles.subheading}>
-              {displayedVendors.length} verified vendor
-              {displayedVendors.length === 1 ? "" : "s"} offering{" "}
-              {category.label.toLowerCase()} services
+              {SERVICES_ENABLED ? (
+                <>
+                  {displayedVendors.length} verified vendor
+                  {displayedVendors.length === 1 ? "" : "s"} offering{" "}
+                  {category.label.toLowerCase()} services
+                </>
+              ) : (
+                <>
+                  {displayedVendors.length} vendor
+                  {displayedVendors.length === 1 ? "" : "s"} selling{" "}
+                  {category.label.toLowerCase()}
+                </>
+              )}
             </p>
           </div>
         </header>
@@ -268,7 +279,8 @@ const CategoryVendorList: React.FC<CategoryVendorListProps> = ({
                         {matchedCategory && (
                           <span className={styles.metaItem}>
                             {matchedCategory.services.length}{" "}
-                            {category.label.toLowerCase()} service
+                            {category.label.toLowerCase()}{" "}
+                            {matchedCategory.services[0]?.product ? "product" : "service"}
                             {matchedCategory.services.length === 1 ? "" : "s"}
                           </span>
                         )}
@@ -297,7 +309,9 @@ const CategoryVendorList: React.FC<CategoryVendorListProps> = ({
             {otherCategories.length > 0 && (
               <nav
                 className={styles.otherCategories}
-                aria-label="Other service categories"
+                aria-label={
+                  SERVICES_ENABLED ? "Other service categories" : "Other product categories"
+                }
               >
                 <p className={styles.otherCategoriesLabel}>
                   Browse other categories

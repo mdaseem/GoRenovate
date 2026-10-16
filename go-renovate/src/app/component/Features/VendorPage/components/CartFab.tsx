@@ -5,18 +5,25 @@ interface CartFabProps {
   totalItems: number;
   formattedTotal: string;
   onClick: () => void;
+  // "products" = the shop cart; the default is the services quote cart.
+  mode?: "services" | "products";
 }
 
 const CartFab: React.FC<CartFabProps> = ({
   totalItems,
   formattedTotal,
   onClick,
+  mode = "services",
 }) => (
   <button
     className={styles.cartFab}
     onClick={onClick}
     type="button"
-    aria-label={`Open quote cart — ${totalItems} services, total ${formattedTotal}`}
+    aria-label={
+      mode === "products"
+        ? `Open cart — ${totalItems} ${totalItems === 1 ? "product" : "products"}, total ${formattedTotal}`
+        : `Open quote cart — ${totalItems} services, total ${formattedTotal}`
+    }
   >
     <span className={styles.fabIcon} aria-hidden="true">
       🗂️

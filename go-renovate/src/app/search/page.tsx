@@ -9,6 +9,7 @@ import {
   SEARCH_PARAM,
 } from "../component/Molecules/Filters/filterConfig";
 import ErrorState from "../component/Atoms/ErrorState/ErrorState";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -34,8 +35,10 @@ export async function generateMetadata({
     ? `Search results for "${query}" | Go Renovate`
     : "Search | Go Renovate";
   const description = query
-    ? `Vendors and services matching "${query}" on Go Renovate.`
-    : "Search for renovation vendors and services on Go Renovate.";
+    ? `Vendors${SERVICES_ENABLED ? " and services" : " and products"} matching "${query}" on Go Renovate.`
+    : SERVICES_ENABLED
+      ? "Search for renovation vendors and services on Go Renovate."
+      : "Search for vendors and products on Go Renovate.";
 
   return {
     title,
@@ -80,7 +83,11 @@ export default async function SearchPage({ searchParams }: PageProps) {
         <ErrorState
           variant="page"
           title="Search Go Renovate"
-          message="Search for a vendor, service, or category using the search bar above."
+          message={
+            SERVICES_ENABLED
+              ? "Search for a vendor, service, or category using the search bar above."
+              : "Search for a vendor, product, or category using the search bar above."
+          }
         />
       </div>
     );

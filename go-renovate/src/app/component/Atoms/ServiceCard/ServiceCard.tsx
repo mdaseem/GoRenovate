@@ -3,6 +3,13 @@ import Image from "next/image";
 import styles from "./ServiceCard.module.css";
 import { ServiceOption } from "@/app/types/vendor";
 import { MATERIAL_COLORS, UNIT_LABELS } from "@/app/types/vendorConstants";
+import {
+  formatDimensions,
+  isOutOfStock,
+  maxQuantityFor,
+  PRODUCT_PLACEHOLDER_IMAGE,
+  stockNote,
+} from "@/app/utils/productFacts";
 
 interface ServiceCardProps {
   service: ServiceOption;
@@ -20,6 +27,9 @@ const FALLBACK_IMAGE = "/house.jpg";
 
 const MAX_VISIBLE_INCLUDES = 3;
 
+// The card is shared by services and (while services are switched off) products. A product carries a
+// `product` block; it swaps the service-only lines (material, includes, unit, turnaround) for the
+// product's size and stock, and the add control for what can really be bought here.
 const ServiceCard: React.FC<ServiceCardProps> = ({
   service,
   categoryLabel,
@@ -29,10 +39,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   onDecrement,
   onViewMore,
 }) => {
-  const material = MATERIAL_COLORS[service.materialTag];
-  const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
-  const visibleIncludes = service.includes.slice(0, MAX_VISIBLE_INCLUDES);
-  const hiddenIncludesCount = service.includes.length - visibleIncludes.length;
+  const product = service.product;
+  const material =
+    !product && service.materialTag ? MATERIAL_COLORS[service.materialTag] : undefined;
+  const unitLabel =
+    !product && service.unit ? (UNIT_LABELS[service.unit] ?? `per ${service.unit}`) : null;
+  const includes = service.includes ?? [];
+  const visibleIncludes = includes.slice(0, MAX_VISIBLE_INCLUDES);
+  const hiddenIncludesCount = includes.length - visibleIncludes.length;
+  const dimensions = product ? formatDimensions(product.dimensionsCm) : null;
+  const note = product ? stockNote(product) : null;
+  const maxQuantity = product ? maxQuantityFor(product) : Infinity;
+  const noun = product ? "Product" : "Service";
 
   const handleAdd = useCallback(() => {
     onAdd(service, categoryLabel);
@@ -56,11 +74,74 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     maximumFractionDigits: 0,
   }).format(service.price);
 
+  const renderAddControl = () => {
+    if (product && product.purchaseMode === "external-store") {
+      return product.externalStoreUrl ? (
+        <a
+          className={styles.addButton}
+          href={product.externalStoreUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Visit the store to buy ${service.name} (opens in a new tab)`}
+        >
+          Visit store
+        </a>
+      ) : null;
+    }
+    if (product && isOutOfStock(product)) {
+      return (
+        <button className={styles.addButton} type="button" disabled>
+          Out of stock
+        </button>
+      );
+    }
+    if (quantity === 0) {
+      return (
+        <button
+          className={styles.addButton}
+          onClick={handleAdd}
+          type="button"
+          aria-label={product ? `Add ${service.name} to cart` : `Add ${service.name} to quote`}
+        >
+          + Add
+        </button>
+      );
+    }
+    return (
+      <div
+        className={styles.quantityControl}
+        role="group"
+        aria-label={`Quantity of ${service.name}`}
+      >
+        <button
+          className={styles.qtyButton}
+          onClick={handleDecrement}
+          type="button"
+          aria-label="Decrease quantity"
+        >
+          −
+        </button>
+        <span className={styles.qtyValue} aria-live="polite" aria-atomic="true">
+          {quantity}
+        </span>
+        <button
+          className={styles.qtyButton}
+          onClick={handleIncrement}
+          type="button"
+          aria-label="Increase quantity"
+          disabled={quantity >= maxQuantity}
+        >
+          +
+        </button>
+      </div>
+    );
+  };
+
   return (
-    <article className={styles.card} aria-label={`Service: ${service.name}`}>
+    <article className={styles.card} aria-label={`${noun}: ${service.name}`}>
       <div className={styles.media}>
         <Image
-          src={service.imageUrl || FALLBACK_IMAGE}
+          src={service.imageUrl || (product ? PRODUCT_PLACEHOLDER_IMAGE : FALLBACK_IMAGE)}
           alt=""
           fill
           sizes="(max-width: 480px) 80px, 112px"
@@ -119,18 +200,26 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           </svg>
         </button>
 
-        <ul className={styles.includesList} aria-label="What's included">
-          {visibleIncludes.map((item) => (
-            <li key={item} className={styles.includeChip}>
-              ✓ {item}
-            </li>
-          ))}
-          {hiddenIncludesCount > 0 && (
-            <li className={styles.includeChipMore} aria-hidden="true">
-              +{hiddenIncludesCount} more
-            </li>
-          )}
-        </ul>
+        {product
+          ? dimensions && (
+              <ul className={styles.includesList} aria-label="Size">
+                <li className={styles.includeChip}>{dimensions}</li>
+              </ul>
+            )
+          : (
+              <ul className={styles.includesList} aria-label="What's included">
+                {visibleIncludes.map((item) => (
+                  <li key={item} className={styles.includeChip}>
+                    ✓ {item}
+                  </li>
+                ))}
+                {hiddenIncludesCount > 0 && (
+                  <li className={styles.includeChipMore} aria-hidden="true">
+                    +{hiddenIncludesCount} more
+                  </li>
+                )}
+              </ul>
+            )}
 
         <div className={styles.cardFooter}>
           <div className={styles.pricing}>
@@ -140,58 +229,21 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             >
               {formattedPrice}
             </span>
-            <span className={styles.priceUnit}>{unitLabel}</span>
-            <span
-              className={styles.estimatedDays}
-              aria-label={`Estimated ${service.estimatedDays} days`}
-            >
-              ~{service.estimatedDays}{" "}
-              {service.estimatedDays === 1 ? "day" : "days"}
-            </span>
+            {unitLabel && <span className={styles.priceUnit}>{unitLabel}</span>}
+            {product
+              ? note && <span className={styles.estimatedDays}>{note}</span>
+              : service.estimatedDays !== undefined && (
+                  <span
+                    className={styles.estimatedDays}
+                    aria-label={`Estimated ${service.estimatedDays} days`}
+                  >
+                    ~{service.estimatedDays}{" "}
+                    {service.estimatedDays === 1 ? "day" : "days"}
+                  </span>
+                )}
           </div>
 
-          <div className={styles.addControl}>
-            {quantity === 0 ? (
-              <button
-                className={styles.addButton}
-                onClick={handleAdd}
-                type="button"
-                aria-label={`Add ${service.name} to quote`}
-              >
-                + Add
-              </button>
-            ) : (
-              <div
-                className={styles.quantityControl}
-                role="group"
-                aria-label={`Quantity of ${service.name}`}
-              >
-                <button
-                  className={styles.qtyButton}
-                  onClick={handleDecrement}
-                  type="button"
-                  aria-label="Decrease quantity"
-                >
-                  −
-                </button>
-                <span
-                  className={styles.qtyValue}
-                  aria-live="polite"
-                  aria-atomic="true"
-                >
-                  {quantity}
-                </span>
-                <button
-                  className={styles.qtyButton}
-                  onClick={handleIncrement}
-                  type="button"
-                  aria-label="Increase quantity"
-                >
-                  +
-                </button>
-              </div>
-            )}
-          </div>
+          <div className={styles.addControl}>{renderAddControl()}</div>
         </div>
       </div>
     </article>

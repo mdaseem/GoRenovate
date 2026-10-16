@@ -14,6 +14,7 @@ import OrderStatusBadge from "../../Atoms/OrderStatusBadge/OrderStatusBadge";
 import BackLink from "../../Atoms/BackLink/BackLink";
 import { OrderSummary } from "@/app/types/order";
 import { EssentialOrderSummary } from "@/app/types/essentialOrder";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 function OrdersListSkeleton() {
   return (
@@ -60,7 +61,11 @@ const OrdersListPage: React.FC = () => {
         <ErrorState
           variant="page"
           title="Sign in to view your orders"
-          message="Once you're signed in, every quote you've checked out with will show up here."
+          message={
+            SERVICES_ENABLED
+              ? "Once you're signed in, every quote you've checked out with will show up here."
+              : "Once you're signed in, every order you've placed will show up here."
+          }
           actionLabel="Sign in"
           onAction={() => dispatch(setOpenStateLogin(true))}
         />
@@ -73,6 +78,7 @@ const OrdersListPage: React.FC = () => {
       <BackLink className={styles.backLink} />
       <h1 className={styles.heading}>My Orders</h1>
 
+      {(SERVICES_ENABLED || orders.length > 0) && (
       <section className={styles.section}>
         <h2 className={styles.sectionHeading}>Renovation Orders</h2>
 
@@ -141,16 +147,17 @@ const OrdersListPage: React.FC = () => {
           </ul>
         )}
       </section>
+      )}
 
       <section className={styles.section}>
-        <h2 className={styles.sectionHeading}>Room Orders</h2>
+        <h2 className={styles.sectionHeading}>Product Orders</h2>
 
         {isLoadingEssentialOrders && <OrdersListSkeleton />}
 
         {!isLoadingEssentialOrders && essentialOrdersError && (
           <ErrorState
             variant="inline"
-            title="Couldn't load your room orders"
+            title="Couldn't load your product orders"
             message={essentialOrdersError}
           />
         )}
@@ -162,12 +169,17 @@ const OrdersListPage: React.FC = () => {
               <span className={styles.emptyIcon} aria-hidden="true">
                 🛋️
               </span>
-              <p className={styles.emptyText}>No room orders yet</p>
+              <p className={styles.emptyText}>No product orders yet</p>
               <p className={styles.emptySubtext}>
-                Shop a curated room and check out to see it here.
+                {SERVICES_ENABLED
+                  ? "Shop a curated room and check out to see it here."
+                  : "Shop from a vendor or a curated room and check out to see it here."}
               </p>
-              <Link href="/roomCategory" className={styles.emptyAction}>
-                Shop by room
+              <Link
+                href={SERVICES_ENABLED ? "/roomCategory" : "/vendors"}
+                className={styles.emptyAction}
+              >
+                {SERVICES_ENABLED ? "Shop by room" : "Browse vendors"}
               </Link>
             </div>
           )}

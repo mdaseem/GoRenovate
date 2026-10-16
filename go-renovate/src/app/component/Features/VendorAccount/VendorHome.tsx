@@ -8,6 +8,7 @@ import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
 import { OwnVendorProfile } from "@/app/types/vendorAccount";
 import { fetchOwnVendor } from "@/app/utils/vendorAccountApi";
 import { getAvatarStyle, getInitials } from "@/app/utils/vendorAvatar";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 const VendorProfile: React.FC<{ token: string }> = ({ token }) => {
   const [vendor, setVendor] = useState<OwnVendorProfile | null>(null);
@@ -99,14 +100,16 @@ const VendorProfile: React.FC<{ token: string }> = ({ token }) => {
           <p className={styles.muted}>
             {isHidden
               ? "Your profile is currently hidden from customers."
-              : "Customers will see your profile on the Vendors pages once you have at least one service listed."}
+              : SERVICES_ENABLED
+                ? "Customers will see your profile on the Vendors pages once you have at least one service listed."
+                : "Customers will see your profile on the Vendors pages once you have at least one product listed."}
           </p>
         )}
       </div>
 
       <section className={styles.section} aria-labelledby="vendor-services-heading">
         <h2 id="vendor-services-heading" className={styles.sectionHeading}>
-          Your services
+          {SERVICES_ENABLED ? "Your services" : "Your products"}
         </h2>
         {hasServices ? (
           <ul className={styles.chips}>
@@ -119,8 +122,9 @@ const VendorProfile: React.FC<{ token: string }> = ({ token }) => {
         ) : (
           <div className={styles.notice}>
             <strong className={styles.noticeTitle}>Nothing listed yet</strong>
-            Tools to add and edit your services and products are the next thing we&apos;re building. Your
-            account and profile are set up and ready for them.
+            {SERVICES_ENABLED
+              ? "Tools to add and edit your services and products are the next thing we're building. Your account and profile are set up and ready for them."
+              : "Tools to add and edit your products are the next thing we're building. Your account and profile are set up and ready for them."}
           </div>
         )}
       </section>

@@ -5,18 +5,24 @@ import Dashboard from "../component/Molecules/Dashboard/Dashboard";
 import { authOptions } from "../authOptions";
 import { Vendor } from "@/app/types/vendor";
 import { buildFilterQueryString } from "../component/Molecules/Filters/filterConfig";
+import { SERVICES_ENABLED } from "@/app/utils/features";
+
+const title = SERVICES_ENABLED
+  ? "Browse Renovation Vendors | Go Renovate"
+  : "Browse Vendors | Go Renovate";
+const description = SERVICES_ENABLED
+  ? "Compare verified home renovation vendors and contractors near you. Explore services, pricing, and reviews, then request a free quote — no sign-up required to browse."
+  : "Browse vendors selling furniture, lighting, rugs and décor. See their products and prices, add what you like to your cart and check out once — no sign-up required to browse.";
 
 export const metadata: Metadata = {
-  title: "Browse Renovation Vendors | Go Renovate",
-  description:
-    "Compare verified home renovation vendors and contractors near you. Explore services, pricing, and reviews, then request a free quote — no sign-up required to browse.",
+  title,
+  description,
   alternates: {
     canonical: "/vendors",
   },
   openGraph: {
-    title: "Browse Renovation Vendors | Go Renovate",
-    description:
-      "Compare verified home renovation vendors and contractors. Explore services, pricing, and reviews, then request a free quote.",
+    title,
+    description,
     url: "/vendors",
     type: "website",
   },
