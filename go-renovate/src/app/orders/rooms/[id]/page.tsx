@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import EssentialOrderDetailPage from "@/app/component/Molecules/EssentialOrderDetailPage/EssentialOrderDetailPage";
 
 export const metadata: Metadata = {
-  title: "Room Order Details | Go Renovate",
-  description: "See the status and shipping details for every vendor in your room order.",
+  title: "Order Details | Go Renovate",
+  description: "See the status and shipping details for every vendor in your order.",
 };
 
 type PageProps = {

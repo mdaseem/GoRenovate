@@ -23,6 +23,7 @@ import { Vendor } from "@/app/types/vendor";
 import { useVendorFilters } from "../Filters/hooks/useVendorFilters";
 import { buildVendorsQueryString, SEARCH_PARAM } from "../Filters/filterConfig";
 import { useDebouncedValue } from "../../CustomHooks/useDebouncedValue";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 const FILTER_FETCH_DEBOUNCE_MS = 0;
 
@@ -123,8 +124,12 @@ function ProductListPage(props: {
           />
         ) : !hasCatalog ? (
           <ErrorState
-            title="No products found"
-            message="Check back soon — new services are added regularly."
+            title={SERVICES_ENABLED ? "No products found" : "No vendors found"}
+            message={
+              SERVICES_ENABLED
+                ? "Check back soon — new services are added regularly."
+                : "Check back soon — new vendors and products are added regularly."
+            }
           />
         ) : !hasFilteredResults ? (
           <ErrorState

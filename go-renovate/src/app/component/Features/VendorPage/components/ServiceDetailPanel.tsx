@@ -102,7 +102,7 @@ const ServiceDetailPanel: React.FC<ServiceDetailPanelProps> = ({
           type="button"
           className={`${styles.navArrow} ${styles.navArrowPrev}`}
           onClick={onPrev}
-          aria-label="Previous service"
+          aria-label={`Previous ${service.product ? "product" : "service"}`}
         >
           <svg
             width="18"
@@ -127,7 +127,7 @@ const ServiceDetailPanel: React.FC<ServiceDetailPanelProps> = ({
           type="button"
           className={`${styles.navArrow} ${styles.navArrowNext}`}
           onClick={onNext}
-          aria-label="Next service"
+          aria-label={`Next ${service.product ? "product" : "service"}`}
         >
           <svg
             width="18"

@@ -81,7 +81,7 @@ function* handleGetEssentialOrders(
     } else {
       yield put(
         setEssentialOrderError(
-          resolveErrorMessage(error, "Couldn't load your room orders. Please try again."),
+          resolveErrorMessage(error, "Couldn't load your product orders. Please try again."),
         ),
       );
     }

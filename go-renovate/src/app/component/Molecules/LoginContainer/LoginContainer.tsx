@@ -2,12 +2,19 @@ import React from "react";
 import "./LoginContainer.css";
 import LiveBackground from "../../Atoms/LiveBackground/LiveBackground";
 import Login from "../../Atoms/Login/Login";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
-const highlights = [
-  "Verified vendors, vetted for quality and reliability",
-  "Transparent, itemized quotes — no hidden costs",
-  "Real-time chat support from quote to completion",
-];
+const highlights = SERVICES_ENABLED
+  ? [
+      "Verified vendors, vetted for quality and reliability",
+      "Transparent, itemized quotes — no hidden costs",
+      "Real-time chat support from quote to completion",
+    ]
+  : [
+      "Verified vendors, vetted for quality and reliability",
+      "Clear prices — one cart across vendors",
+      "Real-time chat, built in",
+    ];
 
 const stats = [
   { value: "2,400+", label: "Projects Completed" },
@@ -38,11 +45,13 @@ const LoginContainer: React.FC = () => {
         <div className="login-showcase">
           <p className="login-showcase-eyebrow">✦ Go Renovate</p>
           <h2 className="login-showcase-heading">
-            Your Renovation, <em>Simplified.</em>
+            {SERVICES_ENABLED ? "Your Renovation, " : "Your Home, "}
+            <em>{SERVICES_ENABLED ? "Simplified." : "Furnished."}</em>
           </h2>
           <p className="login-showcase-sub">
-            Connect with verified vendors, compare transparent quotes, and
-            manage your entire renovation from one place.
+            {SERVICES_ENABLED
+              ? "Connect with verified vendors, compare transparent quotes, and manage your entire renovation from one place."
+              : "Browse vendors, build one cart across them, and follow every order from one place."}
           </p>
 
           <ul className="login-showcase-list">

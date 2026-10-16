@@ -13,10 +13,8 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { setOpenStateLogin } from "@/app/store/features/overLaySlice";
 import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
 import BackLink from "@/app/component/Atoms/BackLink/BackLink";
-import { useHeaderHeight } from "./hooks/useHeaderHeight";
 import { useToast } from "./hooks/useToast";
-import { useCategoryScrollSpy } from "./hooks/useCategoryScrollSpy";
-import { useCategoryMenu } from "./hooks/useCategoryMenu";
+import { useCatalogueLayout } from "./hooks/useCatalogueLayout";
 import { useServiceNavigation } from "./hooks/useServiceNavigation";
 import CategorySection from "./components/CategorySection";
 import VendorDetails from "./components/VendorDetails";
@@ -37,9 +35,23 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
   const router = useRouter();
   const categories = vendor?.categories ?? [];
 
-  const [openCategoryIds, setOpenCategoryIds] = useState<Set<string>>(
-    () => new Set(categories[0]?.id ? [categories[0].id] : []),
-  );
+  const {
+    openCategoryIds,
+    toggleCategory,
+    activeCategoryId,
+    registerSectionRef,
+    handleCategoryMenuSelect,
+    menu: {
+      isOpen: isCategoryMenuOpen,
+      buttonRef: categoryMenuButtonRef,
+      panelRef: categoryMenuPanelRef,
+      toggle: toggleCategoryMenu,
+      close: closeCategoryMenu,
+      selectCategory: selectCategoryFromMenu,
+      handleKeyDown: handleCategoryMenuKeyDown,
+      handleBlur: handleCategoryMenuBlur,
+    },
+  } = useCatalogueLayout(categories);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const serviceNav = useServiceNavigation(categories);
@@ -59,9 +71,6 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
     useCartAvailability();
 
   const { toast, showToast } = useToast();
-  const headerHeight = useHeaderHeight();
-  const { activeCategoryId, setActiveCategoryId, registerSectionRef } =
-    useCategoryScrollSpy(categories, headerHeight);
 
   const handleAddService = useCallback(
     (service: ServiceOption, categoryLabel: string) => {
@@ -86,55 +95,6 @@ const VendorPage: React.FC<propType> = ({ vendor }) => {
     },
     [getQuantity, updateQuantity],
   );
-
-  const toggleCategory = useCallback((categoryId: string) => {
-    setOpenCategoryIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(categoryId)) {
-        next.delete(categoryId);
-      } else {
-        next.add(categoryId);
-      }
-      return next;
-    });
-  }, []);
-
-  const handleCategoryChange = useCallback(
-    (categoryId: string) => {
-      setActiveCategoryId(categoryId);
-      const el = document.getElementById(`category-section-${categoryId}`);
-      if (el) {
-        const y =
-          el.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }
-    },
-    [headerHeight, setActiveCategoryId],
-  );
-
-  const handleCategoryMenuSelect = useCallback(
-    (categoryId: string) => {
-      setOpenCategoryIds((prev) => {
-        if (prev.has(categoryId)) return prev;
-        const next = new Set(prev);
-        next.add(categoryId);
-        return next;
-      });
-      handleCategoryChange(categoryId);
-    },
-    [handleCategoryChange],
-  );
-
-  const {
-    isOpen: isCategoryMenuOpen,
-    buttonRef: categoryMenuButtonRef,
-    panelRef: categoryMenuPanelRef,
-    toggle: toggleCategoryMenu,
-    close: closeCategoryMenu,
-    selectCategory: selectCategoryFromMenu,
-    handleKeyDown: handleCategoryMenuKeyDown,
-    handleBlur: handleCategoryMenuBlur,
-  } = useCategoryMenu({ onSelectCategory: handleCategoryMenuSelect });
 
   // Avoid two floating overlays fighting for attention.
   useEffect(() => {

@@ -11,11 +11,13 @@ import {
   VendorApplication,
 } from "@/app/types/vendorAccount";
 import { ApiError, submitApplication } from "@/app/utils/vendorAccountApi";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
+// While services are switched off the form does not ask what is sold: every applicant sells products.
 const EMPTY_VALUES: ApplicationFormValues = {
   businessName: "",
   city: "",
-  sells: "",
+  sells: SERVICES_ENABLED ? "" : "products",
   phone: "",
   pickupAddress: "",
   gstin: "",
@@ -24,7 +26,7 @@ const EMPTY_VALUES: ApplicationFormValues = {
 const FIELD_ORDER: ApplicationField[] = [
   "businessName",
   "city",
-  "sells",
+  ...(SERVICES_ENABLED ? (["sells"] as const) : []),
   "phone",
   "pickupAddress",
   "gstin",
@@ -211,6 +213,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ token, onSubmitted })
         })}
       </div>
 
+      {SERVICES_ENABLED && (
       <fieldset
         className={styles.fieldset}
         aria-describedby={errors.sells ? "sell-sells-error" : undefined}
@@ -237,6 +240,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ token, onSubmitted })
           </span>
         )}
       </fieldset>
+      )}
 
       {textField("pickupAddress", "Shop or pickup address", {
         multiline: true,

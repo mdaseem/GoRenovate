@@ -2,6 +2,7 @@ import React from "react";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import styles from "./HomePage.module.css";
 import Link from "next/link";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -140,7 +141,7 @@ const rooms = [
   },
 ];
 
-const paths = [
+const servicePaths = [
   {
     id: "renovate",
     num: "01",
@@ -191,7 +192,39 @@ const paths = [
   },
 ] as const;
 
-const promises = [
+// While services are switched off (see utils/features.ts) the first path is a shop, not a booking.
+const shopPaths = [
+  {
+    id: "shop",
+    num: "01",
+    variant: "renovate",
+    badge: "Shop",
+    icon: "🛍️",
+    title: "Shop from Vendors",
+    description:
+      "Browse vendors, see what each one sells and buy products directly — add them to your cart and check out once, even across vendors.",
+    bullets: [
+      "See each vendor's products and prices",
+      "Add pieces from several vendors to one cart",
+      "Place one order and track every vendor's part",
+    ],
+    chips: [
+      { label: "Sofas", icon: "🛋️", href: "/vendors/category/sofa" },
+      { label: "Lighting", icon: "💡", href: "/vendors/category/lighting" },
+      { label: "Rugs", icon: "🧶", href: "/vendors/category/rug" },
+      { label: "Coffee Tables", icon: "🪑", href: "/vendors/category/coffee-table" },
+    ],
+    proof: "Clear prices · One order across vendors · Order tracking",
+    ctaLabel: "Browse Vendors",
+    ctaHref: "/vendors",
+  },
+  servicePaths[1],
+] as const;
+
+const paths = SERVICES_ENABLED ? servicePaths : shopPaths;
+
+const promises = SERVICES_ENABLED
+  ? [
   {
     icon: "🧾",
     title: "Itemised pricing",
@@ -212,7 +245,29 @@ const promises = [
     title: "Track every order",
     text: "Follow your booking from confirmation to completion.",
   },
-];
+    ]
+  : [
+      {
+        icon: "🧾",
+        title: "Clear prices",
+        text: "See every product's price before you buy.",
+      },
+      {
+        icon: "⚖️",
+        title: "Compare vendors",
+        text: "Products and prices, side by side.",
+      },
+      {
+        icon: "🛒",
+        title: "One checkout",
+        text: "Many vendors, one cart, one address, one order.",
+      },
+      {
+        icon: "📍",
+        title: "Track every order",
+        text: "Follow each vendor's part of your order from your Orders page.",
+      },
+    ];
 
 const renovateSteps = [
   {
@@ -237,6 +292,29 @@ const renovateSteps = [
   },
 ];
 
+const shopSteps = [
+  {
+    step: "01",
+    title: "Browse Vendors",
+    desc: "Explore vendors and see the products each one sells, grouped by type, with prices up front.",
+  },
+  {
+    step: "02",
+    title: "Add to Your Cart",
+    desc: "Pick exactly the pieces you want — from one vendor or several — and set the quantity you need.",
+  },
+  {
+    step: "03",
+    title: "Checkout Once",
+    desc: "Add your address and place one order, even when your cart has products from several vendors.",
+  },
+  {
+    step: "04",
+    title: "Each Vendor Ships",
+    desc: "Every vendor prepares and ships their part, and you can follow each one from your Orders page.",
+  },
+];
+
 const shopByRoomSteps = [
   {
     step: "01",
@@ -255,7 +333,7 @@ const shopByRoomSteps = [
   },
 ];
 
-const faqs = [
+const serviceFaqs = [
   {
     q: "What's the difference between hiring a vendor and shopping by room?",
     a: "Hiring a vendor is for services: painting, flooring, kitchens, repairs and more. You pick the services you need and book them. Shopping by room is for products: curated furniture and décor bundles you can buy and have delivered.",
@@ -278,6 +356,23 @@ const faqs = [
   },
 ];
 
+const shopFaqs = [
+  {
+    q: "What's the difference between shopping from vendors and shopping by room?",
+    a: "Shopping from vendors lets you browse what each vendor sells and buy exactly the pieces you want. Shopping by room gives you curated bundles you can customise piece by piece. Either way you check out once.",
+  },
+  serviceFaqs[1],
+  serviceFaqs[2],
+  serviceFaqs[3],
+  {
+    q: "I sell furniture or décor. How do I list my products?",
+    a: "Apply on the Sell on Go Renovate page. We review every application, and once you're approved you'll have your own vendor area.",
+  },
+];
+
+const faqs = SERVICES_ENABLED ? serviceFaqs : shopFaqs;
+const processSteps = SERVICES_ENABLED ? renovateSteps : shopSteps;
+
 export default function HomePage() {
   return (
     <div className={`${styles.root} ${playfairDisplay.variable} ${dmSans.variable}`}>
@@ -287,13 +382,18 @@ export default function HomePage() {
           <div className={styles.heroTexture} aria-hidden="true" />
           <div className={styles.heroInner}>
             <div className={styles.heroIntro}>
-              <p className={styles.heroPill}>✦ Renovate · Furnish · Transform</p>
+              <p className={styles.heroPill}>
+                {SERVICES_ENABLED
+                  ? "✦ Renovate · Furnish · Transform"
+                  : "✦ Shop · Furnish · Transform"}
+              </p>
               <h1 id="hero-heading" className={styles.heroHeading}>
                 Your Home, <em>Reimagined.</em>
               </h1>
               <p className={styles.heroSub}>
-                Hire vetted vendors for a full project, or furnish a room with
-                pieces you can buy today. Pick your path.
+                {SERVICES_ENABLED
+                  ? "Hire vetted vendors for a full project, or furnish a room with pieces you can buy today. Pick your path."
+                  : "Shop furniture and décor from vendors, or furnish a whole room in one order. Pick your path."}
               </p>
             </div>
 
@@ -354,8 +454,12 @@ export default function HomePage() {
               </span>
             </div>
 
-            <a href="#services" className={styles.heroScroll}>
-              Explore all services <span aria-hidden="true">↓</span>
+            <a
+              href={SERVICES_ENABLED ? "#services" : "#rooms"}
+              className={styles.heroScroll}
+            >
+              {SERVICES_ENABLED ? "Explore all services" : "Explore rooms"}{" "}
+              <span aria-hidden="true">↓</span>
             </a>
           </div>
           <div className={styles.heroDivider} aria-hidden="true" />
@@ -382,7 +486,8 @@ export default function HomePage() {
           </ul>
         </section>
 
-        {/* SERVICES */}
+        {/* SERVICES (only while services are switched on) */}
+        {SERVICES_ENABLED && (
         <section className={styles.services} id="services">
           <div className={styles.sectionHeader}>
             <span className={styles.sectionEyebrow}>What We Do</span>
@@ -437,9 +542,10 @@ export default function HomePage() {
             </Link>
           </p>
         </section>
+        )}
 
         {/* SHOP BY ROOM */}
-        <section className={styles.services}>
+        <section className={styles.services} id="rooms">
           <div className={styles.sectionHeader}>
             <span className={styles.sectionEyebrow}>Home Essentials, Curated</span>
             <h2 className={styles.sectionTitle}>
@@ -493,8 +599,9 @@ export default function HomePage() {
               Two Paths, <em>One Platform</em>
             </h2>
             <p className={styles.sectionSub}>
-              Whether you&apos;re renovating a space or furnishing one, here&apos;s
-              what happens after you choose your path.
+              {SERVICES_ENABLED
+                ? "Whether you're renovating a space or furnishing one, here's what happens after you choose your path."
+                : "Whether you're shopping from a vendor or furnishing a room, here's what happens after you choose your path."}
             </p>
           </div>
 
@@ -502,10 +609,11 @@ export default function HomePage() {
             className={`${styles.processTrack} ${styles["processTrack--renovate"]}`}
           >
             <h3 className={styles.processTrackTitle}>
-              <span aria-hidden="true">🔧</span> Renovate a Space
+              <span aria-hidden="true">{SERVICES_ENABLED ? "🔧" : "🛍️"}</span>{" "}
+              {SERVICES_ENABLED ? "Renovate a Space" : "Shop from Vendors"}
             </h3>
             <div className={styles.processSteps}>
-              {renovateSteps.map((item) => (
+              {processSteps.map((item) => (
                 <div key={item.step} className={styles.processCard}>
                   <span className={styles.processStep}>{item.step}</span>
                   <h4 className={styles.processTitle}>{item.title}</h4>
@@ -567,25 +675,35 @@ export default function HomePage() {
                 Run a home business? <em>Get found.</em>
               </h2>
               <p className={styles.vendorSub}>
-                List your services or products where homeowners are already
-                planning their next project.
+                {SERVICES_ENABLED
+                  ? "List your services or products where homeowners are already planning their next project."
+                  : "List your products where homeowners are already furnishing their homes."}
               </p>
-              <a
-                href="mailto:hello@gorenovate.in?subject=List%20my%20business"
-                className={styles.ctaButton}
-              >
-                List Your Business
-              </a>
+              {SERVICES_ENABLED ? (
+                <a
+                  href="mailto:hello@gorenovate.in?subject=List%20my%20business"
+                  className={styles.ctaButton}
+                >
+                  List Your Business
+                </a>
+              ) : (
+                <Link href="/sell" className={styles.ctaButton}>
+                  Sell on Go Renovate
+                </Link>
+              )}
             </div>
             <ul className={styles.vendorPoints}>
               <li>
                 <span aria-hidden="true">✓</span>
-                Reach customers browsing by service and by room
+                {SERVICES_ENABLED
+                  ? "Reach customers browsing by service and by room"
+                  : "Reach customers browsing by vendor and by room"}
               </li>
               <li>
                 <span aria-hidden="true">✓</span>
-                Itemised listings, so customers know exactly what they&apos;re
-                booking
+                {SERVICES_ENABLED
+                  ? "Itemised listings, so customers know exactly what they're booking"
+                  : "Clear listings, so customers know exactly what they're buying"}
               </li>
               <li>
                 <span aria-hidden="true">✓</span>
@@ -603,8 +721,9 @@ export default function HomePage() {
               Let&apos;s Build Something <em>Beautiful</em>
             </h2>
             <p className={styles.ctaBannerSub}>
-              Hire a vendor for your next project, or furnish a room with
-              pieces you can buy today. Pick a path and get started.
+              {SERVICES_ENABLED
+                ? "Hire a vendor for your next project, or furnish a room with pieces you can buy today. Pick a path and get started."
+                : "Shop from a vendor, or furnish a room with pieces you can buy today. Pick a path and get started."}
             </p>
             <div className={styles.ctaBannerActions}>
               <Link href="/vendors" className={styles.ctaButton}>
@@ -627,17 +746,29 @@ export default function HomePage() {
               <span className={styles.logoText}>Gorenovate</span>
             </Link>
             <p className={styles.footerTagline}>
-              Home renovation and home essentials, from vetted vendors.
+              {SERVICES_ENABLED
+                ? "Home renovation and home essentials, from vetted vendors."
+                : "Home essentials and furnishings, from vendors we approve."}
             </p>
           </div>
           <div className={styles.footerLinks}>
-            <div className={styles.footerCol}>
-              <h3>Services</h3>
-              <Link href="/vendors">Full Renovation</Link>
-              <Link href="/vendors/category/kitchen">Kitchen</Link>
-              <Link href="/vendors/category/bathroom">Bathroom</Link>
-              <Link href="/vendors/category/smart-home">Smart Home</Link>
-            </div>
+            {SERVICES_ENABLED ? (
+              <div className={styles.footerCol}>
+                <h3>Services</h3>
+                <Link href="/vendors">Full Renovation</Link>
+                <Link href="/vendors/category/kitchen">Kitchen</Link>
+                <Link href="/vendors/category/bathroom">Bathroom</Link>
+                <Link href="/vendors/category/smart-home">Smart Home</Link>
+              </div>
+            ) : (
+              <div className={styles.footerCol}>
+                <h3>Shop</h3>
+                <Link href="/vendors">All Vendors</Link>
+                <Link href="/vendors/category/sofa">Sofas</Link>
+                <Link href="/vendors/category/lighting">Lighting</Link>
+                <Link href="/vendors/category/rug">Rugs</Link>
+              </div>
+            )}
             <div className={styles.footerCol}>
               <h3>Shop by Room</h3>
               {rooms.map((room) => (

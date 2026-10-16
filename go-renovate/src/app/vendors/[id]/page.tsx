@@ -5,8 +5,10 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import VendorPage from "@/app/component/Features/VendorPage/VendorPage";
+import ShopVendorPage from "@/app/component/Features/VendorPage/ShopVendorPage";
 import { authOptions } from "@/app/authOptions";
-import { Vendor } from "@/app/types/vendor";
+import { SERVICES_ENABLED } from "@/app/utils/features";
+import { isShopVendor, Vendor } from "@/app/types/vendor";
 
 const getVendor = cache(async function getVendor(
   id: string,
@@ -45,13 +47,19 @@ export async function generateMetadata({
   if (!vendor) {
     return {
       title: "Vendor | Go Renovate",
-      description:
-        "Discover verified home renovation vendors and request a free quote on Go Renovate.",
+      description: SERVICES_ENABLED
+        ? "Discover verified home renovation vendors and request a free quote on Go Renovate."
+        : "Shop furniture, lighting and décor from vendors on Go Renovate.",
     };
   }
 
-  const title = `${vendor.name} — Renovation Services | Go Renovate`;
-  const description = vendor.tagline
+  const isShop = isShopVendor(vendor);
+  const title = isShop
+    ? `${vendor.name} — Furniture & Décor | Go Renovate`
+    : `${vendor.name} — Renovation Services | Go Renovate`;
+  const description = isShop
+    ? `${vendor.tagline ? `${vendor.tagline} ` : ""}Shop products from ${vendor.name}${vendor.location ? ` in ${vendor.location}` : ""} on Go Renovate.`
+    : vendor.tagline
     ? `${vendor.tagline} ${vendor.location ? `Serving ${vendor.location}.` : ""} Rated ${vendor.rating}/5 from ${vendor.reviewCount} reviews. Get a free quote today.`.trim()
     : `Explore renovation services from ${vendor.name} and request a free, no-obligation quote.`;
 
@@ -80,7 +88,7 @@ export default async function VendorDetailPage({ params }: PageProps) {
   const jsonLd = vendor
     ? {
         "@context": "https://schema.org",
-        "@type": "HomeAndConstructionBusiness",
+        "@type": isShopVendor(vendor) ? "Store" : "HomeAndConstructionBusiness",
         name: vendor.name,
         description: vendor.tagline,
         address: vendor.location
@@ -105,7 +113,11 @@ export default async function VendorDetailPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <VendorPage vendor={vendor} />
+      {vendor && isShopVendor(vendor) ? (
+        <ShopVendorPage vendor={vendor} />
+      ) : (
+        <VendorPage vendor={vendor} />
+      )}
     </div>
   );
 }

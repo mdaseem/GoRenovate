@@ -9,6 +9,7 @@ import {
 } from "@/app/store/features/aiChatSlice";
 import { RootState } from "@/app/store/store";
 import ErrorState from "../ErrorState/ErrorState";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 const AIChat = () => {
   const { data: session } = useSession();
@@ -60,8 +61,9 @@ const AIChat = () => {
         >
           {displayMessages.length === 0 && !error && (
             <p className="ai-chat-empty-state">
-              Ask about vendors, services, or products — e.g. &ldquo;Find
-              painters near Koramangala&rdquo;.
+              {SERVICES_ENABLED
+                ? "Ask about vendors, services, or products — e.g. “Find painters near Koramangala”."
+                : "Ask about vendors or their products — e.g. “Find vendors that sell sofas”."}
             </p>
           )}
           {displayMessages.map((msg, index) => (

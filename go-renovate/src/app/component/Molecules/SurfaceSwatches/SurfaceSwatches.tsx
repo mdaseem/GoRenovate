@@ -5,6 +5,7 @@ import {
   FLOOR_SWATCHES,
   WALL_SWATCHES,
 } from "@/app/utils/surfaceSwatches";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 type Props = {
   wallId: string | null;
@@ -113,7 +114,7 @@ export default function SurfaceSwatches({
         round={false}
       />
 
-      {(wall || floor) && (
+      {SERVICES_ENABLED && (wall || floor) && (
         <div className={styles.cta}>
           <p className={styles.ctaNote}>Colours are approximate. Ready to make it real?</p>
           <div className={styles.ctaLinks}>

@@ -10,6 +10,7 @@ import CategoryVendorList, {
   CategorySummary,
 } from "@/app/component/Molecules/CategoryVendorList/CategoryVendorList";
 import { buildCategoryScopedFilterQuery } from "@/app/component/Molecules/Filters/filterConfig";
+import { SERVICES_ENABLED } from "@/app/utils/features";
 
 const SITE_URL = "https://gorenovate.in";
 
@@ -83,16 +84,23 @@ export async function generateMetadata({
   if (!category) {
     return {
       title: "Category | Go Renovate",
-      description:
-        "Browse verified home renovation vendors by service category on Go Renovate.",
+      description: SERVICES_ENABLED
+        ? "Browse verified home renovation vendors by service category on Go Renovate."
+        : "Browse vendors by product category on Go Renovate.",
     };
   }
 
   const vendorCount = category.vendorCount;
-  const title = `${category.label} Contractors & Vendors | Go Renovate`;
-  const description = `Compare ${vendorCount} verified ${category.label.toLowerCase()} vendor${
-    vendorCount === 1 ? "" : "s"
-  } on Go Renovate. Check ratings, pricing, and request a free quote.`;
+  const title = SERVICES_ENABLED
+    ? `${category.label} Contractors & Vendors | Go Renovate`
+    : `${category.label} from Vendors | Go Renovate`;
+  const description = SERVICES_ENABLED
+    ? `Compare ${vendorCount} verified ${category.label.toLowerCase()} vendor${
+        vendorCount === 1 ? "" : "s"
+      } on Go Renovate. Check ratings, pricing, and request a free quote.`
+    : `Compare ${vendorCount} vendor${
+        vendorCount === 1 ? "" : "s"
+      } selling ${category.label.toLowerCase()} on Go Renovate. See their products and prices.`;
 
   return {
     title,

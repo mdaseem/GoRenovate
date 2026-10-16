@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./VendorDetails.module.css";
-import { Vendor } from "@/app/types/vendor";
+import { isShopVendor, Vendor } from "@/app/types/vendor";
 import MyFavorites from "@/app/component/Atoms/MyFavorites/view/MyFavorites.view";
 import { useAppSelector } from "@/app/store/hooks";
 import { getAvatarStyle, getInitials } from "@/app/utils/vendorAvatar";
@@ -205,7 +205,11 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
       {categories.length > 0 && (
         <nav
           className={styles.categoryNav}
-          aria-label="Jump to a service category"
+          aria-label={
+            isShopVendor(vendor)
+              ? "Jump to a product category"
+              : "Jump to a service category"
+          }
         >
           <ul className={styles.categoryChips}>
             {categories.map((category) => (

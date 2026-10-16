@@ -152,7 +152,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           name: service.name,
           description: service.description,
           price: service.price,
-          unit: service.unit,
+          unit: service.unit ?? "unit",
           quantity,
           categoryLabel,
           imageUrl: service.imageUrl,
@@ -211,7 +211,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         </h3>
         <ul className={styles.summaryList}>
           {items.map(({ service, quantity }) => {
-            const unitLabel = UNIT_LABELS[service.unit] ?? `per ${service.unit}`;
+            const unitLabel = service.unit
+              ? (UNIT_LABELS[service.unit] ?? `per ${service.unit}`)
+              : "";
             return (
               <li key={service.id} className={styles.summaryItem}>
                 <div className={styles.summaryItemMedia}>

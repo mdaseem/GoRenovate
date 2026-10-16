@@ -59,7 +59,12 @@ const CategorySection: React.FC<CategorySectionProps> = ({
             <span className={styles.categoryTitle}>
               {category.label}
               <span className={styles.serviceCount}>
-                · {category.services.length} services
+                · {category.services.length}{" "}
+                {category.services[0]?.product
+                  ? category.services.length === 1
+                    ? "product"
+                    : "products"
+                  : "services"}
               </span>
             </span>
             <svg

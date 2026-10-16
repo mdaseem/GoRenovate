@@ -8,6 +8,8 @@ interface ServiceNavHeaderProps {
   hasNext: boolean;
   onPrev: () => void;
   onNext: () => void;
+  // What is being browsed; "service" unless the vendor lists products.
+  noun?: "service" | "product";
 }
 
 const ServiceNavHeader: React.FC<ServiceNavHeaderProps> = ({
@@ -17,17 +19,18 @@ const ServiceNavHeader: React.FC<ServiceNavHeaderProps> = ({
   hasNext,
   onPrev,
   onNext,
+  noun = "service",
 }) => {
   if (total <= 1) return null;
 
   return (
-    <div className={styles.nav} role="group" aria-label="Browse services">
+    <div className={styles.nav} role="group" aria-label={`Browse ${noun}s`}>
       <button
         type="button"
         className={styles.navButton}
         onClick={onPrev}
         disabled={!hasPrev}
-        aria-label="Previous service"
+        aria-label={`Previous ${noun}`}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
@@ -49,7 +52,7 @@ const ServiceNavHeader: React.FC<ServiceNavHeaderProps> = ({
         className={styles.navButton}
         onClick={onNext}
         disabled={!hasNext}
-        aria-label="Next service"
+        aria-label={`Next ${noun}`}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
