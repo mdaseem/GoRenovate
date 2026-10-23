@@ -89,10 +89,15 @@ const OrderStatusTimeline: React.FC<OrderStatusTimelineProps> = ({
   }
 
   const currentIndex = ORDER_STATUS_STEPS.indexOf(status);
+  // Steps before the current one that never happened (no history entry) are left out; upcoming steps stay.
+  const visibleSteps = ORDER_STATUS_STEPS.filter(
+    (step, index) => index >= currentIndex || findHistoryEntry(statusHistory, step) !== undefined,
+  );
 
   return (
     <ol className={styles.timeline} aria-label="Order status">
-      {ORDER_STATUS_STEPS.map((step, index) => {
+      {visibleSteps.map((step) => {
+        const index = ORDER_STATUS_STEPS.indexOf(step);
         const entry = findHistoryEntry(statusHistory, step);
         const isCompleted = index <= currentIndex;
         const isCurrent = index === currentIndex;

@@ -189,6 +189,12 @@
   border-radius: 100px;
 }
 
+.photoSoon {
+  margin: 0.5rem 1.25rem 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
 .estimatedDays {
   margin: 1.1rem 0 0;
   font-size: 0.82rem;

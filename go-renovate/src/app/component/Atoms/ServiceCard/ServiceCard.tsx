@@ -148,6 +148,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           className={styles.mediaImage}
           loading="lazy"
         />
+        {product && !service.imageUrl && (
+          <span className={styles.photoSoon}>Photo coming soon</span>
+        )}
         {service.popular && (
           <span className={styles.popularBadge} aria-label="Popular service">
             Popular

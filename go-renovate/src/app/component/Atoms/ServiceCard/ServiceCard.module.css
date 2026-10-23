@@ -24,6 +24,20 @@
   }
 }
 
+/* Products without a photo yet: a small honest caption on the default picture. */
+.photoSoon {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2px 3px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+  color: #4b5563;
+  z-index: 1;
+}
+
 .media {
   position: relative;
   width: 112px;
