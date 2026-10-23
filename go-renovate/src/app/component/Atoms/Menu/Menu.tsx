@@ -21,6 +21,7 @@ const Menu: React.FC = () => {
   const dispatch = useAppDispatch();
   const store = useAppSelector((state) => state.overlay);
   const { account } = useAccountInfo();
+  const newOrders = useAppSelector((state) => state.vendorOrders.counts?.new ?? 0);
 
   const closeMenu = () => dispatch(setOpenMobileMenu(false));
 
@@ -133,6 +134,33 @@ const Menu: React.FC = () => {
 
         {account?.role === "vendor" && (
           <Link
+            href="/vendor/orders"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            Orders
+            {newOrders > 0 && (
+              <span className="account-menu-badge" aria-label={`${newOrders} new`}>
+                {newOrders}
+              </span>
+            )}
+          </Link>
+        )}
+
+        {account?.role === "vendor" && (
+          <Link
+            href="/vendor/products"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            My products
+          </Link>
+        )}
+
+        {account?.role === "vendor" && (
+          <Link
             href="/vendor"
             role="menuitem"
             className="account-menu-item"
@@ -150,6 +178,17 @@ const Menu: React.FC = () => {
             onClick={closeMenu}
           >
             Vendor applications
+          </Link>
+        )}
+
+        {account?.role === "admin" && (
+          <Link
+            href="/admin/products"
+            role="menuitem"
+            className="account-menu-item"
+            onClick={closeMenu}
+          >
+            Product review
           </Link>
         )}
 

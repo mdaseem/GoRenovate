@@ -209,6 +209,9 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({
   return (
     <div className={styles.detail}>
       <ServiceImageCarousel images={images} altText={service.name} />
+      {product && !service.imageUrl && !(service.images && service.images.length > 0) && (
+        <p className={styles.photoSoon}>Photo coming soon</p>
+      )}
 
       <div className={styles.body}>
         <p className={styles.category}>{categoryLabel}</p>

@@ -79,6 +79,21 @@
   flex-shrink: 0;
 }
 
+.account-menu-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 100px;
+  background: #f5b301;
+  color: #1a1f2e;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
 .account-menu-item-danger {
   color: #b3261e;
 }

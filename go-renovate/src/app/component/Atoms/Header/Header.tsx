@@ -12,6 +12,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import Overlay from "../../HOC/Overlay/Overlay";
 import Menu from "../Menu/Menu";
 import SlowLoadBanner from "../SlowLoadBanner/SlowLoadBanner";
+import { useVendorOrderBadge } from "../../CustomHooks/useVendorOrderBadge";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -19,6 +20,8 @@ export default function Header() {
   const isMobileMenuOpen = useAppSelector(
     (state: RootState) => state.overlay.isMobileMenuOpen,
   );
+  // Vendors only: the number of new orders waiting (0 for everyone else).
+  const newOrders = useVendorOrderBadge();
   const profileButtonRef = useRef<HTMLButtonElement>(null);
   const wasMenuOpenRef = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -84,7 +87,11 @@ export default function Header() {
                   aria-expanded={isMobileMenuOpen}
                   aria-controls="account-menu"
                   aria-label={
-                    session ? "Account menu" : "Account and login menu"
+                    session
+                      ? newOrders > 0
+                        ? `Account menu, ${newOrders} new order${newOrders === 1 ? "" : "s"}`
+                        : "Account menu"
+                      : "Account and login menu"
                   }
                   onClick={() => dispatch(setOpenMobileMenu(!isMobileMenuOpen))}
                 >
@@ -96,6 +103,11 @@ export default function Header() {
                     height={32}
                   />
                 </button>
+                {newOrders > 0 && (
+                  <span className="header-profile-badge" aria-hidden="true">
+                    {newOrders > 9 ? "9+" : newOrders}
+                  </span>
+                )}
                 <Overlay
                   id="account-menu"
                   isDisable={false}

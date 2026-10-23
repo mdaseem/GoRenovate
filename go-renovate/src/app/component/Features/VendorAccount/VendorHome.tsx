@@ -7,8 +7,113 @@ import AccountGate from "./components/AccountGate";
 import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
 import { OwnVendorProfile } from "@/app/types/vendorAccount";
 import { fetchOwnVendor } from "@/app/utils/vendorAccountApi";
+import { fetchMyProducts } from "@/app/utils/vendorProductsApi";
+import { ProductCounts } from "@/app/types/vendorProducts";
+import productStyles from "../VendorProducts/VendorProducts.module.css";
 import { getAvatarStyle, getInitials } from "@/app/utils/vendorAvatar";
 import { SERVICES_ENABLED } from "@/app/utils/features";
+import orderStyles from "../VendorOrders/VendorOrders.module.css";
+import { useAppSelector } from "@/app/store/hooks";
+
+// The first thing a vendor needs: are there orders waiting. The numbers come from the same store the
+// header badge uses, so they match it.
+const OrdersSummary: React.FC = () => {
+  const counts = useAppSelector((state) => state.vendorOrders.counts);
+  let text: React.ReactNode;
+  if (!counts) {
+    text = "Checking for orders…";
+  } else if (counts.new > 0 || counts.accepted > 0) {
+    text = (
+      <>
+        {counts.new > 0 && (
+          <span className={orderStyles.homeOrdersStrong}>
+            {counts.new} new order{counts.new === 1 ? "" : "s"}
+          </span>
+        )}
+        {counts.new > 0 && counts.accepted > 0 && " · "}
+        {counts.accepted > 0 && (
+          <span className={orderStyles.homeOrdersStrong}>{counts.accepted} to ship</span>
+        )}
+      </>
+    );
+  } else {
+    text = "No orders waiting. New orders appear here when a buyer checks out.";
+  }
+  return (
+    <section className={styles.section} aria-labelledby="vendor-orders-heading">
+      <h2 id="vendor-orders-heading" className={styles.sectionHeading}>
+        Orders
+      </h2>
+      <div className={`${styles.card} ${orderStyles.homeOrders}`}>
+        <p className={orderStyles.homeOrdersText} role="status">
+          {text}
+        </p>
+        <Link href="/vendor/orders" className={styles.primaryButton}>
+          Open orders
+        </Link>
+      </div>
+    </section>
+  );
+};
+
+// Where the vendor adds and manages products, with the numbers that matter: how many are live and how
+// many are waiting for our review.
+const ProductsSummary: React.FC<{ token: string }> = ({ token }) => {
+  const [counts, setCounts] = useState<ProductCounts | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchMyProducts(token, { status: "all", limit: 1, signal: controller.signal })
+      .then((page) => setCounts(page.counts))
+      .catch((err: unknown) => {
+        if (controller.signal.aborted) return;
+        console.error("Failed to load product counts:", err);
+        setFailed(true);
+      });
+    return () => controller.abort();
+  }, [token]);
+
+  let text: React.ReactNode;
+  if (failed) text = "We couldn't check your products right now.";
+  else if (!counts) text = "Checking your products…";
+  else if (counts.live + counts.pending + counts.paused + counts.rejected === 0) {
+    text = "You haven't added a product yet. Add your first one: we review it, then buyers can see it.";
+  } else {
+    text = (
+      <>
+        <span className={productStyles.homeProductsStrong}>{counts.live} live</span>
+        {counts.pending > 0 && (
+          <>
+            {" · "}
+            <span className={productStyles.homeProductsStrong}>{counts.pending} in review</span>
+          </>
+        )}
+        {counts.rejected > 0 && (
+          <>
+            {" · "}
+            <span className={productStyles.homeProductsStrong}>{counts.rejected} need changes</span>
+          </>
+        )}
+      </>
+    );
+  }
+  return (
+    <section className={styles.section} aria-labelledby="vendor-products-heading">
+      <h2 id="vendor-products-heading" className={styles.sectionHeading}>
+        Products
+      </h2>
+      <div className={`${styles.card} ${productStyles.homeProducts}`}>
+        <p className={productStyles.homeProductsText} role="status">
+          {text}
+        </p>
+        <Link href="/vendor/products" className={styles.primaryButton}>
+          My products
+        </Link>
+      </div>
+    </section>
+  );
+};
 
 const VendorProfile: React.FC<{ token: string }> = ({ token }) => {
   const [vendor, setVendor] = useState<OwnVendorProfile | null>(null);
@@ -56,6 +161,8 @@ const VendorProfile: React.FC<{ token: string }> = ({ token }) => {
 
   return (
     <>
+      <OrdersSummary />
+      {!SERVICES_ENABLED && <ProductsSummary token={token} />}
       <div className={styles.card}>
         <div className={styles.profileHead}>
           <span
@@ -124,7 +231,7 @@ const VendorProfile: React.FC<{ token: string }> = ({ token }) => {
             <strong className={styles.noticeTitle}>Nothing listed yet</strong>
             {SERVICES_ENABLED
               ? "Tools to add and edit your services and products are the next thing we're building. Your account and profile are set up and ready for them."
-              : "Tools to add and edit your products are the next thing we're building. Your account and profile are set up and ready for them."}
+              : "Add your first product from My products. Once we have approved it, buyers can find you here."}
           </div>
         )}
       </section>
