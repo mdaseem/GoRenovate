@@ -4,6 +4,7 @@ import Image from "next/image";
 import styles from "./RoomScene.module.css";
 import { ScenePiece } from "@/app/utils/roomScene";
 import { cutoutImageProps, cutoutSizes } from "@/app/utils/cutoutImage";
+import { isPhotoStandIn, pieceImageUrl } from "@/app/utils/pieceImage";
 
 type Props = {
   item: ScenePiece;
@@ -79,15 +80,16 @@ function ScenePieceView({
     zIndex,
   } as React.CSSProperties;
 
+  const pictureUrl = pieceImageUrl(item);
   const visual =
-    item.cutoutUrl && !imageFailed ? (
+    pictureUrl && !imageFailed ? (
       <Image
-        src={item.cutoutUrl}
+        src={pictureUrl}
         alt=""
         width={0}
         height={0}
         sizes={cutoutSizes(width, compact)}
-        {...cutoutImageProps(item.cutoutUrl)}
+        {...cutoutImageProps(pictureUrl)}
         // The scene only mounts a piece when it is wanted (and Browse All
         // thumbnails only near the screen), so no extra lazy-load delay.
         loading="eager"
@@ -95,11 +97,13 @@ function ScenePieceView({
         draggable={false}
         onError={() => onImageError(item._id)}
         className={`${styles.cutout}${height !== null ? ` ${styles.cutoutFit}` : ""}${
+          isPhotoStandIn(item) ? ` ${styles.photoStandIn}` : ""
+        }${
           zone === "floor" ? ` ${styles.cutoutFloor}` : ""
         }${flipped ? ` ${styles.flipped}` : ""}`}
       />
     ) : (
-      // No vendor cutout yet: a labelled tile keeps the piece visible
+      // No cutout and no photo: a labelled tile keeps the piece visible
       // and movable instead of silently dropping it from the preview.
       <span className={styles.placeholder}>
         <span aria-hidden="true">📦</span>

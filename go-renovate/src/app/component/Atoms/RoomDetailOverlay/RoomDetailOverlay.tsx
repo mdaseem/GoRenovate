@@ -18,6 +18,7 @@ import { useProductViewer } from "../../CustomHooks/useProductViewer";
 import RoomCheckoutFooter from "../../Molecules/RoomCheckoutFooter/RoomCheckoutFooter";
 import RoomScene from "../RoomScene/RoomScene";
 import { humanizeStyleTag } from "@/app/types/category";
+import { pieceImageUrl } from "@/app/utils/pieceImage";
 import { resolveScene } from "@/app/utils/sceneSpec";
 import { ScenePositions } from "@/app/utils/roomScene";
 import { useEssentialAvailability } from "../../CustomHooks/useEssentialAvailability";
@@ -105,7 +106,7 @@ export default function RoomDetailOverlay() {
   // Curated Rooms use the same room preview as Customize (read-only) once at
   // least one piece has a vendor cutout; otherwise the original hero is kept.
   const hasScenePreview =
-    !room.heroImageUrl && selectedItems.some((item) => item.cutoutUrl);
+    !room.heroImageUrl && selectedItems.some((item) => pieceImageUrl(item));
 
   const livePrice = (item: { _id: string; price: number }) =>
     availability[item._id]?.price ?? item.price;

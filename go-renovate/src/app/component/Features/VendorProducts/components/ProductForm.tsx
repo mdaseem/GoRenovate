@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "../VendorProducts.module.css";
 import {
+  FIT_CHOICES,
+  FitZone,
   ManagedProduct,
   PhotoRules,
   PRODUCT_LIMITS,
@@ -28,6 +30,8 @@ interface ProductFormProps {
 
 interface Values {
   slot: string;
+  // "" until chosen; only used for the types that ask how it is fitted
+  fit: string;
   name: string;
   price: string;
   stock: string;
@@ -38,12 +42,13 @@ interface Values {
   description: string;
 }
 
-const FIELD_ORDER: ProductField[] = ["slot", "name", "price", "stock", "dimensionsCm", "description", "photos"];
+const FIELD_ORDER: ProductField[] = ["slot", "fit", "name", "price", "stock", "dimensionsCm", "description", "photos"];
 const PHOTO_INPUT_ID = "product-photos";
 
 function initialValues(product?: ManagedProduct): Values {
   return {
     slot: product?.slot ?? "",
+    fit: product?.fit ?? "",
     name: product?.name ?? "",
     price: product ? String(product.price) : "",
     stock: product && product.stock !== null ? String(product.stock) : "",
@@ -58,8 +63,9 @@ function initialValues(product?: ManagedProduct): Values {
 const toNumber = (text: string) => (text.trim() === "" ? NaN : Number(text));
 
 // Same rules as the server (services/vendorProductRules.ts); the server stays the authority.
-function validate(values: Values): { errors: ProductFieldErrors; input: ProductInput | null } {
+function validate(values: Values, fits: FitZone[] | undefined): { errors: ProductFieldErrors; input: ProductInput | null } {
   const errors: ProductFieldErrors = {};
+  if (fits && !fits.includes(values.fit as FitZone)) errors.fit = "Choose how it is fitted.";
   const name = values.name.trim().replace(/\s+/g, " ");
   if (!values.slot) errors.slot = "Choose what kind of product this is.";
   if (name.length < PRODUCT_LIMITS.nameMin || name.length > PRODUCT_LIMITS.nameMax) {
@@ -94,7 +100,10 @@ function validate(values: Values): { errors: ProductFieldErrors; input: ProductI
     errors.description = `Keep the description under ${PRODUCT_LIMITS.descriptionMax} characters.`;
   }
   if (Object.keys(errors).length > 0) return { errors, input: null };
-  return { errors, input: { name, description, slot: values.slot, price, stock, dimensionsCm } };
+  return {
+    errors,
+    input: { name, description, slot: values.slot, price, stock, dimensionsCm, ...(fits ? { fit: values.fit as FitZone } : {}) },
+  };
 }
 
 // Add a product, or edit one. Phone first: one column, big tiles for the product type, numbers with
@@ -108,6 +117,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, photoRules, pro
   const [isSaving, setIsSaving] = useState(false);
   const [warnings, setWarnings] = useState<string[] | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  // The type the vendor picked decides whether the form asks "How is it fitted?".
+  const selectedFits = types.find((type) => type.id === values.slot)?.fits;
   const photos = useProductPhotos({ token, rules: photoRules, productId: product?.id, initialUrls: product?.photos ?? [] });
 
   const set = <K extends keyof Values>(key: K, value: Values[K], field?: ProductField) => {
@@ -132,7 +143,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, photoRules, pro
     event.preventDefault();
     if (isSaving) return;
     setFormError(null);
-    const result = validate(values);
+    const result = validate(values, selectedFits);
     // A new product needs a photo (the owner cannot approve it without one) whenever photos can be uploaded.
     if (!editing && photoRules.enabled && photos.readyCount === 0 && !photos.busy) {
       result.errors.photos = photos.hasProblem
@@ -238,7 +249,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, photoRules, pro
                 value={type.id}
                 className={styles.typeInput}
                 checked={values.slot === type.id}
-                onChange={() => set("slot", type.id, "slot")}
+                onChange={() => {
+                  set("slot", type.id, "slot");
+                  // an answer that does not make sense for the new type is dropped, so it must be chosen again
+                  if (!type.fits?.includes(values.fit as FitZone)) set("fit", "", "fit");
+                }}
               />
               <span className={styles.typeBox}>
                 <span className={styles.typeIcon} aria-hidden="true">
@@ -255,6 +270,43 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, photoRules, pro
           </p>
         )}
       </fieldset>
+
+      {selectedFits && (
+        <fieldset
+          className={`${styles.section} ${styles.fieldset}`}
+          aria-describedby={fieldErr("fit") ? "product-fit-error" : "product-fit-hint"}
+        >
+          <legend className={styles.legend}>How is it fitted?</legend>
+          <p id="product-fit-hint" className={styles.hint}>
+            So buyers see it in the right place in their room.
+          </p>
+          <div className={`${styles.typeGrid} ${fieldErr("fit") ? styles.typeGridInvalid : ""}`}>
+            {FIT_CHOICES.filter((choice) => selectedFits.includes(choice.id)).map((choice) => (
+              <label key={choice.id} className={styles.typeTile}>
+                <input
+                  type="radio"
+                  name="fit"
+                  value={choice.id}
+                  className={styles.typeInput}
+                  checked={values.fit === choice.id}
+                  onChange={() => set("fit", choice.id, "fit")}
+                />
+                <span className={styles.typeBox}>
+                  <span className={styles.typeIcon} aria-hidden="true">
+                    {choice.icon}
+                  </span>
+                  {choice.label}
+                </span>
+              </label>
+            ))}
+          </div>
+          {fieldErr("fit") && (
+            <p id="product-fit-error" role="alert" className={styles.error}>
+              {fieldErr("fit")}
+            </p>
+          )}
+        </fieldset>
+      )}
 
       <section className={styles.section} aria-labelledby="product-basics-heading">
         <h2 id="product-basics-heading" className={styles.sectionHeading}>

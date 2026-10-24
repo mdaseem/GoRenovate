@@ -1,5 +1,6 @@
 import { Essential, EssentialPlacement } from "@/app/types/category";
 import { ResolvedScene, bookcaseLayout } from "@/app/utils/sceneSpec";
+import { declaredZone, effectivePlacement } from "@/app/utils/slotPlacement";
 
 // Pure helpers behind the room preview (see the room-visual-preview skill).
 // Every position is a percentage of the scene's width/height, so it scales to
@@ -87,15 +88,17 @@ export function getPlacement(
   item: Essential,
   scene?: ResolvedScene,
 ): ResolvedPlacement {
-  const zone = item.placement?.zone ?? "floor";
+  // The product's own placement, with its type's defaults where it says nothing (utils/slotPlacement.ts).
+  const placement = effectivePlacement(item);
+  const zone = placement.zone;
   // A surface piece rests on other pieces, so no space can 'not support' it.
   const supported =
     zone === "surface" || !scene || scene.spec.zones.includes(zone);
   return {
     zone: supported ? zone : "floor",
-    layer: item.placement?.layer ?? 1,
-    elevationCm: item.placement?.elevationCm,
-    supports: Boolean(item.placement?.supports),
+    layer: placement.layer,
+    elevationCm: placement.elevationCm,
+    supports: placement.supports,
   };
 }
 
@@ -539,7 +542,7 @@ export function getFitIssues(items: Essential[], scene: ResolvedScene): FitIssue
     if (item.dimensionsCm?.w === undefined) {
       issues.push({ id: item._id, name: item.name, reason: "no-size" });
     }
-    const declared = item.placement?.zone ?? "floor";
+    const declared = declaredZone(item);
     if (declared !== "surface" && !scene.spec.zones.includes(declared)) {
       issues.push({
         id: item._id,

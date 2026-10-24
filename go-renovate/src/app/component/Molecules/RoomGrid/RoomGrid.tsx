@@ -17,6 +17,7 @@ import { buildRoomsQueryString } from "../RoomFilters/roomFilterConfig";
 import { useRoomFilters } from "../RoomFilters/useRoomFilters";
 import RoomCard from "../../Atoms/RoomCard/RoomCard";
 import { Essential } from "@/app/types/category";
+import { pieceImageUrl } from "@/app/utils/pieceImage";
 import { resolveScene } from "@/app/utils/sceneSpec";
 import ErrorState from "../../Atoms/ErrorState/ErrorState";
 import { Loader1 } from "../Loader/Loader";
@@ -58,7 +59,7 @@ export default function RoomGrid({ categorySlug }: Props) {
       const items = room.essentialIds
         .map((id) => catalog.get(id))
         .filter((item): item is Essential => Boolean(item));
-      if (!items.some((item) => item.cutoutUrl)) continue;
+      if (!items.some((item) => pieceImageUrl(item))) continue;
       let scene = sceneBySlug.get(room.spaceSlug);
       if (!scene) {
         scene = resolveScene(detail, room.spaceSlug);
