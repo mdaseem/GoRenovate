@@ -133,8 +133,24 @@ const ProductRow: React.FC<ProductRowProps> = ({ product, token, onChanged, onDu
         </div>
       </div>
 
-      {product.status === "pending" && (
+      {product.status === "pending" && product.hasPhoto && (
         <p className={styles.note}>Waiting for our review. Buyers can&apos;t see it yet.</p>
+      )}
+      {product.status === "pending" && !product.hasPhoto && (
+        <p className={`${styles.note} ${styles.noteBad}`}>
+          <strong>Add a photo:</strong> we can&apos;t approve a product without one.{" "}
+          <Link href={`/vendor/products/${product.id}/edit`} className={styles.noteLink}>
+            Add photos
+          </Link>
+        </p>
+      )}
+      {product.status !== "pending" && !product.hasPhoto && product.status !== "rejected" && (
+        <p className={styles.note}>
+          This product has no photo yet.{" "}
+          <Link href={`/vendor/products/${product.id}/edit`} className={styles.noteLink}>
+            Add photos
+          </Link>
+        </p>
       )}
       {product.status === "rejected" && (
         <p className={`${styles.note} ${styles.noteBad}`}>
