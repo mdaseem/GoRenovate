@@ -13,6 +13,7 @@
 // Honest by construction: a photo is a stand-in, never passed off as a model, and
 // a model whose size is clearly off the listing is shrunk to fit inside the
 // piece's box rather than stretched out of shape.
+import { pieceImageUrl } from "../pieceImage";
 import { World, WorldKind, WorldPiece } from "../roomWorld";
 import { CLOSE_TOLERANCE, MISMATCH_TOLERANCE } from "./modelCheck";
 
@@ -114,11 +115,12 @@ export function planPieces(world: World, ready: ReadyAssets): PiecePlan[] {
     // a rug is a thin slab; its front-view photo says nothing about its top
     if (piece.kind === "rug") return base;
 
-    const aspect = item.cutoutUrl ? ready.cards.get(item.cutoutUrl) : undefined;
-    if (!item.cutoutUrl || !aspect) return base;
+    const pictureUrl = pieceImageUrl(item);
+    const aspect = pictureUrl ? ready.cards.get(pictureUrl) : undefined;
+    if (!pictureUrl || !aspect) return base;
 
     const cardH = piece.hCm === null ? w / aspect : h;
-    const common = { cardUrl: item.cutoutUrl, cardW: w, cardH };
+    const common = { cardUrl: pictureUrl, cardW: w, cardH };
 
     if (piece.volume === "box") {
       return { ...base, ...common, mode: "block+card", facing: "front", cardZ: base.z + d / 2 + CARD_LIFT };

@@ -110,6 +110,15 @@
   object-position: 50% 100%;
 }
 
+/* A product with only a photo (no cutout yet): the photo fills the piece's real-size box like a framed
+   picture instead of pretending to be a cut-out object. */
+.cutout.photoStandIn {
+  object-fit: cover;
+  object-position: 50% 50%;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
 .flipped {
   transform: scaleX(-1);
 }

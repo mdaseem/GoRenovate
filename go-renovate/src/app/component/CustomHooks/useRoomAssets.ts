@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WorldPiece } from "@/app/utils/roomWorld";
 import { LoadedModel, closeLoaded, loadModelFromUrl } from "@/app/utils/gl/modelLoader";
+import { pieceImageUrl } from "@/app/utils/pieceImage";
 
 // The pictures and 3D models the 3D room needs for the pieces in it, fetched in
 // the background while the room is already on screen (pieces start as plain
@@ -72,7 +73,8 @@ export function useRoomAssets(pieces: WorldPiece[]): { assets: RoomAssets; statu
     const cardUrls = new Set<string>();
     for (const { item } of pieces) {
       if (item.model3d && !modelNeeds.has(item._id)) modelNeeds.set(item._id, { url: item.model3d.url, name: item.name });
-      if (item.cutoutUrl) cardUrls.add(item.cutoutUrl);
+      const picture = pieceImageUrl(item);
+      if (picture) cardUrls.add(picture);
     }
     return { modelNeeds, cardUrls: [...cardUrls] };
   }, [pieces]);

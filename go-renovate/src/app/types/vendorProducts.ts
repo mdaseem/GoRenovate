@@ -35,6 +35,8 @@ export interface ManagedProduct {
   status: ProductStatus;
   pausedBy: "vendor" | "admin" | null;
   reviewNote: string;
+  // How the vendor said it is fitted; null for the types that do not ask.
+  fit: FitZone | null;
   hasPhoto: boolean;
   imageUrl: string | null;
   // The vendor's own uploaded photos in order (the first is the main picture).
@@ -54,10 +56,26 @@ export interface AdminProduct extends ManagedProduct {
   possibleRooms: string[];
 }
 
+// Where a piece sits in a room. The answer to "How is it fitted?" (see services/vendorProductRules.ts).
+export type FitZone = "floor" | "wall" | "ceiling" | "surface";
+
+export const FIT_CHOICES: { id: FitZone; label: string; icon: string }[] = [
+  { id: "floor", label: "Stands on the floor", icon: "🛋️" },
+  { id: "wall", label: "Hangs on the wall", icon: "🖼️" },
+  { id: "ceiling", label: "Hangs from the ceiling", icon: "💡" },
+  { id: "surface", label: "Sits on a table or shelf", icon: "🪴" },
+];
+
+export const FIT_LABELS: Record<FitZone, string> = Object.fromEntries(
+  FIT_CHOICES.map((choice) => [choice.id, choice.label]),
+) as Record<FitZone, string>;
+
 export interface ProductType {
   id: string;
   label: string;
   icon: string;
+  // Present only for the types that ask "How is it fitted?": the answers that make sense for the type.
+  fits?: FitZone[];
 }
 
 // What the photo step may do right now (`enabled` is false when the server has no photo storage set up).
@@ -96,12 +114,15 @@ export interface ProductInput {
   price: number;
   stock: number | null;
   dimensionsCm: { w: number; h: number; d?: number } | null;
+  // Sent only for the types that ask.
+  fit?: FitZone;
 }
 
 export type ProductField =
   | "name"
   | "description"
   | "slot"
+  | "fit"
   | "price"
   | "stock"
   | "dimensionsCm"

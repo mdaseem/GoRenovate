@@ -6,7 +6,7 @@ import styles from "./VendorProducts.module.css";
 import AccountGate from "@/app/component/Features/VendorAccount/components/AccountGate";
 import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
 import { usePagedProducts } from "@/app/component/CustomHooks/usePagedProducts";
-import { AdminProduct, PRODUCT_STATUS_LABELS, ProductStatus } from "@/app/types/vendorProducts";
+import { AdminProduct, FIT_LABELS, PRODUCT_STATUS_LABELS, ProductStatus } from "@/app/types/vendorProducts";
 import { summariseProduct } from "@/app/utils/productFormat";
 import { productImageProps } from "@/app/utils/productImage";
 import {
@@ -113,6 +113,7 @@ const ReviewCard: React.FC<{
       <div className={styles.flagRow}>
         {!product.hasPhoto && <span className={styles.flag}>No photo yet</span>}
         {!product.dimensionsCm && <span className={styles.flag}>No size</span>}
+        {product.fit && <span className={styles.flag}>{FIT_LABELS[product.fit]}</span>}
         <span className={styles.flag}>{product.inRooms ? "Shown in rooms" : "Shop only"}</span>
         {product.status === "paused" && product.pausedBy && (
           <span className={styles.flag}>Paused by {product.pausedBy === "admin" ? "you" : "the vendor"}</span>

@@ -8,13 +8,14 @@
 //   WebP/AVIF.
 // - Raster on another host (a vendor CDN): loaded as-is. next/image throws for
 //   a host that isn't in next.config's `images.remotePatterns`, which would
-//   break the whole scene. Once a vendor host is added there, treat that host
-//   like a local path here to get the same resizing.
+//   break the whole scene. Vendor photos on Cloudinary ARE in remotePatterns
+//   (next.config.ts), so they get the same resizing as a local path.
 export function cutoutImageProps(url: string): { unoptimized: boolean } {
   const path = url.split(/[?#]/)[0].toLowerCase();
   const isSvg = path.endsWith(".svg");
   const isLocal = url.startsWith("/") && !url.startsWith("//");
-  return { unoptimized: isSvg || !isLocal };
+  const isOurPhotoHost = url.startsWith("https://res.cloudinary.com/");
+  return { unoptimized: isSvg || !(isLocal || isOurPhotoHost) };
 }
 
 // `sizes` for a piece drawn at `widthPct` % of the scene. Pieces are small

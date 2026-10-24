@@ -7,6 +7,7 @@ import { ResolvedScene } from "@/app/utils/sceneSpec";
 import { World, WorldPiece } from "@/app/utils/roomWorld";
 import { CutoutSample } from "@/app/utils/cutoutSample";
 import { cutoutImageProps, cutoutSizes } from "@/app/utils/cutoutImage";
+import { pieceImageUrl } from "@/app/utils/pieceImage";
 import { useCutoutSamples } from "../../CustomHooks/useCutoutSamples";
 
 type Props = {
@@ -43,16 +44,17 @@ function Card({
     ...(sample ? { "--face": sample.colour, "--solid": sample.solidBottom } : {}),
   } as React.CSSProperties;
 
-  const hasPicture = Boolean(item.cutoutUrl) && !failed;
+  const pictureUrl = pieceImageUrl(item);
+  const hasPicture = Boolean(pictureUrl) && !failed;
   const picture = () =>
-    hasPicture && item.cutoutUrl ? (
+    hasPicture && pictureUrl ? (
       <Image
-        src={item.cutoutUrl}
+        src={pictureUrl}
         alt=""
         width={0}
         height={0}
         sizes={cutoutSizes((piece.wCm / widthCm) * 100, false)}
-        {...cutoutImageProps(item.cutoutUrl)}
+        {...cutoutImageProps(pictureUrl)}
         loading="eager"
         decoding="async"
         draggable={false}
@@ -117,8 +119,8 @@ export default function Room3DView({ scene, world, label, worldRef, gestureProps
   const boxUrls = useMemo(
     () =>
       world.pieces
-        .filter((piece) => piece.volume === "box" && piece.item.cutoutUrl)
-        .map((piece) => piece.item.cutoutUrl as string),
+        .filter((piece) => piece.volume === "box" && pieceImageUrl(piece.item))
+        .map((piece) => pieceImageUrl(piece.item) as string),
     [world],
   );
   const samples = useCutoutSamples(boxUrls);
@@ -159,7 +161,7 @@ export default function Room3DView({ scene, world, label, worldRef, gestureProps
               widthCm={world.widthCm}
               failed={failed.has(piece.item._id)}
               onFail={(id) => setFailed((prev) => new Set(prev).add(id))}
-              sample={piece.item.cutoutUrl ? samples[piece.item.cutoutUrl] : undefined}
+              sample={pieceImageUrl(piece.item) ? samples[pieceImageUrl(piece.item) as string] : undefined}
             />
           ))}
         </div>
