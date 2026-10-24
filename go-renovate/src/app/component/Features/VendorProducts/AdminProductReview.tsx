@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useCallback, useEffect, useId, useRef, useState } from "react";
+import Image from "next/image";
 import styles from "./VendorProducts.module.css";
 import AccountGate from "@/app/component/Features/VendorAccount/components/AccountGate";
 import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
 import { usePagedProducts } from "@/app/component/CustomHooks/usePagedProducts";
 import { AdminProduct, PRODUCT_STATUS_LABELS, ProductStatus } from "@/app/types/vendorProducts";
 import { summariseProduct } from "@/app/utils/productFormat";
+import { productImageProps } from "@/app/utils/productImage";
 import {
   adminPauseProduct,
   adminResumeProduct,
@@ -90,6 +92,24 @@ const ReviewCard: React.FC<{
         </div>
       </div>
       {product.description && <p className={styles.description}>{product.description}</p>}
+      {product.photos.length > 1 && (
+        <ul className={styles.photoStrip} aria-label={`All ${product.photos.length} photos of ${product.name}`}>
+          {product.photos.map((url, index) => (
+            <li key={url}>
+              <a href={url} target="_blank" rel="noopener noreferrer" className={styles.photoStripLink}>
+                <Image
+                  src={url}
+                  alt={`Photo ${index + 1} of ${product.name} (opens full size)`}
+                  width={72}
+                  height={72}
+                  className={styles.photoStripImg}
+                  {...productImageProps(url)}
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
       <div className={styles.flagRow}>
         {!product.hasPhoto && <span className={styles.flag}>No photo yet</span>}
         {!product.dimensionsCm && <span className={styles.flag}>No size</span>}
@@ -148,6 +168,11 @@ const ReviewCard: React.FC<{
               Also show it in the room designer
             </label>
           )}
+          {product.status === "pending" && !product.hasPhoto && (
+            <p id={`${uid}-needs-photo`} className={styles.hint}>
+              The vendor hasn&apos;t added a photo yet, so this can&apos;t be approved. Send it back to ask for one.
+            </p>
+          )}
           {product.status === "pending" && canUseRooms && alsoRooms && (
             <p className={styles.hint}>
               Rooms look best with a size and a transparent picture. Without them it appears as a labelled tile.
@@ -159,7 +184,8 @@ const ReviewCard: React.FC<{
                 <button
                   type="button"
                   className={styles.btnPrimary}
-                  disabled={busy}
+                  disabled={busy || !product.hasPhoto}
+                  aria-describedby={!product.hasPhoto ? `${uid}-needs-photo` : undefined}
                   onClick={() =>
                     run(
                       () => approveProduct(token, product.id, alsoRooms && canUseRooms),

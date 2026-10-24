@@ -4,13 +4,14 @@ import React, { useEffect, useState } from "react";
 import styles from "./VendorProducts.module.css";
 import AccountGate from "@/app/component/Features/VendorAccount/components/AccountGate";
 import ErrorState from "@/app/component/Atoms/ErrorState/ErrorState";
-import { ManagedProduct, ProductType } from "@/app/types/vendorProducts";
+import { ManagedProduct, PhotoRules, ProductType } from "@/app/types/vendorProducts";
 import { fetchMyProduct, fetchProductTypes, ProductsApiError } from "@/app/utils/vendorProductsApi";
 import ProductForm from "./components/ProductForm";
 
 // Loads what the form needs (the product types, and the product when editing), then shows it.
 const FormLoader: React.FC<{ token: string; productId?: string }> = ({ token, productId }) => {
   const [types, setTypes] = useState<ProductType[] | null>(null);
+  const [photoRules, setPhotoRules] = useState<PhotoRules | null>(null);
   const [product, setProduct] = useState<ManagedProduct | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +28,7 @@ const FormLoader: React.FC<{ token: string; productId?: string }> = ({ token, pr
       .then(([options, loaded]) => {
         if (controller.signal.aborted) return;
         setTypes(options.types);
+        setPhotoRules(options.photos);
         setProduct(loaded);
       })
       .catch((err: unknown) => {
@@ -65,7 +67,7 @@ const FormLoader: React.FC<{ token: string; productId?: string }> = ({ token, pr
       />
     );
   }
-  if (!types || (productId && !product)) {
+  if (!types || !photoRules || (productId && !product)) {
     return (
       <div className={styles.skeleton} role="status" aria-label="Loading">
         <div className={styles.skeletonBlock} />
@@ -74,7 +76,9 @@ const FormLoader: React.FC<{ token: string; productId?: string }> = ({ token, pr
     );
   }
   // Remount when the product changes so the form always starts from the product on screen.
-  return <ProductForm key={product?.id ?? "new"} token={token} types={types} product={product ?? undefined} />;
+  return (
+    <ProductForm key={product?.id ?? "new"} token={token} types={types} photoRules={photoRules} product={product ?? undefined} />
+  );
 };
 
 const VendorProductFormPage: React.FC<{ productId?: string }> = ({ productId }) => (

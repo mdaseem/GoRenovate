@@ -5,6 +5,7 @@ import {
   ProductInput,
   ProductPage,
   ProductStatus,
+  PhotoTicket,
   ProductTypesResponse,
 } from "@/app/types/vendorProducts";
 
@@ -92,6 +93,22 @@ export const updateProduct = (token: string, id: string, changes: Partial<Produc
     token,
     { method: "PATCH", body: changes },
   );
+
+// --- photos: ask for permission to upload one, then (after the browser has sent it to Cloudinary) attach it
+export const requestPhotoTicket = (token: string, signal?: AbortSignal) =>
+  request<PhotoTicket>("/vendor/products/photo-ticket", token, { method: "POST", signal });
+
+export const attachPhoto = (token: string, productId: string, publicId: string) =>
+  request<{ product: ManagedProduct }>(`/vendor/products/${encodeURIComponent(productId)}/photos`, token, {
+    method: "POST",
+    body: { publicId },
+  }).then((data) => data.product);
+
+export const removePhoto = (token: string, productId: string, url: string) =>
+  request<{ product: ManagedProduct }>(`/vendor/products/${encodeURIComponent(productId)}/photos/remove`, token, {
+    method: "POST",
+    body: { url },
+  }).then((data) => data.product);
 
 const action = (verb: "pause" | "resume" | "duplicate") => (token: string, id: string) =>
   request<{ product: ManagedProduct }>(`/vendor/products/${encodeURIComponent(id)}/${verb}`, token, {

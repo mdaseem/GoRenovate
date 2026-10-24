@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "../VendorProducts.module.css";
 import {
   ManagedProduct,
+  PhotoRules,
   PRODUCT_LIMITS,
   ProductField,
   ProductFieldErrors,
@@ -14,10 +15,13 @@ import {
 } from "@/app/types/vendorProducts";
 import { setFlashMessage } from "@/app/utils/flashMessage";
 import { createProduct, ProductsApiError, updateProduct } from "@/app/utils/vendorProductsApi";
+import { useProductPhotos } from "../hooks/useProductPhotos";
+import PhotoPicker from "./PhotoPicker";
 
 interface ProductFormProps {
   token: string;
   types: ProductType[];
+  photoRules: PhotoRules;
   // Present when editing an existing product.
   product?: ManagedProduct;
 }
@@ -34,7 +38,8 @@ interface Values {
   description: string;
 }
 
-const FIELD_ORDER: ProductField[] = ["slot", "name", "price", "stock", "dimensionsCm", "description"];
+const FIELD_ORDER: ProductField[] = ["slot", "name", "price", "stock", "dimensionsCm", "description", "photos"];
+const PHOTO_INPUT_ID = "product-photos";
 
 function initialValues(product?: ManagedProduct): Values {
   return {
@@ -94,7 +99,7 @@ function validate(values: Values): { errors: ProductFieldErrors; input: ProductI
 
 // Add a product, or edit one. Phone first: one column, big tiles for the product type, numbers with
 // number keypads. A new product goes to review; price and stock edits on a live product are live at once.
-const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
+const ProductForm: React.FC<ProductFormProps> = ({ token, types, photoRules, product }) => {
   const router = useRouter();
   const editing = Boolean(product);
   const [values, setValues] = useState<Values>(() => initialValues(product));
@@ -103,6 +108,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [warnings, setWarnings] = useState<string[] | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const photos = useProductPhotos({ token, rules: photoRules, productId: product?.id, initialUrls: product?.photos ?? [] });
 
   const set = <K extends keyof Values>(key: K, value: Values[K], field?: ProductField) => {
     setValues((current) => ({ ...current, [key]: value }));
@@ -115,7 +121,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
         ? 'input[name="slot"]'
         : field === "dimensionsCm"
           ? 'input[name="w"]'
-          : `[name="${field}"]`,
+          : field === "photos"
+            ? `#${PHOTO_INPUT_ID}`
+            : `[name="${field}"]`,
     );
     target?.focus();
   };
@@ -125,6 +133,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
     if (isSaving) return;
     setFormError(null);
     const result = validate(values);
+    // A new product needs a photo (the owner cannot approve it without one) whenever photos can be uploaded.
+    if (!editing && photoRules.enabled && photos.readyCount === 0 && !photos.busy) {
+      result.errors.photos = photos.hasProblem
+        ? "Fix or remove the photo that didn't upload, or add another one."
+        : "Add at least one photo so buyers can see what they are buying.";
+      result.input = null;
+    }
+    if (photos.busy) {
+      setFormError("Please wait for your photos to finish uploading, then save.");
+      return;
+    }
     setErrors(result.errors);
     if (!result.input) {
       const first = FIELD_ORDER.find((field) => result.errors[field]);
@@ -141,6 +160,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
           ? "Changes saved. Price and stock are live now."
           : "Changes saved."
         : "Product added. It is in review, so buyers can't see it yet.";
+      if (!editing) {
+        // The product exists now, so the photos that were uploaded while filling the form can be saved on it.
+        const { failed } = await photos.attachAll(saved.product.id);
+        if (failed > 0) {
+          setFlashMessage("Your product is saved, but some photos didn't make it. Add them again here.");
+          router.push(`/vendor/products/${saved.product.id}/edit`);
+          return;
+        }
+      }
       if (saved.warnings.length > 0) {
         setWarnings(saved.warnings);
         setFlashMessage(note);
@@ -388,14 +416,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
         </div>
       </section>
 
-      <div className={styles.photoNotice}>
-        <span aria-hidden="true">📷</span>
-        <p className={styles.photoNoticeText}>
-          <span className={styles.photoNoticeTitle}>Photos are coming soon</span>
-          For now your product shows a default picture. You will be able to add real photos here soon, and
-          once you can, a product will need a photo before it can be approved.
-        </p>
-      </div>
+      <PhotoPicker photos={photos} rules={photoRules} error={fieldErr("photos")} inputId={PHOTO_INPUT_ID} />
 
       {formError && (
         <p role="alert" className={styles.error}>
@@ -411,8 +432,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ token, types, product }) => {
       )}
 
       <div className={styles.actions}>
-        <button type="submit" className={styles.btnPrimary} disabled={isSaving}>
-          {isSaving ? "Saving…" : editing ? "Save changes" : "Submit for review"}
+        <button type="submit" className={styles.btnPrimary} disabled={isSaving || photos.busy}>
+          {isSaving ? "Saving…" : photos.busy ? "Waiting for photos…" : editing ? "Save changes" : "Submit for review"}
         </button>
         <Link href="/vendor/products" className={styles.btnSecondary}>
           Cancel

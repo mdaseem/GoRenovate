@@ -611,29 +611,232 @@
   border-color: #c0392b;
 }
 
-/* ---------- photo notice ---------- */
+/* ---------- photos (the picker on the product form, and the owner's strip) ---------- */
 
-.photoNotice {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-start;
-  padding: 0.9rem 1rem;
-  border: 1px dashed #d8d4c9;
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 104px), 1fr));
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.photoCell {
+  min-width: 0;
+}
+
+.photoTile,
+.photoAdd {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
   border-radius: 12px;
-  background: #fbfaf6;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  color: #4b5563;
 }
 
-.photoNoticeText {
-  margin: 0;
+.photoTile {
+  border: 1px solid #ece9e3;
+  background: #f1efe9;
 }
 
-.photoNoticeTitle {
+.photoTileFailed {
+  border-color: #c0392b;
+}
+
+.photoImg {
   display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoMain {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(26, 31, 46, 0.82);
+  font-size: 0.72rem;
   font-weight: 700;
+  color: #fff;
+}
+
+/* The 44px tap area is the button; the visible circle inside it is smaller so it does not hide the picture. */
+.photoRemove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.photoRemoveMark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  font-size: 0.8rem;
+  line-height: 1;
   color: #1a1f2e;
+}
+
+.photoRemove:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: -4px;
+  border-radius: 12px;
+}
+
+.photoOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.86);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  color: #1a1f2e;
+}
+
+.photoProgress {
+  width: 80%;
+  height: 8px;
+  accent-color: #278b2e;
+}
+
+.photoFailMark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #b3261e;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.photoAdd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 44px;
+  border: 2px dashed #c9c4b4;
+  background: #fbfaf6;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #278b2e;
+  cursor: pointer;
+}
+
+.photoAddIcon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.photoAddInvalid {
+  border-color: #c0392b;
+}
+
+.photoAdd:focus-within {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+/* The real file input covers the whole tile (invisible), so a tap anywhere on it opens the camera / gallery. */
+.photoInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.photoProblems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.photoProblem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #f0c9c5;
+  border-radius: 10px;
+  background: #fdf3f2;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #7a1c15;
+}
+
+.photoProblemText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.photoProblemActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.noteLink {
+  font-weight: 700;
+  color: #1e6f25;
+  text-decoration: underline;
+}
+
+.photoStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.photoStripLink {
+  display: block;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border: 1px solid #ece9e3;
+  border-radius: 10px;
+}
+
+.photoStripLink:focus-visible {
+  outline: 2px solid #278b2e;
+  outline-offset: 2px;
+}
+
+.photoStripImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ---------- lists, loading, empty ---------- */

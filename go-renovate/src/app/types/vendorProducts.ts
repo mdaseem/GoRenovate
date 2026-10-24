@@ -37,6 +37,8 @@ export interface ManagedProduct {
   reviewNote: string;
   hasPhoto: boolean;
   imageUrl: string | null;
+  // The vendor's own uploaded photos in order (the first is the main picture).
+  photos: string[];
   inRooms: boolean;
   createdByVendor: boolean;
   submittedAt: string | null;
@@ -58,9 +60,26 @@ export interface ProductType {
   icon: string;
 }
 
+// What the photo step may do right now (`enabled` is false when the server has no photo storage set up).
+export interface PhotoRules {
+  enabled: boolean;
+  maxPerProduct: number;
+  maxBytes: number;
+  minSide: number;
+}
+
+// One upload permission from POST /vendor/products/photo-ticket: where to send the file and the signed
+// fields to send with it. Good for one photo, for about an hour.
+export interface PhotoTicket {
+  uploadUrl: string;
+  fields: Record<string, string>;
+  publicId: string;
+}
+
 export interface ProductTypesResponse {
   types: ProductType[];
   maxProducts: number;
+  photos: PhotoRules;
 }
 
 export interface ProductPage<T> {
@@ -86,6 +105,7 @@ export type ProductField =
   | "price"
   | "stock"
   | "dimensionsCm"
+  | "photos"
   | "reason"
   | "showInRooms"
   | "enabled"
